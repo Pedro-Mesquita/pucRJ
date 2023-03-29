@@ -36,87 +36,87 @@ def posicao(t, x, y):
     t.setposition(x,y)
     t.down()
 
-# for x in range(9):
-#     if x <= 9:
-#         t.write(x)
-#     t.fd(20)
+for x in range(9):
+    if x <= 9:
+        t.write(x)
+    t.fd(20)
 
-# triangulo(t)
+triangulo(t)
 
-# t.home()
-# t.left(180)
-# for x in range(9):
-#     if x <= 9:
-#         t.write(x*-1)
-#     t.fd(20)
+t.home()
+t.left(180)
+for x in range(9):
+    if x <= 9:
+        t.write(x*-1)
+    t.fd(20)
  
-# triangulo(t)
+triangulo(t)
    
-# t.home()  
-# t.left(90)      
-# for x in range(9):
-#     if x == 0:
-#         print()
-#     elif x<=9:
-#         t.write(x, align="right")
-#     t.fd(20)
+t.home()  
+t.left(90)      
+for x in range(9):
+    if x == 0:
+        print()
+    elif x<=9:
+        t.write(x, align="right")
+    t.fd(20)
 
-# triangulo(t)
+triangulo(t)
 
-# t.home()
-# t.right(90)
-# for x in range(9):
-#     if x == 0:
-#         print()
-#     elif x <= 9:
-#         t.write(x*-1, align="right")
-#     t.fd(15)
-# triangulo(t)
+t.home()
+t.right(90)
+for x in range(9):
+    if x == 0:
+        print()
+    elif x <= 9:
+        t.write(x*-1, align="right")
+    t.fd(15)
+triangulo(t)
 
-# posicao(t, 50, 50)
-# t.color("red")
-# t.begin_fill()
-# for x in range(12):
-#     t.right(360/12)
-#     t.fd(30)    
-# t.end_fill()
-# posicao(t,-50,50)
-# t.color("yellow")
-# t.begin_fill()
-# for x in range(3):
-#     t.fd(110)
-#     t.right(120)
-# t.end_fill()
+posicao(t, 50, 50)
+t.color("red")
+t.begin_fill()
+for x in range(12):
+    t.right(360/12)
+    t.fd(30)    
+t.end_fill()
+posicao(t,-50,50)
+t.color("yellow")
+t.begin_fill()
+for x in range(3):
+    t.fd(110)
+    t.right(120)
+t.end_fill()
 
-# posicao(t,-100,-50)
+posicao(t,-100,-50)
 
-# t.color("green")
-# t.begin_fill()
-# for i in range(360):
-#     t.left(360/360)
-#     t.fd(0.8)
-# t.end_fill()
+t.color("green")
+t.begin_fill()
+for i in range(360):
+    t.left(360/360)
+    t.fd(0.8)
+t.end_fill()
     
-# posicao(t, 50,-120)
+posicao(t, 50,-120)
 
-# t.color("blue")
-# t.begin_fill()
-# for x in range(5):
-#     t.right(360/5)
-#     t.fd(50)    
-# t.end_fill()
+t.color("blue")
+t.begin_fill()
+for x in range(5):
+    t.right(360/5)
+    t.fd(50)    
+t.end_fill()
 
-# posicao(t,200,200)
+posicao(t,200,200)
 
-# t.color("black")
+t.color("black")
 
-# for x in range(50):
-#     t.fd(x)
-#     t.left(30)
-# t.up()
-# t.home()
-# posicao(t,-200,200)
-# t.color("red")
+for x in range(50):
+    t.fd(x)
+    t.left(30)
+t.up()
+t.home()
+posicao(t,-200,200)
+t.color("red")
 
 def bandeira_litras(t,cor_um, cor_dois, cor_tres):
     t.color(cor_um)
@@ -151,29 +151,29 @@ def bandeira_litras(t,cor_um, cor_dois, cor_tres):
     t.fd(100/3)
     t.end_fill()
 
-# t.up()
-# t.home()
-# t.down()
-# t.left(90)
-# posicao(t, -200, 200)
-# bandeira_litras(t, "red", "white", "red")
+t.up()
+t.home()
+t.down()
+t.left(90)
+posicao(t, -200, 200)
+bandeira_litras(t, "red", "white", "red")
 
-# t.up()
-# t.home()
-# t.down()
-# posicao(t,-200,-200)
-# t.left(90)
-# bandeira_litras(t, "green", "yellow", "red")
-# t.left(90)
-# t.fd(150/1.8)
-# t.right(105)
+t.up()
+t.home()
+t.down()
+posicao(t,-200,-200)
+t.left(90)
+bandeira_litras(t, "green", "yellow", "red")
+t.left(90)
+t.fd(150/1.8)
+t.right(105)
 
-# t.begin_fill()
-# t.down()
-# for i in range(5):
-#     t.fd(35)
-#     t.right(144)
-# t.end_fill()
+t.begin_fill()
+t.down()
+for i in range(5):
+    t.fd(35)
+    t.right(144)
+t.end_fill()
 
 t.up()
 t.home()
@@ -186,10 +186,44 @@ t.fd(150)
 t.left(90)
 t.fd(100)
 t.left(180)
+t.color("#0A64AD")
+t.begin_fill()
 t.fd((100/9)*4)
 t.right(90)
 t.fd((100/9)*5)
 t.left(90)
 t.fd((100/9)*5)
+t.left(90)
+t.fd((100/9)*5)
+t.left(90)
+t.fd((100/9)*5)
+t.end_fill()
+t.fd((100/9)*4)
+t.left(90)
+t.begin_fill()
+t.fd(150)
+t.left(90)
+t.fd(100/9)
+t.left(90)
+t.fd(150)
+t.left(90)
+t.fd(100/9)
+t.end_fill()
 
+for x in range(4):
+    t.left(180)
+    t.fd(100/9)
+    t.color("white")
+    t.fd(100/9)
+    t.color("#0A64AD")
+    t.right(90)
+    t.begin_fill()
+    t.fd(150)
+    t.left(90)
+    t.fd(100/9)
+    t.left(90)
+    t.fd(150)
+    t.left(90)
+    t.fd(100/9)
+    t.end_fill()
 t.getscreen()._root.mainloop()
