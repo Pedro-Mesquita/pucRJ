@@ -98,7 +98,8 @@ t.begin_fill()
 for i in range(360):
   t.left(360 / 360)
   t.fd(0.8)
-  t.end_fill()
+  
+t.end_fill()
 
 posicao(t, 50, -120)
 
