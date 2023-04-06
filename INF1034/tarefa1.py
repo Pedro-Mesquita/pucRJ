@@ -260,6 +260,7 @@ t.right(90)
 t.fd(100/9)
 t.end_fill()
 t.color("black")
+#topzeira
 
 
 t.getscreen()._root.mainloop()
