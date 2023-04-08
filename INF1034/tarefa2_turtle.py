@@ -1,14 +1,3 @@
-# 1) Desenhar o plano cartesiano (eixos x e y) (opcional, não incluso na nota: com a seta ao final de cada um e numerados);
-# 2) Desenhar uma forma geométrica, pelo menos, em cada quadrante (usar repetição e fazer pelo menos duas diferentes da sala de aula, com cores distintas para cada);
-# 3) Desenhar uma espiral (sentido horário ou anti-horario) em algum dos quadrantes;
-# 4) Desenhar uma bandeira fácil (Marrocos, ou uma com 2 a 3 formas geométricas, não necessariamente diferentes);
-# 5) Desenhar uma bandeira média (Turquia, ou uma com 3 a 4 formas geométricas, não necessariamente diferentes);
-
-# 6) Desenhar uma bandeira difícil (África do Sul, ou uma com mais de 4 formas geométricas, não necessariamente diferentes);
-# DESAFIOS (opcional, não incluso na nota)
-# - Deve ser usado textinput para alguma funcionalidade (mudança de cor, escolher forma geométrica, etc.);
-# - Implementar o código usando uma função para cada elemento diferente (bandeira, plano, forma geométrica, etc.)
-
 import turtle
 import random
 
