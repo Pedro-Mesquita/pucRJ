@@ -169,17 +169,18 @@ def bandeira_grecia(t, x, y, largura_bandeira, altura_bandeira):
 t = turtle.Turtle()
 t.speed(0)
 
-cor_dodecagono = input("Digite uma cor para o dodecágono: ")
-cor_triangulo = input("Digite uma cor para o triângulo: ")
-cor_circulo = input("Digite uma cor para o círculo: ")
-cor_pentagono = input("Digite uma cor para o pentágono: ")
-
 
 eixos(t)
-
+cor_dodecagono = turtle.textinput("cores", "Cor do dodecágono")
 dodecagono(t, random.randint(10, 100), random.randint(10, 100), 20, cor_dodecagono)
+
+cor_triangulo = turtle.textinput("cores", "Cor do triângulo")
 triangulo(t, random.randint(-100, -60), random.randint(10, 100), 50, cor_triangulo)
+
+cor_circulo = turtle.textinput("cores", "Cor do círculo")
 circulo(t, random.randint(-100, -10), random.randint(-100, -10), 20, cor_circulo)
+
+cor_pentagono = turtle.textinput("cores", "Cor do pentágono")
 pentagono(t, random.randint(10, 100), random.randint(-100, -10), 10, cor_pentagono)
 
 espiral(t, random.randint(150, 300), random.randint(150, 300), 30, 10, 'purple')
@@ -189,5 +190,3 @@ bandeira_grecia(t, random.randint(200, 300), random.randint(-350, -300),200, 150
 
 
 t.getscreen()._root.mainloop()
-
-
