@@ -1,0 +1,69 @@
+#exercício 1 da lista - par ou ímpar
+#exercício 4 da lista - Jogo da adivinhação (itens A e B)
+#exercício 5 da lista - pedra, papel ou tesoura
+#exercício 7 da lista - jogo da forca
+
+import random
+
+#ex1
+# x = 0
+# print("O computador escolheu par.")
+# numero_de_vitorias_pc = 0
+# numero_de_vitorias_usuario = 0
+# while x < 11:
+#     numero_par_ou_impar_pc = random.randint(0, 11)
+#     numero_par_ou_impar_usuario = int(input("Escreva um número inteiro: "))
+#     if (numero_par_ou_impar_pc + numero_par_ou_impar_usuario) % 2 == 0:
+#         numero_de_vitorias_pc = numero_de_vitorias_pc + 1
+#         print('Valores digitados: %d e %d, portanto o computador ganhou'%(numero_par_ou_impar_pc, numero_par_ou_impar_usuario))
+#     else:
+#         numero_de_vitorias_usuario = numero_de_vitorias_usuario + 1
+#         print('Valores digitados: %d e %d, portanto o usuário ganhou'%(numero_par_ou_impar_pc, numero_par_ou_impar_usuario)) 
+#     x = x + 1
+
+# if numero_de_vitorias_pc > numero_de_vitorias_usuario:
+#     print("O computador ganhou por %d a %d"%(numero_de_vitorias_pc, numero_de_vitorias_usuario))
+# elif numero_de_vitorias_usuario > numero_de_vitorias_pc:
+#     print("O usuário ganhou por %d a %d"%(numero_de_vitorias_usuario, numero_de_vitorias_pc))
+# else:
+#     print("Empatou!")
+
+#ex2
+numero_gerado = random.randint(1, 1024)
+contador_de_tentativas_usuario = 0
+contador_de_tentativas_pc = 0
+nao_acertou = True
+
+quem_vai_adivinhar = input("Quem tentará adivinhar: 0 (o usuário) ou 1 (o computador)")
+if quem_vai_adivinhar == "0":
+    numero_usuario = int(input("Digite um valor:"))
+    while nao_acertou:
+        if numero_usuario < numero_gerado:
+            print("-1")
+            contador_de_tentativas_usuario = contador_de_tentativas_usuario + 1
+            numero_usuario = int(input("Digite um outro valor:"))
+        elif numero_usuario > numero_gerado:
+            print("1")
+            contador_de_tentativas_usuario = contador_de_tentativas_usuario + 1
+            numero_usuario = int(input("Digite um outro valor:"))
+        else:
+            contador_de_tentativas_usuario = contador_de_tentativas_usuario + 1
+            print("0")
+            nao_acertou = False
+    print('Número de tentativas: %d'%(contador_de_tentativas)
+elif quem_vai_adivinhar == "1":
+    numero_para_ser_adivinhado = int(input("Digite um valor para o pc descobrir: "))
+    if numero_para_ser_adivinhado % 2 == 0:
+        valor_chutado = numero_para_ser_adivinhado / 2
+        print("Valor chutado pelo pc: %d"%(valor_chutado))
+        
+    else
+        valor_chutado = (numero_para_ser_adivinhado + 1)/2
+        print("Valor chutado pelo pc: %d"%(valor_chutado))
+    while nao_acertou:
+        if
+        
+else:
+    print("Digite um valor válido.")
+    quem_vai_adivinhar = input("Quem tentará adivinhar: 0 (o usuário) ou 1 (o computador)")
+    
