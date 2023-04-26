@@ -1,0 +1,21 @@
+import string
+
+def totiente(n):
+    return (primo_um - 1) * (primo_dois-1) 
+
+def conversor_mensagem_ascii(mensagem):
+    for c in mensagem:
+        mensagem_ascii.append(ord(c))
+
+def codificar_letra(m, n):
+    return (m**e) % n
+
+mensagem_ascii = []
+primo_um = 17
+primo_dois = 41
+n = primo_um * primo_dois
+e = 13
+
+conversor_mensagem_ascii('TURING')
+for c in mensagem_ascii:
+    print(codificar_letra(c, n))
