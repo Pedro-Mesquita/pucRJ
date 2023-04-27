@@ -19,3 +19,54 @@ e = 13
 conversor_mensagem_ascii('TURING')
 for c in mensagem_ascii:
     print(codificar_letra(c, n))
+
+
+#####################################################################################################3
+
+def totiente(n):
+    return (primo_um - 1) * (primo_dois-1)  
+
+def conversor_mensagem_ascii(mensagem):
+    for c in mensagem:
+        mensagem_ascii.append(ord(c))
+
+def conversor_ascii_mensagem(mensagem_ascii):
+    return chr(mensagem_ascii)
+
+def codificar_letra(m, n):
+    return (m**a) % n
+
+def alg_euclides_estendido(a, b):
+    if a == 0:
+        return b, 0, 1
+    else:
+        mdc, x, y = alg_euclides_estendido(b % a, a)
+        return mdc, y - (b // a) * x, x
+
+def chave_privada(a, n):
+    tupla = alg_euclides_estendido(a, totiente(n))
+    return tupla[1]
+    
+def descodificar_letra(letra_cifrada, chave_p, n):
+    return letra_cifrada ** chave_p % n
+    
+
+
+mensagem_ascii = []
+primo_um = 17
+primo_dois = 41
+n = primo_um * primo_dois
+a = 13
+mensagem = input("Digite a sua mensagem: ")
+
+# ---- CRIPTOGRAFANDO ----
+conversor_mensagem_ascii(mensagem)
+for c in mensagem_ascii:
+    print(c)
+
+    print(conversor_ascii_mensagem(descodificar_letra(codificar_letra(c, n), chave_privada(a,n), n)))
+
+# print('Chave privada:',chave_privada(a, n))
+
+
+
