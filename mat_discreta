@@ -1,4 +1,4 @@
-def totiente(n):
+def totiente():
     return (primo_um - 1) * (primo_dois-1)  
 
 def conversor_mensagem_ascii(mensagem):
@@ -19,7 +19,7 @@ def alg_euclides_estendido(a, b):
         return mdc, y - (b // a) * x, x
 
 def chave_privada(a, n):
-    tupla = alg_euclides_estendido(a, totiente(n))
+    tupla = alg_euclides_estendido(a, totiente())
     return tupla[1]
     
 def descodificar_letra(letra_cifrada, chave_p, n):
@@ -27,21 +27,51 @@ def descodificar_letra(letra_cifrada, chave_p, n):
     
 
 
-mensagem_ascii = []
-primo_um = 17
+mensagem_ascii = [] #criando um array
+mensagem_criptografada = [] #criando um array
+mensagem_descriptografada = [] #criando um array
+mensagem_sem_ascii = [] #criando um array
+primo_um = 17 
 primo_dois = 41
-n = primo_um * primo_dois
-a = 13
+n = primo_um * primo_dois #tamanho do conjunto
+a = 13  #MDC(φ(n), e) = 1, sendo e > 1
+
 mensagem = input("Digite a sua mensagem: ")
 
+
+
 # ---- CRIPTOGRAFANDO ----
-conversor_mensagem_ascii(mensagem)
-for c in mensagem_ascii:
-    print(c)
 
-    print(conversor_ascii_mensagem(descodificar_letra(codificar_letra(c, n), chave_privada(a,n), n)))
+conversor_mensagem_ascii(mensagem) # transformando em ASCII
 
-# print('Chave privada:',chave_privada(a, n))
+for c in mensagem_ascii: # criptografando 
+    mensagem_criptografada.append(codificar_letra(c, n))
 
 
+
+# ---- GERANDO CHAVE PRIVADA ----
+
+chave_privada = chave_privada(a,n)
+
+
+
+# ---- DESCRIPTOGRAFANDO ----
+
+for c in mensagem_criptografada:
+    mensagem_descriptografada.append(descodificar_letra(c, chave_privada, n))
+
+
+
+# ---- CONVERTENDO DE ASCII ----
+
+for c in mensagem_descriptografada:
+    mensagem_sem_ascii.append(conversor_ascii_mensagem(c))
+
+
+
+print(mensagem)
+print(mensagem_ascii)
+print(mensagem_criptografada)
+print(mensagem_descriptografada)
+print(mensagem_sem_ascii)
 
