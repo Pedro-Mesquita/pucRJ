@@ -97,6 +97,11 @@ else:
     print("Empatou!")
 
 # ------------------------ ex 4 ------------------------
+
+def _string(list):
+    caractere_vazio = ' '
+    return caractere_vazio.join(list)
+
 palavra_secreta = input("Digite a palavra secreta: ").lower()
 x = 0
 
@@ -116,7 +121,7 @@ while x < len(palavra_secreta):
                 if palavra_secreta[y] == letra:
                     palavra_tentada[y] = letra
                 y = y + 1
-            print(palavra_tentada)
+            print(_string(palavra_tentada))
 
         else:
             print("Errado!")
