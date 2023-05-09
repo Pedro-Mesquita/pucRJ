@@ -61,23 +61,26 @@
 # print(verificaSenha(senha))
 
 #ex 3
-import string
+# import string
 
-numeros = '0123456789'
-caracteres = numeros+""+string.ascii_lowercase
+# numeros = '0123456789'
+# caracteres = numeros+""+string.ascii_lowercase
 
-def criptografa(senha):
-    print(senha)
-    senha_cripto = ''
-    senha_descripto = ''
-    for x in range(len(senha)):
-        i = caracteres.find(senha[x])
-        senha_cripto = senha_cripto+''+caracteres[i+3]
-    print(senha_cripto)
-    for k in range(len(senha)):
-        i = caracteres.find(senha_cripto[k])
-        senha_descripto = senha_descripto+''+caracteres[i-3]
-    print(senha_descripto)
+# def criptografa(senha):
+#     print(senha)
+#     senha_cripto = ''
+#     senha_descripto = ''
+#     for x in range(len(senha)):
+#         i = caracteres.find(senha[x])
+#         if i+3 > len(senha):
+#             senha_cripto = senha_cripto+''+caracteres[(i+3)%36]
+#         else:
+#             senha_cripto = senha_cripto+''+caracteres[i+3]
+#     print(senha_cripto)
+#     for k in range(len(senha)):
+#         i = caracteres.find(senha_cripto[k])
+#         senha_descripto = senha_descripto+''+caracteres[i-3]
+#     print(senha_descripto)
 
-senha = input("Digite uma senha para ser testada: ")
-criptografa(senha)
+# senha = input("Digite uma senha para ser testada: ")
+# criptografa(senha)
