@@ -1,6 +1,6 @@
 import turtle
+import eixos_turtle
 import random
-
 def eixos(t):
     t.home()
     t.fd(300)
@@ -181,12 +181,72 @@ cor_circulo = turtle.textinput("cores", "Cor do círculo")
 circulo(t, random.randint(-100, -10), random.randint(-100, -10), 20, cor_circulo)
 
 cor_pentagono = turtle.textinput("cores", "Cor do pentágono")
-pentagono(t, random.randint(10, 100), random.randint(-100, -10), 10, cor_pentagono)
+pentagono(t, random.randint(10, 100), random.randint(-100, -10), 30, cor_pentagono)
 
 espiral(t, random.randint(150, 300), random.randint(150, 300), 30, 10, 'purple')
 bandeira_austria(t, random.randint(-300, -150), random.randint(150, 300), 200, 150)
 bandeira_gana(t, random.randint(-300, -150), random.randint(-300, -150), 200, 150)
 bandeira_grecia(t, random.randint(200, 300), random.randint(-350, -300),200, 150)
 
-
 t.getscreen()._root.mainloop()
+
+
+#################################################  SEGUNDA PARTE  ###############################################################################################
+
+
+
+
+
+
+# t=turtle.Turtle()
+# t.speed(0)
+# eixos_turtle.plotEixosCartesianos(t,25,15)
+
+# # B.1
+
+# x=0
+# while(x<=10):
+#     y=(x**(1/2))
+#     eixos_turtle.plotponto(t,x,-y,15)
+#     x=x+0.2 
+
+
+# # B.2
+
+# x = -5
+# while(x<=5):
+#     y = 1/(x**2)
+#     eixos_turtle.plotponto(t,x,-y,15)
+#     x=x+0.2 
+
+
+# # B.3
+
+# x = -5
+# while(x<=5):
+#     y = 2**x
+#     eixos_turtle.plotponto(t,x,-y,15)
+#     x=x+0.2 
+
+
+# # B.4
+
+# x = -5
+# while(x<=5):
+#     y = 5-(x**2)
+#     eixos_turtle.plotponto(t,x,-y,15)
+#     x=x+0.2 
+
+
+# # B.5
+
+# x = -5
+# while(x<=5):
+#     y = (x+2)*(x-2)
+#     eixos_turtle.plotponto(t,x,-y,15)
+#     x=x+0.2 
+
+
+
+
+
