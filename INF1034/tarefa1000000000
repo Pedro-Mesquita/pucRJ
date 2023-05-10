@@ -1,0 +1,136 @@
+import random
+
+# ------------------------ ex1 ------------------------
+x = 0
+print("O computador escolheu par.")
+numero_de_vitorias_pc = 0
+numero_de_vitorias_usuario = 0
+while x < 11:
+    numero_par_ou_impar_pc = random.randint(0, 11)
+    numero_par_ou_impar_usuario = int(input("Escreva um número inteiro: "))
+    if (numero_par_ou_impar_pc + numero_par_ou_impar_usuario) % 2 == 0:
+        numero_de_vitorias_pc = numero_de_vitorias_pc + 1
+        print('Valores digitados: %d e %d, portanto o computador ganhou'%(numero_par_ou_impar_pc, numero_par_ou_impar_usuario))
+    else:
+        numero_de_vitorias_usuario = numero_de_vitorias_usuario + 1
+        print('Valores digitados: %d e %d, portanto o usuário ganhou'%(numero_par_ou_impar_pc, numero_par_ou_impar_usuario)) 
+    x = x + 1
+
+if numero_de_vitorias_pc > numero_de_vitorias_usuario:
+    print("O computador ganhou por %d a %d"%(numero_de_vitorias_pc, numero_de_vitorias_usuario))
+elif numero_de_vitorias_usuario > numero_de_vitorias_pc:
+    print("O usuário ganhou por %d a %d"%(numero_de_vitorias_usuario, numero_de_vitorias_pc))
+else:
+    print("Empatou!")
+
+# ------------------------ ex2 ------------------------
+numero_gerado = random.randint(1, 1024)
+contador_de_tentativas_usuario = 0
+contador_de_tentativas_pc = 0
+nao_acertou = True
+
+quem_vai_adivinhar = input("Quem tentará adivinhar: 0 (o usuário) ou 1 (o computador): ")
+if quem_vai_adivinhar == "0":
+    numero_usuario = int(input("Digite um valor: "))
+    while nao_acertou:
+        if numero_usuario < numero_gerado:
+            print("-1")
+            contador_de_tentativas_usuario = contador_de_tentativas_usuario + 1
+            numero_usuario = int(input("Digite um outro valor: "))
+        elif numero_usuario > numero_gerado:
+            print("1")
+            contador_de_tentativas_usuario = contador_de_tentativas_usuario + 1
+            numero_usuario = int(input("Digite um outro valor: "))
+        else:
+            contador_de_tentativas_usuario = contador_de_tentativas_usuario + 1
+            print("0")
+            nao_acertou = False
+    print('Número de tentativas: %d'%(contador_de_tentativas_usuario))
+elif quem_vai_adivinhar == "1":
+    numero_para_ser_adivinhado = int(input("Digite um valor para o pc descobrir entre 0 e 1024: "))
+    valor_chutado_pelo_pc = 512
+    for i in range(10):
+        print("Número chutado: %d"%(valor_chutado_pelo_pc))
+        resposta_usuario = input("Digite o quanto o valor chegou perto: ")
+        if resposta_usuario == '1':
+            contador_de_tentativas_pc = contador_de_tentativas_pc + 1
+            valor_chutado_pelo_pc = valor_chutado_pelo_pc + 2**(10-i-2)
+        elif resposta_usuario == '-1':
+            contador_de_tentativas_pc = contador_de_tentativas_pc + 1
+            valor_chutado_pelo_pc = valor_chutado_pelo_pc - 2**(10-i-2)
+        else:
+            print("O pc acertou!")
+            contador_de_tentativas_pc = contador_de_tentativas_pc + 1
+            print("Tentativas: %d"%(contador_de_tentativas_pc))
+            break
+else:
+    print("Digite um valor válido.")
+    quem_vai_adivinhar = input("Quem tentará adivinhar: 0 (o usuário) ou 1 (o computador)")
+
+# ------------------------ ex3 ------------------------
+def retorna_objeto(numero):
+    if numero == 1:
+        return 'PEDRA'
+    elif numero == 2:
+        return 'PAPEL'
+    elif numero == 3:
+        return 'TESOURA'
+
+input_usuario = int(input("Entre com sua escolha 1 (pedra), 2 (papel) ou 3 (tesoura): "))
+escolha_pc = random.randint(1,3)
+print("Escolha aleatória do pc: %d"%(escolha_pc))
+print("Usuário: %s Computador: %s "%(retorna_objeto(input_usuario), retorna_objeto(escolha_pc)))
+
+if input_usuario + escolha_pc == 5 and input_usuario > escolha_pc:
+    print("Usuário ganhou!")
+elif input_usuario + escolha_pc == 5 and input_usuario < escolha_pc:
+    print("PC ganhou!")
+elif input_usuario + escolha_pc == 4 and input_usuario > escolha_pc:
+    print("PC ganhou!")
+elif input_usuario + escolha_pc == 4 and input_usuario < escolha_pc:
+    print("Usuário ganhou!")
+elif input_usuario + escolha_pc == 3 and input_usuario > escolha_pc:
+    print("Usuário ganhou!")
+elif input_usuario + escolha_pc == 3 and input_usuario < escolha_pc:
+    print("PC ganhou!")
+else:
+    print("Empatou!")
+
+# ------------------------ ex 4 ------------------------
+
+def _string(list):
+    caractere_vazio = ' '
+    return caractere_vazio.join(list)
+
+palavra_secreta = input("Digite a palavra secreta: ").lower()
+x = 0
+
+palavra_tentada = list(len(palavra_secreta) * '_')
+lista_de_letras = []
+while x < len(palavra_secreta):
+    if '_' in palavra_tentada:
+        print("TENTATIVAS RESTANTES: %d"%(len(palavra_secreta)- x))
+
+        letra = input("Entre com uma letra: ").lower()
+        y = 0
+        if letra in lista_de_letras:
+            print("Letra já digitada.")
+        elif letra in palavra_secreta:
+            print("Certo!")
+            while y < len(palavra_secreta):
+                if palavra_secreta[y] == letra:
+                    palavra_tentada[y] = letra
+                y = y + 1
+            print(_string(palavra_tentada))
+
+        else:
+            print("Errado!")
+        
+        lista_de_letras.append(letra)
+        x = x + 1
+    else:
+        break
+if '_' in palavra_tentada:
+    print("Você perdeu.")
+else:
+    print("Parabéns, você ganhou!")
