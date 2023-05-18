@@ -63,3 +63,52 @@ def bomDia(n):
     return bomDia(n - 1)
 
 bomDia(10)
+
+def printCarac(s):
+    if s == '':
+        return
+    print(s[0])
+    return printCarac(s[1:])
+
+
+def printCaracInvertido(s):
+    if s == '':
+        return 
+    print(s[-1:])
+    return printCaracInvertido(s[:-1])
+
+def contaCarac(s):
+    if s == '':
+        return 0
+    return 1 + contaCarac(s[1:])
+
+def qtdVogais(s):
+    if s == '':
+        return 0
+    if s[0] in 'aeiouAEIOU':
+        return 1 + qtdVogais(s[1:])
+    return qtdVogais(s[1:])
+
+def occorrencia(s, c):
+    if s == '':
+        return 0
+    if s[0] == c:
+        return 1 + occorrencia(s[1:], c)
+    return occorrencia(s[1:], c)
+
+def contemCarac(s, c):
+    if s == '':
+        return False
+    if  s[0] == c:
+        return True
+    return contemCarac(s[1:], c)
+
+def porArroba(s):
+    if s == '':
+        return ''
+    if s[0] == 'a':
+        return '@' + porArroba(s[1:])
+    return s[0:1] + porArroba(s[1:])
+    
+print(porArroba('shaolin'))
+    
