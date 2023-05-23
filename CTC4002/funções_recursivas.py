@@ -133,3 +133,18 @@ def acha(lista, c):
                 if b == c:
                     soma += 1
     return soma
+
+def tamanho_carac(lista):
+    for i, elem in enumerate(lista):
+        if type(elem) == str:
+            lista[i] = len(elem)
+        if type(elem) == list:
+            top(elem)
+        
+def maior_sub(lista, num):
+    for i,e in enumerate(lista):
+        if type(e) == list:
+            maior_sub(e, num)
+        if type(e) == int or type(e) == float:
+            if e > num:
+                lista[i] = -num
