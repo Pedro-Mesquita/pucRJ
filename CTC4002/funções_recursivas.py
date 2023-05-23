@@ -111,3 +111,14 @@ def sem_a(str1, str2):
     if str1[0] == 'a' or str2[0] == 'a':
         return ''
     return str1[0]+str2[0] + sem_a(str1[1:], str2[1:])
+
+lista = [10, 'ab', 2.3, [12,9], 5, [[6,'oi'], 'ta'], 21]
+
+def somaLista(lista):
+    soma = 0
+    for elemento in lista:
+        if type(elemento) == list:
+            soma += somaLista(elemento)
+        if type(elemento) == float or type(elemento) == int:
+            soma += elemento
+    return soma
