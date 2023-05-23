@@ -122,3 +122,14 @@ def somaLista(lista):
         if type(elemento) == float or type(elemento) == int:
             soma += elemento
     return soma
+
+def acha(lista, c):
+    soma = 0
+    for elemento in lista:
+        if type(elemento) == list:
+            soma += acha(elemento, c)
+        if type(elemento) == str:
+            for b in elemento:
+                if b == c:
+                    soma += 1
+    return soma
