@@ -111,3 +111,40 @@ def sem_a(str1, str2):
     if str1[0] == 'a' or str2[0] == 'a':
         return ''
     return str1[0]+str2[0] + sem_a(str1[1:], str2[1:])
+
+lista = [10, 'ab', 2.3, [12,9], 5, [[6,'oi'], 'ta'], 21]
+
+def somaLista(lista):
+    soma = 0
+    for elemento in lista:
+        if type(elemento) == list:
+            soma += somaLista(elemento)
+        if type(elemento) == float or type(elemento) == int:
+            soma += elemento
+    return soma
+
+def acha(lista, c):
+    soma = 0
+    for elemento in lista:
+        if type(elemento) == list:
+            soma += acha(elemento, c)
+        if type(elemento) == str:
+            for b in elemento:
+                if b == c:
+                    soma += 1
+    return soma
+
+def tamanho_carac(lista):
+    for i, elem in enumerate(lista):
+        if type(elem) == str:
+            lista[i] = len(elem)
+        if type(elem) == list:
+            top(elem)
+        
+def maior_sub(lista, num):
+    for i,e in enumerate(lista):
+        if type(e) == list:
+            maior_sub(e, num)
+        if type(e) == int or type(e) == float:
+            if e > num:
+                lista[i] = -num
