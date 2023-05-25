@@ -8,6 +8,7 @@ texto = texto.upper()
 texto = texto.replace(',', '').replace('(', '').replace(')', '').replace('!', '').split()
 lista = texto
 lista_filtrada = []
+numeros = [0, 5, 10, 15, 20, 25]
 cores = ['red','green','blue','yellow','magenta','cyan','pink','gray','black','brown']
 for c in lista:
     if len(c) > 3:
@@ -33,8 +34,18 @@ def pos_tartaruga(t, x, y):
 
 t.setpos(0,0)
 t.right(20)
-for i in range(19):
-    pos_tartaruga(t, 60*(i*0.5), 40)
+t.speed(10)
+for i in range(31):
+    pos_tartaruga(t, 20+i, 14)
     t.color(random.choice(cores))
-    t.write(lista_palavras_e_incidencia[i][0], move=True,align='right',font=('Arial',15,'bold'))
+    if 20 + i >= 25 and 20 + i <= 29:
+        t.write(lista_palavras_e_incidencia[i][0], move=True,align='right',font=('Arial',15,'bold'))
+    if 20 + i >= 35 and 20 + i <= 39:
+        t.write(lista_palavras_e_incidencia[i][0], move=True,align='right',font=('Arial',15,'bold'))
+    if 20 + i >= 42 and 20 + i <= 46:
+        t.write(lista_palavras_e_incidencia[i][0], move=True,align='right',font=('Arial',15,'bold'))
+    if 20 + i >= 48 and 20 + i <= 53:
+        t.write(lista_palavras_e_incidencia[i][0], move=True,align='right',font=('Arial',15,'bold'))
     t.color('black')
+
+turtle.exitonclick()
