@@ -164,3 +164,33 @@ def str_lista(lista):
         if type(e) == int or type(e) == float:
             lista[i] = str(e)
             
+        
+def verifica_2(n):
+    if n < 10:
+        return n == 2
+    if n % 10 == 2:
+        return True
+    return verifica_2(n//10)
+
+
+
+def c_na_str(s, c):
+    if s == '':
+        return False
+    if s[0] == c:
+        return True
+    return c_na_str(s[1:], c)
+    
+                    
+
+lst = ['mamaco', ['su', 'top'], 'bolinha', 23]
+
+def ou(lst):
+    for i, e in enumerate(lst):
+        if type(e) == list:
+            ou(e)
+        if 'ou' in str(e):
+            return True
+        
+    return False
+print(ou(lst))
