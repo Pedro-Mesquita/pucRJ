@@ -148,3 +148,19 @@ def maior_sub(lista, num):
         if type(e) == int or type(e) == float:
             if e > num:
                 lista[i] = -num
+                
+def modifica_lista(lista):
+    for i, e in enumerate(lista):
+        if type(e) == list:
+            modifica_lista(e)
+        if type(e) == int or type(e) == float:
+            lista[i] = [int(e/8), int(e%8)]
+        
+
+def str_lista(lista):
+    for i, e in enumerate(lista):
+        if type(e) == list:
+            str_lista(e)
+        if type(e) == int or type(e) == float:
+            lista[i] = str(e)
+            
