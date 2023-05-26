@@ -12,7 +12,6 @@ def load():
       "y": 300,
       "raio": 10,
       "speed": 0.2,
-      "collided": False
     }
 
     rectangle1 = {
@@ -30,28 +29,21 @@ def load():
 
 
 
-def check_circular_collision(ax, ay, ar, bx, by, br):
-   dx = bx - ax
-   dy = by - ay
-   dist = math.sqrt(dx * dx + dy * dy)
-   return dist < ar + br
-
-
 def update(dt):
-    global  rectangle1, rectangle2
-    
-## if   rectangle2['y'] >= bola['y'] and bola['y'] <= (rectangle2['y']+ 100) and (bola['x']+10) >= rectangle2['x']:
-  ##      bola['x']  -= (dt*0.5)
-        
-    ##else: 
-        
-        ##bola['x'] += (dt*0.5)
-
-
+    global  rectangle1, rectangle2, bola
 
     keys = pygame.key.get_pressed()
-
+    bolean = True
+    bola['x'] = bola['x'] - (dt * bola['speed'])
     
+
+
+    if bola['y']+10 >= rectangle2['y'] and bola['y'] + 10 <= rectangle2['y']+100 and bola['x'] >= rectangle2['x'] and bola['x'] <= rectangle2['x']+30: 
+        print('bateu')
+
+    if bola['y']+10 >= rectangle1['y'] and bola['y'] + 10 <= rectangle1['y']+100 and bola['x'] >= rectangle1['x'] and bola['x'] <= rectangle1['x']+30: 
+        bola['x'] += dt * bola['speed']
+
     if keys[pygame.K_UP]:
         if rectangle2['y'] >= 10:
             rectangle2['y'] -= (dt*0.5)
