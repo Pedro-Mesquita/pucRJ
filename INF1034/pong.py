@@ -4,7 +4,7 @@ width = 800  #Largura Janela
 height = 600 #Altura Janela
 
 def load():
-    global clock, bola, rectangle1,rectangle2, start, dt
+    global clock, bola, rectangle1,rectangle2, voce_perdeu
     clock = pygame.time.Clock() 
     bola = {
       "x": 390,
@@ -26,8 +26,18 @@ def load():
         'h': 100 
     }
 
+    def voce_perdeu():
+        screen.fill((0, 0, 0))
+        font_size = 40
+        font_color = (255, 255, 255)
+        font = pygame.font.Font(None, font_size)
+        text_content = "Game Over!"
+        text_surface = font.render(text_content, True, font_color)
+        text_rect = text_surface.get_rect(center=(width // 2, height//2))
+        screen.blit(text_surface, text_rect)
+
 def update(dt):
-    global  rectangle1, rectangle2, bola, start
+    global  rectangle1, rectangle2, bola, voce_perdeu
     keys = pygame.key.get_pressed()
     bola['x'] += dt * bola['speed']
 
@@ -38,16 +48,24 @@ def update(dt):
         bola['speed'] = -bola['speed']
 
 
+    if bola['x'] >= 800 or bola['x'] <= 0:
+        voce_perdeu()
+
+
+    if keys[pygame.K_w]:
+        if rectangle1['y'] >= 10:
+            rectangle1['y'] -= (dt*0.5)
+        
     if keys[pygame.K_UP]:
         if rectangle2['y'] >= 10:
             rectangle2['y'] -= (dt*0.5)
-        if rectangle1['y'] >= 10:
-            rectangle1['y'] -= (dt*0.5)
+    if keys[pygame.K_s]:
+        if rectangle1['y'] <= (590 - rectangle1['h']) :
+            rectangle1['y'] += (dt*0.5)
     if keys[pygame.K_DOWN]:
         if rectangle2['y'] <= (590 - rectangle2['h']):
             rectangle2['y'] += (dt*0.5)
-        if rectangle1['y'] <= (590 - rectangle1['h']) :
-            rectangle1['y'] += (dt*0.5)
+        
 
 def draw_screen(screen):
     screen.fill((0,0,0))
