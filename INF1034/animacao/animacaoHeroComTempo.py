@@ -42,7 +42,7 @@ def update(dt):
         if hero_anim_time > 100: #quando acumular mais de 100 ms
             hero_anim_frame +=  1 # avança para proximo frame
             if hero_anim_frame < 9 or hero_anim_frame > 11:
-                hero_anim_frame = 9
+                hero_anim_frame = 8
             hero_anim_time = 0 #reinicializa a contagem do tempo
     
     if keys[pygame.K_DOWN]:
