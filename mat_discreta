@@ -11,25 +11,24 @@ def conversor_ascii_mensagem(mensagem_ascii):
 def codificar_letra(m, n):
     return (m**a) % n
  
-def alg_euclides_estendido(a, b):
-    if a == 0:
-        return b, 0, 1
-    else:
-        mdc, x, y = alg_euclides_estendido(b % a, a)
-        return mdc, y - (b // a) * x, x
+def mdc(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
 
 def chave_privada(a, n):
-    tupla = alg_euclides_estendido(a, totiente())
-    return tupla[1]
+    return mdc(a, totiente())
     
 def descodificar_letra(letra_cifrada, chave_p, n):
-    return letra_cifrada ** chave_p % n 
+    return (letra_cifrada ** chave_p) % n 
 
-def co_primo():
-    for i in range(2,totiente()):
-        if alg_euclides_estendido(i, totiente())[0] == 1:
-            lista_primos.append(i)
-    return lista_primos
+def primos_entre_si(numero):
+    primos = []
+    for i in range(2, numero):
+        if mdc(numero, i) == 1:
+            if i > 1 and i < n:
+                primos.append(i)
+    return primos
 
 lista_primos = []
 mensagem_ascii = [] #criando um array
@@ -40,7 +39,7 @@ mensagem = input("Digite a sua mensagem: ")
 primo_um = int(input("Digite o primeiro número primo: "))
 primo_dois = int(input("Digite o segundo número primo: "))
 n = primo_um * primo_dois #tamanho do conjunto
-print(co_primo())
+print(primos_entre_si(totiente()))
 a = int(input("Digite o A escolido: "))
 
 
@@ -79,4 +78,3 @@ print(mensagem_ascii)
 print(mensagem_criptografada)
 print(mensagem_descriptografada)
 print(mensagem_sem_ascii)
-
