@@ -17,7 +17,7 @@ def transforma_extenso(numero):
     if numero < 100:
         print(dezenas[(numero//10)-2])
         return transforma_extenso(numero%10)
-    if numero < 1000:
+    if numero < 1000:  
         print(centena[(numero//100)-1])
         return transforma_extenso(numero%10)
 transforma_extenso(200)
