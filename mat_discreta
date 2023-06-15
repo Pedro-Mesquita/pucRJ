@@ -45,7 +45,7 @@ a = int(input("Digite o A escolido: "))
 
 
 # ---- CRIPTOGRAFANDO ----
-
+ 
 conversor_mensagem_ascii(mensagem) # transformando em ASCII
 
 for c in mensagem_ascii: # criptografando 
