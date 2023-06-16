@@ -1,80 +1,91 @@
-def totiente():
-    return (primo_um - 1) * (primo_dois-1)  
+mensagem = input("Digite a sua mensagem: ")
+print(mensagem)
+
+#1º passo: transformar a mensagem para ascii
+
+mensagem_transformada_em_ascii = []
 
 def conversor_mensagem_ascii(mensagem):
     for c in mensagem:
-        mensagem_ascii.append(ord(c))
+        mensagem_transformada_em_ascii.append(ord(c))
+        
+conversor_mensagem_ascii(mensagem)
+print(mensagem_transformada_em_ascii)        
 
-def conversor_ascii_mensagem(mensagem_ascii):
-    return chr(mensagem_ascii)
+#2º passo: escolher os primos
 
-def codificar_letra(m, n):
-    return (m**a) % n
- 
-def mdc(a, b):
-    while b != 0:
-        a, b = b, a % b
-    return a
+primo_um = int(input("Digite um primo: "))
+primo_dois = int(input("Digite um primo: "))
 
-def chave_privada(a, n):
-    return mdc(a, totiente())
-    
-def descodificar_letra(letra_cifrada, chave_p, n):
-    return (letra_cifrada ** chave_p) % n 
+#3º passo: definindo o n
 
-def primos_entre_si(numero):
+n = primo_um * primo_dois
+
+#4º passo: definindo a função totiente
+
+def totiente(p1, p2):
+    return (p1-1) * (p2-1)
+
+#5° passo: calculando possíveis valores para a chave pública
+
+def mdcEstendido(a, b):
+    #Caso Base
+    if a == 0 :
+        return b,0,1
+             
+    mdc,x1,y1 = mdcEstendido(b%a, a)
+     
+    x = y1 - (b//a) * x1
+    y = x1
+     
+    return mdc,x,y
+
+def primos_entre_si(totiente):
     primos = []
-    for i in range(2, numero):
-        if mdc(numero, i) == 1:
-            if i > 1 and i < n:
+    for i in range(2, totiente):
+        if mdcEstendido(totiente, i)[0] == 1:
+            if i > 1 and i < totiente:
                 primos.append(i)
     return primos
 
-lista_primos = []
-mensagem_ascii = [] #criando um array
-mensagem_criptografada = [] #criando um array
-mensagem_descriptografada = [] #criando um array
-mensagem_sem_ascii = [] #criando um array
-mensagem = input("Digite a sua mensagem: ")
-primo_um = int(input("Digite o primeiro número primo: "))
-primo_dois = int(input("Digite o segundo número primo: "))
-n = primo_um * primo_dois #tamanho do conjunto
-print(primos_entre_si(totiente()))
-a = int(input("Digite o A escolido: "))
+print(primos_entre_si(totiente(primo_um, primo_dois)))
+
+#6º passo: escolhendo a chave pública
+
+chave_publica = int(input("Escolha um número a dentro dos possíveis valores acima: "))
+print('chave pública: ',chave_publica)
+
+#7º passo: codificando a mensagem
+
+mensagem_criptografada = []
+
+def criptografa_mensagem(letra, chave_publica, n):
+    return (letra ** chave_publica) % n
+
+for letra in mensagem_transformada_em_ascii:
+    mensagem_criptografada.append(criptografa_mensagem(letra, chave_publica, n))
+    
+print('mensagem criptografada: ', mensagem_criptografada)
+
+#8º passo: calcular a chave privada
+
+def calcula_chave_privada(a, totiente):
+    return mdcEstendido(a, totiente)[1]
+
+chave_privada = calcula_chave_privada(chave_publica, totiente(primo_um, primo_dois))
+print('chave privada: ', chave_privada)
+
+#9 passo: descodificando a mensagem
+
+mensagem_descriptografada = []
+
+def descriptografa_mensagem_ascii(letra, chave_privada, n):
+    return int((letra ** chave_privada) % n)
+
+for letra in mensagem_criptografada:
+    mensagem_descriptografada.append(descriptografa_mensagem_ascii(letra, chave_privada,  n))
+    
+print('mensagem descriptografada: ',mensagem_descriptografada)
 
 
-
-# ---- CRIPTOGRAFANDO ----
- 
-conversor_mensagem_ascii(mensagem) # transformando em ASCII
-
-for c in mensagem_ascii: # criptografando 
-    mensagem_criptografada.append(codificar_letra(c, n))
-
-
-
-# ---- GERANDO CHAVE PRIVADA ----
-
-chave_privada = chave_privada(a,n)
-
-
-
-# ---- DESCRIPTOGRAFANDO ----
-
-for c in mensagem_criptografada:
-    mensagem_descriptografada.append(descodificar_letra(c, chave_privada, n))
-
-
-
-# ---- CONVERTENDO DE ASCII ----
-
-for c in mensagem_descriptografada:
-    mensagem_sem_ascii.append(conversor_ascii_mensagem(c))
-
-
-
-print(mensagem)
-print(mensagem_ascii)
-print(mensagem_criptografada)
-print(mensagem_descriptografada)
-print(mensagem_sem_ascii)
+https://hackingnaweb.com/criptografia/entendendo-algoritmo-rsa-de-verdade/
