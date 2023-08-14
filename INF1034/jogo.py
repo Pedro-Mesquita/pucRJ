@@ -1,109 +1,70 @@
-#textureAtlas
 import pygame
 import math
 tile_size = 32
 width = 32*20
 height = 32*20
-mapa = []
-tile_quads = []
-background_image = pygame.image.load("fundo.png")
-imagem_bala = pygame.image.load("bala.png")
+background_image = pygame.image.load("./INF1034/fundo.png")
 contagem_tempo = 180000
-nave = {
-    'imagem': 'nave.png',
-    'x': 16*20,
-    'y': 25*20,
-    'velocidade': 0.6,
-    'colisao': False
-}
+
+class Nave(pygame.sprite.Sprite):
+	def __init__(self, x, y):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load("./INF1034/nave.png")
+		self.rect = self.image.get_rect()
+		self.rect.center = [x, y]
+		self.last_shot = pygame.time.get_ticks()
 
 
-class Bala:
-    def __init__ (self, velocidade):
-        self.velocidade = velocidade
-        self.y = 600
-    
-    def update(self, dt):
-        self.y -= dt
-        screen.blit(imagem_bala, (nave['x']+40, self.y))
-        print(self.y)
+	def update(self):
+		speed = 8
+		key = pygame.key.get_pressed()
+		if key[pygame.K_LEFT] and self.rect.left > 0:
+			self.rect.x -= speed
+		if key[pygame.K_RIGHT] and self.rect.right < width:
+			self.rect.x += speed
+			
+                        
+		time_now = pygame.time.get_ticks()
+		#shoot
+		if key[pygame.K_SPACE]:
+			bala = Bullets(self.rect.centerx, self.rect.top)
+			grupo_bala.add(bala)
+			self.last_shot = time_now
 
-        
 
-def load_mapa(filename): #Lê o conteúdo do arquivo para a matriz
-    global mapa
-    file = open(filename,"r")
-    i = 0 
-    for line in file.readlines():
-        mapa.append([])
-        for j in line:
-            mapa[i].append(j)
-        i = i + 1
-    file.close()
-    
-def load_tiles(filename, nx, ny):
-    global tileset_image, tile_quads
-    tileset_image = pygame.image.load(filename)
-    for i in range(nx):
-        for j in range(ny):
-            tile_quads.append((i * tile_size , j * tile_size, tile_size, tile_size))
+class Bullets(pygame.sprite.Sprite):
+	def __init__(self, x, y):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load("./INF1034/bala.png")
+		self.rect = self.image.get_rect()
+		self.rect.center = [x, y]
 
+	def update(self):
+		self.rect.y -= 5
+		if self.rect.bottom < 0:
+			self.kill()
+
+		# self.mask = pygame.mask.from_surface(self.image)
 
 def load():
-    global clock, plataform_tileset
+    global clock
     clock = pygame.time.Clock() 
-    load_mapa("plataform_map.txt")
-    load_tiles("plataform_tileset.png", 3, 3)
     
 def update(dt):
     global nave, contagem_tempo
     contagem_tempo -= dt
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_UP]:
-        if nave['y'] <= 0:
-            nave['y'] = 0
-        else:
-            nave['y'] = nave['y'] - (nave['velocidade'] * dt)
-    if keys[pygame.K_DOWN]:
-        if nave['y'] >= 550:
-            nave['y'] = 550
-        else:
-            nave['y'] = nave['y'] + (nave['velocidade'] * dt)
-
-    if keys[pygame.K_LEFT]:
-        if nave['x'] <= 0:
-            nave['x'] = 0
-        else:
-            nave['x'] = nave['x'] - (nave['velocidade'] * dt)
-    if keys[pygame.K_RIGHT]:
-        if nave['x'] >= 560:
-            nave['x'] = 560
-        else:
-            nave['x'] = nave['x'] + (nave['velocidade'] * dt)
     
-    if keys[pygame.K_SPACE]:
-        Bala(0.10).update(dt)
 
 def draw_screen(screen):
     screen.blit(background_image, (0,0))
-    screen.blit(pygame.image.load(nave['imagem']), (nave['x'], nave['y']))
-    
-    #screen.fill((250,250,250))
-    # for i in range(10): #Percorre a matriz e desenha imagens quadradas
-    #     for j in range(14):
-    #         pos = ((j * tile_size), (i * tile_size))
-    #         if mapa[i][j] == "G":
-    #             screen.blit(tileset_image, pos, tile_quads[0])
-    #         elif mapa[i][j] == "T":
-    #             screen.blit(tileset_image, pos, tile_quads[3])
-    #         elif mapa[i][j] == "A": 
-    #             screen.blit(tileset_image, pos, tile_quads[6])
-    #         elif mapa[i][j] == "P": 
-    #             screen.blit(tileset_image, pos, tile_quads[7])
-    #         elif mapa[i][j] == "B": 
-    #             screen.blit(tileset_image, pos, tile_quads[5])
 
+
+grupo_bala = pygame.sprite.Group()
+
+grupo_nave = pygame.sprite.Group()
+nave = Nave(int(width / 2), height - 100)
+grupo_nave.add(nave)
+    
 def main_loop(screen):  
     global clock, contagem_tempo
     font = pygame.font.Font(None, 30)
@@ -122,11 +83,15 @@ def main_loop(screen):
         draw_screen(screen)
         # Atualiza posição dos objetos da tela
         update(dt)
+        nave.update()
+        grupo_bala.update()
         # Pygame atualiza o seu estado
         t = contagem_tempo/1000
         text = font.render(str(math.floor(t)), True, (255,255,255))
         text_rect = text.get_rect(center = (320, 20))
         screen.blit(text, text_rect)
+        grupo_nave.draw(screen)
+        grupo_bala.draw(screen)
         pygame.display.update() 
 
 pygame.init()
