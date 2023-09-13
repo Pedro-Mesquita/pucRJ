@@ -1,0 +1,27 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+void leInt(char texto[]);
+
+int main(void) {
+    int n1, n2, n3;
+
+    leInt("3 inteiros: ", &n1, &n2, &n3);
+    printf("%d, %d, %d", n1, n2, n3);  
+
+    return 0;
+}
+
+void leInt(char texto[], int *end1, int *end2, int *end3) {
+    int n1, n2, n3;
+
+    printf("%s", texto);
+    scanf("%d%d%d", &n1, &n2, &n3);
+
+    *end1 = n1;
+    *end2 = n2;
+    *end3 = n3;
+}
+
+// *p1 significa "o conteúdo da memória apontada por p1"
+// *p1 = n1 o conteúdo da memória apontada por p1 recebe n1
