@@ -1,5 +1,5 @@
 
-#define ALPHABETO "abcdefghijklmnopqrstuvwxyz"
+#define ALFABETO "abcdefghijklmnopqrstuvwxyz"
 #define TRUE 1
 #define FALSE 0
 
