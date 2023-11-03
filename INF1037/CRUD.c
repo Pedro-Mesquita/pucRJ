@@ -23,6 +23,8 @@ char mostraEPerguntaOpcao(void);
 void deleteCliente(Cliente *pcliente, int qtd);
 void addCliente(Cliente *listaClientes, int qtdClientes);
 void listCliente(Cliente *pcliente, int qtd);
+void listarClienteComID(Cliente *pcliente, int qtd);
+void updateCliente(Cliente *pcliente, int qtd);
 
 int main(void)
 {
@@ -39,14 +41,20 @@ int main(void)
 		{
 		case 'a':
 			// TODO: verificar se ainda pode incluir um cliente
+			printf("\n---------- ADICIONAR CLIENTES ----------\n");
 			addCliente(listaClientes, qtdClientes);
 			qtdClientes++;
 			break;
 		case 'b':
 			break;
 		case 'c':
+			printf("\n---------- ALTERAR SALDO ----------\n");
+			listarClienteComID(listaClientes, qtdClientes);
+			updateCliente(listaClientes, qtdClientes);
 			break;
 		case 'd':
+			printf("\n---------- EXCLUIR CLIENTES ----------\n");
+			listarClienteComID(listaClientes, qtdClientes);
 			deleteCliente(listaClientes, qtdClientes);
 			qtdClientes--;
 			break;
@@ -61,18 +69,58 @@ int main(void)
 	}
 }
 
+void searchCliente(Cliente *pcliente, int qtd)
+{
+	int id;
+	printf("1)nome\n");
+	printf("1)saldo\n");
+	printf("1)idade\n");
+
+	scanf("%d", &id);
+	if (id = 1)
+	{
+		printf("Insira o nome a ser buscado: ");
+		char nomeBuscado[81];
+		scanf("%[^\n]s", nomeBuscado);
+		for (int i = 0; i < qtd; i++)
+		{
+			if(tolower(pcliente[i].nome) == tolower(nomeBuscado)){
+				printf("%s - %.2f - %d\n", pcliente[i].nome, pcliente[i].saldo, pcliente[i].idade);
+			}
+		}
+	}
+	if (id = 2)
+	{
+		printf("Insira o saldo a ser buscado: ");
+	}
+	if (id = 3)
+	{
+		printf("Insira a idade a ser buscada: ");
+	}
+}
+
+void updateCliente(Cliente *pcliente, int qtd)
+{
+	int id;
+	float novoSaldo;
+	printf("Insira o id do cliente que deseja alterar: ");
+	scanf("%d", &id);
+	printf("Insira o novo saldo: ");
+	scanf("%f", &novoSaldo);
+	pcliente[id - 1].saldo = novoSaldo;
+	printf("Saldo alterado com sucesso!\n");
+}
+
 void deleteCliente(Cliente *pcliente, int qtd)
 {
 	int id;
-	for (int i = 0; i < qtd; i++)
-	{
-		printf("%d) %s\n",i+1, pcliente[i].nome);
-	}
 	printf("Insira o id do cliente que deseja excluir: ");
 	scanf("%d", &id);
-	if(id >= 1 && id <= qtd){
-		for(int i = id; i<(qtd); i++){
-			pcliente[i-1] = pcliente[i];
+	if (id >= 1 && id <= qtd)
+	{
+		for (int i = id; i < (qtd); i++)
+		{
+			pcliente[i - 1] = pcliente[i];
 		}
 	}
 }
@@ -94,6 +142,14 @@ void listCliente(Cliente *pcliente, int qtd)
 	{
 		printf("Nome: %s\nSaldo: %.2f\nIdade: %d\n", pcliente[i].nome, pcliente[i].saldo, pcliente[i].idade);
 		printf("----------\n");
+	}
+}
+
+void listarClienteComID(Cliente *pcliente, int qtd)
+{
+	for (int i = 0; i < qtd; i++)
+	{
+		printf("%d) %s\n", i + 1, pcliente[i].nome);
 	}
 }
 
