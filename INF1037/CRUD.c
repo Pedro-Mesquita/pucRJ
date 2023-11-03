@@ -106,7 +106,7 @@ char mostraEPerguntaOpcao(void)
 		printf("b) Buscar um cliente\n");
 		printf("c) Atualizar um cliente\n");
 		printf("d) Apagar um cliente\n");
-		printf("e) Litar todos os clientes\n");
+		printf("e) Listar todos os clientes\n");
 		printf("z) Terminar\n");
 		printf("Insira um valor: ");
 		opcao = tolower(getchar());
