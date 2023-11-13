@@ -9,15 +9,16 @@
 
 struct client
 {
-	char* nome;
+	char *nome;
 	float saldo;
 	int idade;
 };
 typedef struct client Cliente;
 
-struct no {
+struct no
+{
 	Cliente cliente;
-	struct no* prox;
+	struct no *prox;
 };
 
 typedef struct no No;
@@ -32,17 +33,13 @@ struct clientAux
 typedef struct client ClientAux;
 
 char mostraEPerguntaOpcao(void);
-
-void listaTodoClientes(No* pNo);
-No* incluiUmCliente(No* pNo);
-void salvarTodosClientes(No* pNo);
-
-
-
+void listaTodoClientes(No *pNo);
+No *incluiUmCliente(No *pNo);
+void salvarTodosClientes(No *pNo);
 
 int main(void)
 {
-	No* pNo;
+	No *pNo;
 	pNo = NULL;
 	char opcao;
 
@@ -57,10 +54,10 @@ int main(void)
 			break;
 		case 'c':
 			printf("\n---------- ALTERAR SALDO ----------\n");
-			
+
 		case 'd':
 			printf("\n---------- EXCLUIR CLIENTES ----------\n");
-			
+
 			break;
 		case 'e':
 			listaTodoClientes(pNo);
@@ -71,44 +68,69 @@ int main(void)
 	return 0;
 }
 
-
-void lerArquivos(No* pNo) {
-	FILE* arq;
-	No* p;
+void lerArquivos(No *pNo)
+{
+	FILE *arq;
+	No *p;
 	p = pNo;
+	int tamNome;
 	arq = fopen("clientes.bin", "rb");
-	if (arq == NULL) {
+	if (arq == NULL)
+	{
 		fprintf(stderr, "Deu ruim no arquivo\n");
 		exit(2);
 	}
-	//tentar resolver isso
-	while (p) {
-		fread(p, sizeof(), 1);
-	}
-}
-
-void salvarTodosClientes(No* pNo) {
-	FILE* arq;
-	No* p;
-	p = pNo;
-	arq = fopen("clientes.bin", "wb");
-	if (arq == NULL) {
-		fprintf(stderr, "Deu ruim no arquivo\n");
-		exit(2);
-	}
-	while (p) {
-		fwrite(p->cliente.nome, sizeof(strlen(p->cliente.nome)+1), 1, arq);
-		fwrite(&p->cliente.saldo, sizeof(float), 1, arq);
-		fwrite(&p->cliente.idade, sizeof(int), 1, arq);
+	// tentar resolver isso
+	while (fread(&tamNome, sizeof(int), 1, arq) > 0)
+	{
+		tamNome++;
+		p->cliente.nome = (char *)malloc(tamNome * sizeof(char));
+		if (p->cliente.nome == NULL)
+		{
+			fprintf(stderr, "deu ruim!");
+			exit(121);
+		}
+		
+		fread(p->cliente.nome, sizeof(char), 1, arq);
+		p->cliente.nome[tamNome] = '\0';
+		fread(&p->cliente.saldo, sizeof(float), 1, arq);
+		fread(&p->cliente.idade, sizeof(int), 1, arq);
+		p->prox = (No *)malloc(sizeof(No));
 		p = p->prox;
 	}
 }
 
-void listaTodoClientes(No* pNo) {
-	// imprimir na ordem correta com recursão
-	No* p;
+void salvarTodosClientes(No *pNo)
+{
+	FILE *arq;
+	No *p;
 	p = pNo;
-	while(p){
+	arq = fopen("clientes.bin", "wb");
+	if (arq == NULL)
+	{
+		fprintf(stderr, "Deu ruim no arquivo\n");
+		exit(2);
+	}
+	while (p)
+	{
+		int tamNome = strlen(p->cliente.nome);
+
+		fwrite(&tamNome, sizeof(int), 1, arq);
+		fwrite(p->cliente.nome, sizeof(strlen(p->cliente.nome)), 1, arq);
+		fwrite(&p->cliente.saldo, sizeof(float), 1, arq);
+		fwrite(&p->cliente.idade, sizeof(int), 1, arq);
+		p = p->prox;
+	}
+	fclose(arq);
+}
+
+void listaTodoClientes(No *pNo)
+{
+	// imprimir na ordem correta com recursão
+	No *p;
+	p = pNo;
+	while (p)
+	{
 		printf("\nCliente\n");
 		printf("Nome: %s\n", p->cliente.nome);
 		printf("Saldo: R$%f\n", p->cliente.saldo);
@@ -124,21 +146,23 @@ void listaTodoClientes(No* pNo) {
 4 - pNo vai começar a apontar o novo elemento da cabeça da lista
 */
 
-No * incluiUmCliente(No* pCabeca) {
+No *incluiUmCliente(No *pCabeca)
+{
 	char nomeAux[MAX_NOME];
-	No* pAux;
-	//criei o no
+	No *pAux;
+	// criei o no
 	pAux = malloc(sizeof(No));
 	if (pAux == NULL)
 	{
 		fprintf(stderr, "Erro ao alocar memória\n");
 		exit(123);
 	}
-	//preenche os dados do cliente
+	// preenche os dados do cliente
 	printf("Entre com o nome do cliente: ");
 	scanf("%[^\n]s", nomeAux);
-	pAux->cliente.nome = (char*)malloc(strlen(nomeAux) + 1);
-	if (!(*pAux).cliente.nome) {
+	pAux->cliente.nome = (char *)malloc(strlen(nomeAux) + 1);
+	if (!(*pAux).cliente.nome)
+	{
 		fprintf(stderr, "Erro ao alocar memória\n");
 		exit(33);
 	}
@@ -153,7 +177,6 @@ No * incluiUmCliente(No* pCabeca) {
 	pCabeca = pAux;
 	return pCabeca;
 }
-
 
 char mostraEPerguntaOpcao(void)
 {
