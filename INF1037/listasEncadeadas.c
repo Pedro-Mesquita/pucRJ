@@ -9,7 +9,7 @@
 
 struct client
 {
-	char *nome;
+	char* nome;
 	float saldo;
 	int idade;
 };
@@ -18,7 +18,7 @@ typedef struct client Cliente;
 struct no
 {
 	Cliente cliente;
-	struct no *prox;
+	struct no* prox;
 };
 
 typedef struct no No;
@@ -33,14 +33,15 @@ struct clientAux
 typedef struct client ClientAux;
 
 char mostraEPerguntaOpcao(void);
-void listaTodoClientes(No *pNo);
-No *incluiUmCliente(No *pNo);
-void salvarTodosClientes(No *pNo);
+void listaTodoClientes(No* pNo);
+No* incluiUmCliente(No* pNo);
+void salvarTodosClientes(No* pNo);
+void liberaClientes(No* pCabeca);
 
 int main(void)
 {
-	No *pNo;
-	pNo = NULL;
+	No* pHead;
+	pHead = NULL;
 	char opcao;
 
 	while ((opcao = mostraEPerguntaOpcao()) != 'z')
@@ -49,7 +50,7 @@ int main(void)
 		{
 		case 'a':
 			printf("\n---------- ADICIONAR CLIENTES ----------\n");
-			pNo = incluiUmCliente(pNo);
+			pHead = incluiUmCliente(pHead);
 		case 'b':
 			break;
 		case 'c':
@@ -60,18 +61,41 @@ int main(void)
 
 			break;
 		case 'e':
-			listaTodoClientes(pNo);
+			listaTodoClientes(pHead);
 		};
 	}
-	salvarTodosClientes(pNo);
+	salvarTodosClientes(pHead);
+	liberaClientes(pHead);
 
 	return 0;
 }
 
-void lerArquivos(No *pNo)
+void apagaCliente(No * pCabeca) {
+	char nomeAux[MAX_NOME];
+	printf("Insira o nome que deseja excluir: ");
+	scanf("%[^\n]s", nomeAux);
+
+}
+
+void liberaClientes(No* pCabeca){
+	No* p;
+	No* pAux;
+
+	p = pCabeca;
+
+	while (p) {
+		free(p->cliente.nome);
+		pAux = p->prox;
+		free(p);
+		p = pAux;
+	}
+}
+
+
+void lerArquivos(No* pNo)
 {
-	FILE *arq;
-	No *p;
+	FILE* arq;
+	No* p;
 	p = pNo;
 	int tamNome;
 	arq = fopen("clientes.bin", "rb");
@@ -84,26 +108,26 @@ void lerArquivos(No *pNo)
 	while (fread(&tamNome, sizeof(int), 1, arq) > 0)
 	{
 		tamNome++;
-		p->cliente.nome = (char *)malloc(tamNome * sizeof(char));
+		p->cliente.nome = (char*)malloc(tamNome * sizeof(char));
 		if (p->cliente.nome == NULL)
 		{
 			fprintf(stderr, "deu ruim!");
 			exit(121);
 		}
-		
+
 		fread(p->cliente.nome, sizeof(char), 1, arq);
 		p->cliente.nome[tamNome] = '\0';
 		fread(&p->cliente.saldo, sizeof(float), 1, arq);
 		fread(&p->cliente.idade, sizeof(int), 1, arq);
-		p->prox = (No *)malloc(sizeof(No));
+		p->prox = (No*)malloc(sizeof(No));
 		p = p->prox;
 	}
 }
 
-void salvarTodosClientes(No *pNo)
+void salvarTodosClientes(No* pNo)
 {
-	FILE *arq;
-	No *p;
+	FILE* arq;
+	No* p;
 	p = pNo;
 	arq = fopen("clientes.bin", "wb");
 	if (arq == NULL)
@@ -124,10 +148,10 @@ void salvarTodosClientes(No *pNo)
 	fclose(arq);
 }
 
-void listaTodoClientes(No *pNo)
+void listaTodoClientes(No* pNo)
 {
 	// imprimir na ordem correta com recursão
-	No *p;
+	No* p;
 	p = pNo;
 	while (p)
 	{
@@ -146,10 +170,10 @@ void listaTodoClientes(No *pNo)
 4 - pNo vai começar a apontar o novo elemento da cabeça da lista
 */
 
-No *incluiUmCliente(No *pCabeca)
+No* incluiUmCliente(No* pCabeca)
 {
 	char nomeAux[MAX_NOME];
-	No *pAux;
+	No* pAux;
 	// criei o no
 	pAux = malloc(sizeof(No));
 	if (pAux == NULL)
@@ -160,7 +184,7 @@ No *incluiUmCliente(No *pCabeca)
 	// preenche os dados do cliente
 	printf("Entre com o nome do cliente: ");
 	scanf("%[^\n]s", nomeAux);
-	pAux->cliente.nome = (char *)malloc(strlen(nomeAux) + 1);
+	pAux->cliente.nome = (char*)malloc(strlen(nomeAux) + 1);
 	if (!(*pAux).cliente.nome)
 	{
 		fprintf(stderr, "Erro ao alocar memória\n");
