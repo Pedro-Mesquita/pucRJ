@@ -70,14 +70,26 @@ int main(void)
 	return 0;
 }
 
-void apagaCliente(No * pCabeca) {
+void apagaCliente(No* pCabeca) {
+	No* p;
+	No* pAux;
+	p = pCabeca;
 	char nomeAux[MAX_NOME];
 	printf("Insira o nome que deseja excluir: ");
 	scanf("%[^\n]s", nomeAux);
+	while (p) {
+		if (strcmp(nomeAux, p->cliente.nome) == 0) {
+			free(p->cliente.nome);
+			pAux = p->prox;
+			free(p);
+			p = pAux;
+		}
+		p = p->prox;
+	}
 
 }
 
-void liberaClientes(No* pCabeca){
+void liberaClientes(No* pCabeca) {
 	No* p;
 	No* pAux;
 
