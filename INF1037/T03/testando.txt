@@ -1,0 +1,9 @@
+Leo Silva: 1.70 70
+Eva Maria: 1.70 75
+Ana: 1.80 40
+Turing: 1.80 50
+Luiza Loren: 1.80 75
+Lovelace: 1.90 60
+Sato: 2.0 60
+Duda: 2.0 65
+von Neumann: 2.0 80
