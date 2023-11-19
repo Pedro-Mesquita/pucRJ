@@ -14,28 +14,64 @@ int qtdLinhasArquivos(char *nomeDoArquivo);
 Paciente **ponteiroParaPaciente(char *nomeDoArquivo, int qtdLinhas);
 void imprimePacientes(Paciente **ponteiroParaPaciente, int qtdItens);
 float calculaModa(Paciente **ponteiroParaPaciente, int qtd);
+int buscaBinaria(Paciente **ponteiroParaPaciente, float chave, int tamanhoVetor);
 
 int main(void)
 {
     int qtd;
+    float chave;
+    int indice;
+    printf("Altura desejada: ");
+    scanf("%f", &chave);
+
     qtd = qtdLinhasArquivos("texto.txt");
     Paciente **pPaciente = ponteiroParaPaciente("texto.txt", qtd);
-    imprimePacientes(pPaciente, qtd);
-    float moda = calculaModa(pPaciente, qtd);
-    printf("Última moda encontrada: %.2f\n", moda);
+    // imprimePacientes(pPaciente, qtd);
+    // float moda = calculaModa(pPaciente, qtd);
+    // printf("Última moda encontrada: %.2f\n", moda);
+    indice = buscaBinaria(pPaciente, chave, qtd);
+    printf("Indice: %d\n", indice);
+
     return 0;
 }
 
-void imprimePacientes(Paciente **ponteiroParaPaciente, int qtdItens)
+int comparacao(Paciente *pacienteA, int chave)
 {
+}
 
-    for (int i = 0; i < qtdItens; i++)
+int buscaBinaria(Paciente **ponteiroParaPaciente, float chave, int tamanhoVetor)
+{
+    int inicio;
+    int meio;
+    int fim;
+
+    inicio = 0;
+    fim = tamanhoVetor - 1;
+
+    while (inicio <= fim)
     {
-        printf("\n%d° cliente:\n", i + 1);
-        printf("%s\n", ponteiroParaPaciente[i]->nome);
-        printf("%.2f\n", ponteiroParaPaciente[i]->altura);
-        printf("%.0f\n", ponteiroParaPaciente[i]->peso);
+        meio = (inicio + fim) / 2;
+        if (chave == ponteiroParaPaciente[meio]->altura)
+        {
+            for (int i = 0; i < tamanhoVetor; i++)
+            {
+                if (ponteiroParaPaciente[i]->peso > ponteiroParaPaciente[meio]->peso && ponteiroParaPaciente[i]->altura == ponteiroParaPaciente[meio]->altura)
+                {
+                    meio = i;
+                }
+            }
+            return meio;
+        }
+        else if (chave > ponteiroParaPaciente[meio]->altura)
+        {
+            inicio = meio + 1;
+        }
+        else
+        {
+            fim = meio - 1;
+        }
     }
+    return -1;
 }
 
 float calculaModa(Paciente **ponteiroParaPaciente, int qtd)
@@ -61,6 +97,18 @@ float calculaModa(Paciente **ponteiroParaPaciente, int qtd)
         }
     }
     return moda;
+}
+
+void imprimePacientes(Paciente **ponteiroParaPaciente, int qtdItens)
+{
+
+    for (int i = 0; i < qtdItens; i++)
+    {
+        printf("\n%d° cliente:\n", i + 1);
+        printf("%s\n", ponteiroParaPaciente[i]->nome);
+        printf("%.2f\n", ponteiroParaPaciente[i]->altura);
+        printf("%.0f\n", ponteiroParaPaciente[i]->peso);
+    }
 }
 
 Paciente **ponteiroParaPaciente(char *nomeDoArquivo, int qtdLinhas)
