@@ -12,30 +12,55 @@ typedef struct paciente Paciente;
 
 int qtdLinhasArquivos(char *nomeDoArquivo);
 Paciente **ponteiroParaPaciente(char *nomeDoArquivo, int qtdLinhas);
-void imprimeItemDois(Paciente **ponteiroParaPaciente);
+void imprimePacientes(Paciente **ponteiroParaPaciente, int qtdItens);
+float calculaModa(Paciente **ponteiroParaPaciente, int qtd);
 
 int main(void)
 {
     int qtd;
     qtd = qtdLinhasArquivos("texto.txt");
     Paciente **pPaciente = ponteiroParaPaciente("texto.txt", qtd);
-    imprimeItemDois(pPaciente);
+    imprimePacientes(pPaciente, qtd);
+    float moda = calculaModa(pPaciente, qtd);
+    printf("Última moda encontrada: %.2f\n", moda);
     return 0;
 }
 
-void imprimeItemDois(Paciente **ponteiroParaPaciente)
+void imprimePacientes(Paciente **ponteiroParaPaciente, int qtdItens)
 {
-    if (ponteiroParaPaciente[2] != NULL)
+
+    for (int i = 0; i < qtdItens; i++)
     {
-        printf("Valores do terceiro item:\n");
-        printf("%s\n", ponteiroParaPaciente[2]->nome);
-        printf("%.2f\n", ponteiroParaPaciente[2]->altura);
-        printf("%.0f\n", ponteiroParaPaciente[2]->peso);
+        printf("\n%d° cliente:\n", i + 1);
+        printf("%s\n", ponteiroParaPaciente[i]->nome);
+        printf("%.2f\n", ponteiroParaPaciente[i]->altura);
+        printf("%.0f\n", ponteiroParaPaciente[i]->peso);
     }
-    else
+}
+
+float calculaModa(Paciente **ponteiroParaPaciente, int qtd)
+{
+    float moda = ponteiroParaPaciente[0]->altura;
+    int contagemAtual = 1;
+    int maxContagem = 1;
+
+    for (int i = 1; i < qtd; i++)
     {
-        fprintf(stderr, "deu ruim chefe.\n");
+        if (ponteiroParaPaciente[i]->altura == ponteiroParaPaciente[i - 1]->altura)
+        {
+            contagemAtual++;
+        }
+        else
+        {
+            contagemAtual = 1;
+        }
+        if (contagemAtual >= maxContagem)
+        {
+            maxContagem = contagemAtual;
+            moda = ponteiroParaPaciente[i]->altura;
+        }
     }
+    return moda;
 }
 
 Paciente **ponteiroParaPaciente(char *nomeDoArquivo, int qtdLinhas)
