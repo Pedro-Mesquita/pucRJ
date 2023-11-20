@@ -1,3 +1,6 @@
+
+// 33D - Pedro Mesquita Maia - 2312664
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,28 +18,52 @@ Paciente **ponteiroParaPaciente(char *nomeDoArquivo, int qtdLinhas);
 void imprimePacientes(Paciente **ponteiroParaPaciente, int qtdItens);
 float calculaModa(Paciente **ponteiroParaPaciente, int qtd);
 int buscaBinaria(Paciente **ponteiroParaPaciente, float chave, int tamanhoVetor);
+void resultadoBuscaBinaria(int pos, float height, Paciente **pPaciente);
+void liberarMemoria(Paciente **ponteiroParaPaciente, int qtd);
 
 int main(void)
 {
     int qtd;
     float chave;
-    int indice;
-    printf("Altura desejada: ");
-    scanf("%f", &chave);
+    int indice1, indice2, indice3;
 
     qtd = qtdLinhasArquivos("texto.txt");
     Paciente **pPaciente = ponteiroParaPaciente("texto.txt", qtd);
-    // imprimePacientes(pPaciente, qtd);
-    // float moda = calculaModa(pPaciente, qtd);
-    // printf("Última moda encontrada: %.2f\n", moda);
-    indice = buscaBinaria(pPaciente, chave, qtd);
-    printf("Indice: %d\n", indice);
+    imprimePacientes(pPaciente, qtd);
+    float moda = calculaModa(pPaciente, qtd);
+    printf("Moda: %.2f\n", moda);
+    indice1 = buscaBinaria(pPaciente, 1.80, qtd);
+    indice2 = buscaBinaria(pPaciente, 1.60, qtd);
+    indice3 = buscaBinaria(pPaciente, 2.0, qtd);
+    resultadoBuscaBinaria(indice1, 1.80, pPaciente);   
+    resultadoBuscaBinaria(indice2, 1.60, pPaciente);   
+    resultadoBuscaBinaria(indice3, 2.0, pPaciente);   
+    liberarMemoria(pPaciente, qtd);
 
     return 0;
 }
 
-int comparacao(Paciente *pacienteA, int chave)
+
+void liberarMemoria(Paciente **ponteiroParaPaciente, int qtd)
 {
+    for (int i = 0; i < qtd; i++)
+    {
+        free(ponteiroParaPaciente[i]);
+    }
+    free(ponteiroParaPaciente);
+}
+
+
+void resultadoBuscaBinaria(int pos, float height, Paciente **pPaciente)
+{
+    if (pos < 0)
+    {
+        printf("Não há pacientes com a altura %.2f\n", height);
+    }
+    else
+    {
+        printf("Registro de maior peso com altura %.2f: %s - %.2f|%.0f\n", height, pPaciente[pos]->nome, pPaciente[pos]->altura, pPaciente[pos]->peso);
+    }
 }
 
 int buscaBinaria(Paciente **ponteiroParaPaciente, float chave, int tamanhoVetor)
@@ -104,10 +131,7 @@ void imprimePacientes(Paciente **ponteiroParaPaciente, int qtdItens)
 
     for (int i = 0; i < qtdItens; i++)
     {
-        printf("\n%d° cliente:\n", i + 1);
-        printf("%s\n", ponteiroParaPaciente[i]->nome);
-        printf("%.2f\n", ponteiroParaPaciente[i]->altura);
-        printf("%.0f\n", ponteiroParaPaciente[i]->peso);
+        printf("%d° cliente: %s - %.2f|%.0f\n", i + 1, ponteiroParaPaciente[i]->nome, ponteiroParaPaciente[i]->altura, ponteiroParaPaciente[i]->peso);
     }
 }
 
@@ -139,7 +163,7 @@ Paciente **ponteiroParaPaciente(char *nomeDoArquivo, int qtdLinhas)
             fprintf(stderr, "Erro ao alocar memória\n");
             exit(121);
         }
-        if (fscanf(arq, "%80[^:]: %f %f", vetorPacientes[i]->nome, &(vetorPacientes[i]->altura), &(vetorPacientes[i]->peso)) != 3)
+        if (fscanf(arq, "%80[^:]: %f %f\n", vetorPacientes[i]->nome, &(vetorPacientes[i]->altura), &(vetorPacientes[i]->peso)) != 3)
         {
             fprintf(stderr, "Erro ao ler os dados do paciente na linha %d\n", i + 1);
             exit(122);
