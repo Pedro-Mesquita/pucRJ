@@ -1,9 +1,13 @@
-Leo Silva: 1.70 70
-Eva Maria: 1.70 75
-Ana: 1.80 40
-Turing: 1.80 50
-Luiza Loren: 1.80 75
-Lovelace: 1.90 60
-Sato: 2.0 60
-Duda: 2.0 65
-von Neumann: 2.0 80
+Alice Adams: 1.60 50
+Sophie Smith: 1.62 52
+Bob Baker: 1.65 55
+Oliver O'Connor: 1.65 58
+Natalie Nguyen: 1.68 60
+Charlie Carter: 1.70 67
+Max Murphy: 1.70 65
+David Davis: 1.75 65
+Ava Anderson: 1.75 70
+Ella Evans: 1.78 68
+Daniel Davis: 1.78 75
+Frank Foster: 1.80 75
+Liam Lee: 1.80 80
