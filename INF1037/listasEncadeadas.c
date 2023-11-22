@@ -37,6 +37,7 @@ void listaTodoClientes(No* pNo);
 No* incluiUmCliente(No* pNo);
 void salvarTodosClientes(No* pNo);
 void liberaClientes(No* pCabeca);
+No* apagaCliente(No* pCabeca);
 
 int main(void)
 {
@@ -58,8 +59,8 @@ int main(void)
 
 		case 'd':
 			printf("\n---------- EXCLUIR CLIENTES ----------\n");
-
-			break;
+			pHead = apagaCliente(pHead);
+			listaTodoClientes(pHead);
 		case 'e':
 			listaTodoClientes(pHead);
 		};
@@ -70,23 +71,37 @@ int main(void)
 	return 0;
 }
 
-void apagaCliente(No* pCabeca) {
-	No* p;
-	No* pAux;
-	p = pCabeca;
+No* apagaCliente(No* pCabeca) {
+	No* pAux = pCabeca;
+	No* pAnterior;
+	pAnterior = NULL; // D
 	char nomeAux[MAX_NOME];
 	printf("Insira o nome que deseja excluir: ");
 	scanf("%[^\n]s", nomeAux);
-	while (p) {
-		if (strcmp(nomeAux, p->cliente.nome) == 0) {
-			free(p->cliente.nome);
-			pAux = p->prox;
-			free(p);
-			p = pAux;
-		}
-		p = p->prox;
+	// P = D
+	if (strcmp(nomeAux, pAux->cliente.nome) == 0) {
+		free(pAux->cliente.nome);
+		pCabeca = pAux->prox;
+		free(pAux);
+		printf("Chegou aqui");
+		return pCabeca;
 	}
+	//P = C
+	while (pAux) {
+		if (strcmp(nomeAux, pAux->cliente.nome) == 0) {
+			pAnterior->prox = pAux->prox;
+			free(pAux->cliente.nome);
+			free(pAux);
+			//pAnterior = pAux; // D->PROX = B
 
+			return pCabeca;
+		}
+		pAnterior = pAux; // C
+		pAux = pAux->prox; // B
+	}
+	printf("Não foi encontrado nenhum valor");
+	
+	return pCabeca;
 }
 
 void liberaClientes(No* pCabeca) {
@@ -165,14 +180,15 @@ void listaTodoClientes(No* pNo)
 	// imprimir na ordem correta com recursão
 	No* p;
 	p = pNo;
-	while (p)
-	{
-		printf("\nCliente\n");
-		printf("Nome: %s\n", p->cliente.nome);
-		printf("Saldo: R$%f\n", p->cliente.saldo);
-		printf("Idade: %d ano(s)\n", p->cliente.idade);
-		p = p->prox;
-	}
+		while (p)
+		{
+			printf("\nCliente\n");
+			printf("Nome: %s\n", p->cliente.nome);
+			printf("Saldo: R$%.2f\n", p->cliente.saldo);
+			printf("Idade: %d ano(s)\n", p->cliente.idade);
+			p = p->prox;
+		}
+
 }
 
 /*
