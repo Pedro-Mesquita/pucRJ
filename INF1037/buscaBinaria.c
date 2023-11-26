@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
-int buscaBinaria(char* v, int chave, int tamanhoVetor);
+int buscaBinaria(int* v, int chave, int tamanhoVetor);
 
 int main(void) {
 	int v[] = {2,3,8,16,32,64,128,256,512,1024,2027};
