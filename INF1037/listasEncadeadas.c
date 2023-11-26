@@ -9,7 +9,7 @@
 
 struct client
 {
-	char* nome;
+	char *nome;
 	float saldo;
 	int idade;
 };
@@ -18,7 +18,7 @@ typedef struct client Cliente;
 struct no
 {
 	Cliente cliente;
-	struct no* prox;
+	struct no *prox;
 };
 
 typedef struct no No;
@@ -33,15 +33,16 @@ struct clientAux
 typedef struct client ClientAux;
 
 char mostraEPerguntaOpcao(void);
-void listaTodoClientes(No* pNo);
-No* incluiUmCliente(No* pNo);
-void salvarTodosClientes(No* pNo);
-void liberaClientes(No* pCabeca);
-No* apagaCliente(No* pCabeca);
+void listaTodoClientes(No *pNo);
+No *incluiUmCliente(No *pNo);
+void salvarTodosClientes(No *pNo);
+void liberaClientes(No *pCabeca);
+No *apagaCliente(No *pCabeca);
+void imprimeInverso(No *pCabeca);
 
 int main(void)
 {
-	No* pHead;
+	No *pHead;
 	pHead = NULL;
 	char opcao;
 
@@ -60,8 +61,9 @@ int main(void)
 		case 'd':
 			printf("\n---------- EXCLUIR CLIENTES ----------\n");
 			pHead = apagaCliente(pHead);
-			listaTodoClientes(pHead);
 		case 'e':
+			imprimeInverso(pHead);
+			printf("\n Lista normal \n");
 			listaTodoClientes(pHead);
 		};
 	}
@@ -71,46 +73,52 @@ int main(void)
 	return 0;
 }
 
-No* apagaCliente(No* pCabeca) {
-	No* pAux = pCabeca;
-	No* pAnterior;
+No *apagaCliente(No *pCabeca)
+{
+	No *pAux = pCabeca;
+	No *pAnterior;
 	pAnterior = NULL; // D
 	char nomeAux[MAX_NOME];
 	printf("Insira o nome que deseja excluir: ");
 	scanf("%[^\n]s", nomeAux);
 	// P = D
-	if (strcmp(nomeAux, pAux->cliente.nome) == 0) {
+	if (strcmp(nomeAux, pAux->cliente.nome) == 0)
+	{
 		free(pAux->cliente.nome);
 		pCabeca = pAux->prox;
 		free(pAux);
 		printf("Chegou aqui");
 		return pCabeca;
 	}
-	//P = C
-	while (pAux) {
-		if (strcmp(nomeAux, pAux->cliente.nome) == 0) {
+	// P = C
+	while (pAux)
+	{
+		if (strcmp(nomeAux, pAux->cliente.nome) == 0)
+		{
 			pAnterior->prox = pAux->prox;
 			free(pAux->cliente.nome);
 			free(pAux);
-			//pAnterior = pAux; // D->PROX = B
+			// pAnterior = pAux; // D->PROX = B
 
 			return pCabeca;
 		}
-		pAnterior = pAux; // C
+		pAnterior = pAux;  // C
 		pAux = pAux->prox; // B
 	}
 	printf("Não foi encontrado nenhum valor");
-	
+
 	return pCabeca;
 }
 
-void liberaClientes(No* pCabeca) {
-	No* p;
-	No* pAux;
+void liberaClientes(No *pCabeca)
+{
+	No *p;
+	No *pAux;
 
 	p = pCabeca;
 
-	while (p) {
+	while (p)
+	{
 		free(p->cliente.nome);
 		pAux = p->prox;
 		free(p);
@@ -118,11 +126,10 @@ void liberaClientes(No* pCabeca) {
 	}
 }
 
-
-void lerArquivos(No* pNo)
+void lerArquivos(No *pNo)
 {
-	FILE* arq;
-	No* p;
+	FILE *arq;
+	No *p;
 	p = pNo;
 	int tamNome;
 	arq = fopen("clientes.bin", "rb");
@@ -135,7 +142,7 @@ void lerArquivos(No* pNo)
 	while (fread(&tamNome, sizeof(int), 1, arq) > 0)
 	{
 		tamNome++;
-		p->cliente.nome = (char*)malloc(tamNome * sizeof(char));
+		p->cliente.nome = (char *)malloc(tamNome * sizeof(char));
 		if (p->cliente.nome == NULL)
 		{
 			fprintf(stderr, "deu ruim!");
@@ -146,15 +153,15 @@ void lerArquivos(No* pNo)
 		p->cliente.nome[tamNome] = '\0';
 		fread(&p->cliente.saldo, sizeof(float), 1, arq);
 		fread(&p->cliente.idade, sizeof(int), 1, arq);
-		p->prox = (No*)malloc(sizeof(No));
+		p->prox = (No *)malloc(sizeof(No));
 		p = p->prox;
 	}
 }
 
-void salvarTodosClientes(No* pNo)
+void salvarTodosClientes(No *pNo)
 {
-	FILE* arq;
-	No* p;
+	FILE *arq;
+	No *p;
 	p = pNo;
 	arq = fopen("clientes.bin", "wb");
 	if (arq == NULL)
@@ -175,20 +182,19 @@ void salvarTodosClientes(No* pNo)
 	fclose(arq);
 }
 
-void listaTodoClientes(No* pNo)
+void listaTodoClientes(No *pNo)
 {
 	// imprimir na ordem correta com recursão
-	No* p;
+	No *p;
 	p = pNo;
-		while (p)
-		{
-			printf("\nCliente\n");
-			printf("Nome: %s\n", p->cliente.nome);
-			printf("Saldo: R$%.2f\n", p->cliente.saldo);
-			printf("Idade: %d ano(s)\n", p->cliente.idade);
-			p = p->prox;
-		}
-
+	while (p)
+	{
+		printf("\nCliente\n");
+		printf("Nome: %s\n", p->cliente.nome);
+		printf("Saldo: R$%.2f\n", p->cliente.saldo);
+		printf("Idade: %d ano(s)\n", p->cliente.idade);
+		p = p->prox;
+	}
 }
 
 /*
@@ -198,10 +204,10 @@ void listaTodoClientes(No* pNo)
 4 - pNo vai começar a apontar o novo elemento da cabeça da lista
 */
 
-No* incluiUmCliente(No* pCabeca)
+No *incluiUmCliente(No *pCabeca)
 {
 	char nomeAux[MAX_NOME];
-	No* pAux;
+	No *pAux;
 	// criei o no
 	pAux = malloc(sizeof(No));
 	if (pAux == NULL)
@@ -212,7 +218,7 @@ No* incluiUmCliente(No* pCabeca)
 	// preenche os dados do cliente
 	printf("Entre com o nome do cliente: ");
 	scanf("%[^\n]s", nomeAux);
-	pAux->cliente.nome = (char*)malloc(strlen(nomeAux) + 1);
+	pAux->cliente.nome = (char *)malloc(strlen(nomeAux) + 1);
 	if (!(*pAux).cliente.nome)
 	{
 		fprintf(stderr, "Erro ao alocar memória\n");
@@ -248,4 +254,14 @@ char mostraEPerguntaOpcao(void)
 		}
 	} while (!(opcao >= 'a' && opcao <= 'e' || opcao == 'z'));
 	return opcao;
+}
+
+void imprimeInverso(No *pCabeca)
+{
+    if (pCabeca == NULL)
+    {
+        return;
+    }
+    imprimeInverso(pCabeca->prox);
+    printf("%s\n", pCabeca->cliente.nome);
 }
