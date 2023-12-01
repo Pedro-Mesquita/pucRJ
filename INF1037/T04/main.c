@@ -3,7 +3,6 @@
 #include <ctype.h>
 #include <string.h>
 
-// Define a estrutura no
 struct no
 {
     char nome[81];
@@ -11,19 +10,15 @@ struct no
     struct no *prox;
 };
 
-// Define um tipo No
 typedef struct no No;
 
-// Define a estrutura agenda
 struct agenda
 {
     No *ponteiroLista[26];
 };
 
-// Define um tipo Agenda
 typedef struct agenda Agenda;
 
-// Cabeçalho das funções
 Agenda *criaAgenda(void);
 void insereOrd(Agenda *agenda, No *contato);
 void listaLetra(Agenda *agenda, char chave_de_pesquisa);
@@ -37,7 +32,6 @@ int main(void)
     return 0;
 }
 
-// Cria uma agenda e a retorna
 Agenda *criaAgenda()
 {
     Agenda *agenda = (Agenda *)malloc(sizeof(Agenda));
@@ -52,7 +46,6 @@ Agenda *criaAgenda()
     return agenda;
 }
 
-// Insere os dados de um novo no (contato) em ordem alfabética
 void insereOrd(Agenda *agenda, No *contato)
 {
     int pos;
