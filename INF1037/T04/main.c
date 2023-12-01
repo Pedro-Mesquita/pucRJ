@@ -25,10 +25,10 @@ void listaLetra(Agenda *agenda, char chave_de_pesquisa);
 
 int main(void)
 {
-    Agenda *minhaAgenda = criaAgenda();
-    listaLetra(minhaAgenda, 'b');
+    // Agenda *minhaAgenda = criaAgenda();
+    // listaLetra(minhaAgenda, 'b');
 
-    free(minhaAgenda);
+    // free(minhaAgenda);
     return 0;
 }
 
@@ -118,14 +118,16 @@ int retira(Agenda *agenda, char nome[])
 
 void liberaCadastro(Agenda *agenda)
 {
-    for (int i = 0; i < 26; i++)
-    {
-        No *pNo = agenda->ponteiroLista[i];
-        No *pAux = pNo;
-        while (pAux)
-        {
-            pAux = pNo->prox;
-            free(pNo);
-        }
-    }
+    // for (int i = 0; i < 26; i++)
+    // {
+    //     No *pNo = agenda->ponteiroLista[i];
+    //     No *pAux = pNo;
+    //     while (pAux)
+    //     {
+    //         pAux = pNo->prox;
+    //         free(pNo);
+    //     }
+    // }
+
+    free(agenda);
 }
