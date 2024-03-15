@@ -5,3 +5,6 @@ Notações comuns:
     1..1 -> 1
 
 Em um enunciado olhe para os substantivos e verbos, provavelmente eles serão as entidades e os relacionamentos da sua representação.
+
+[] Resolver exercícios da preliminares-01
+[] Resolver exercícios da preliminares-02
