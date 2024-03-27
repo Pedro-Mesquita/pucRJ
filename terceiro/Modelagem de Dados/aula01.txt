@@ -1,0 +1,18 @@
+Modelagem conteitual:
+    * É usada para compreender as partes basilares de determinado projeto. Eximindo-se de pensar sobre questões de aplicações ou tecnologias.
+    * Os modelos são simplicações da realidade
+    * Ajuda na compreensão de sistemas complexos uma vez que não conseguimos compreeder a sua totalidade.
+
+    Modelagem conceitual de dados:
+        * Um modelo de dados é um modelo abstrato que descreve como os dados são organizados e acessados.
+        * Os modelos de dados são expressoas através das linguages de modelagem de dados.
+            - Podendo ser textuais ou gráficas
+        
+        Abordagem Entidade-Relacionamento (E-R): 
+        * É um ténica possível para criar modelos conceituais de dados.
+        * São expressos através de diagramas  de entidade-relacionamento.
+
+            Conceitos - Entidade x Relacionamento:
+                * A entidade representa um conjunto de objetos pertencentes a um universo observado, e que são siginifcativos para determinado problema
+                * Devem ter nomes substantivos, sigular, começando com a primeira letra maiúscula
+                
