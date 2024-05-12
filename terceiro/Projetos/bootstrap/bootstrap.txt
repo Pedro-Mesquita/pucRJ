@@ -1,0 +1,24 @@
+Bootstrap 5 - 
+É um framework front-end para desenvolvimento web rápido
+Contém alguns components feitos em html/js para ajudar a desenvolver mais rápido
+Ajuda na criação de layout responsivos
+
+No mobile, para adicionar rendeziração apropriada e zoom no touch escreva no head:
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+Lembrando que essa tag não é específica no bootrstrap, e sim do html.
+
+--------- Containers ---------
+A parte da página que deseje utilizar o bootstrap deve estar contida em um container.
+Para um container com a largura delimitada use a classe .container, para um container que ocupe toda a largura do viewport use .container-fluid.
+
+ex:
+    <div class="container"> <p>Esse texto não vai estar grudado no lado esquerdo do página. <p></div>
+ex:
+    <div class="container-fluid"> <p>Esse texto vai estar grudado no lado esquerdo do página. <p></div>
+
+Além disso, é possível adicionar outras classes que vão indicar quando o container vai mudar de acordo com a largura da página:
+    *sm, md, lg, xl, xxl
+
+
+Sistema de layout: GRID
