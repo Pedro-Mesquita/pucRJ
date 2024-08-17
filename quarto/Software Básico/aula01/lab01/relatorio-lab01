@@ -22,8 +22,10 @@ Pedro Mesquita Maia
     os dois objetos no "ex2".
 4.c Após compilar e linkar os objetos é executado mostra alguns warnings sobre a falta da declaração da função foo
     Em seguinda, ao executar "./ex3 4.0" a função retorna 0.00. Eu não entendi muito bem o motivo desse retorno.
-5. A função dump recebe um ponteiro p e um inteiro n. Ela cria um ponteiro para unsigned char (que eu acho que é um inteiro)
+5.  A função dump recebe um ponteiro p e um inteiro n. Ela cria um ponteiro para unsigned char (que eu acho que é um inteiro)
     que recebe p. Eu acho que agora p é um ponteiro para o unsigned char.
     Em seguinda é executado um while que tem como condição n ser positivo. Enquanto n for positivo eu vou printando o valor apontado por p1.
     Após isso eu somo 1 no p1. Nessa parte, como p1 aponta para um lugar p1++ aponta para o próximo endereço. Mas eu também não tenhop certeza.
     Em resumo, parece que a função dump percorre n até 1 e printa os valores apontados por p1 em função de n.
+    No ex4.c temos diversas variáveis criadas e que são passadas como parâmetro da função dump que tem o seu cabeçalho definido. Os parâmetros
+    são o endereço de memória da variável e o tamanho da variável. 

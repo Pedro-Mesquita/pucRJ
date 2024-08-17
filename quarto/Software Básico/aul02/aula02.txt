@@ -1,0 +1,4 @@
+Memória é uma sequência de posições numeradas de bytes. Toda memória tem um endereço e um conteúdo
+1 byte = 8 bits
+
+Questão dois: base 16 - dump
