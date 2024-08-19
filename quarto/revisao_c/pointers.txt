@@ -1,0 +1,53 @@
+Pointer is a variable that holds the addres of some object.
+Like in the real life, when we want to do a party we share the address of the house for our guests.
+But in C we have the address of a integer, a string etc.
+
+If I create a pointer to something all I'm doing is storing the memory address in a variable.
+Pointers are powerful because we can access and use the object that's being pointed to by the pointer.
+
+Example:
+
+int main(int argc, char * argv[]) {
+    byte * pBkgndColor = (byte *) 53281;
+
+    *pBkgndColor = 0;
+
+    return 0
+}
+
+In this example we are declaring a pointer to a byte, the name of this pointer is pBkgndColor.
+I have said to my program that "53281" has a type of a memory address.
+Then I acess the value that the pointer points and change the value of it to 0.
+*pBkgndColor means the content of the memory location 53281.
+
+--------------
+
+Example
+
+void foo() {
+    int *x, y;
+    x = &y;
+}
+
+In this case, I have two variables being declared on the same line, but only one of them is being declared as a pointer (*x).
+In the line below, I'm using the & operator. What I'm doing here is getting the address of y and assigning it to x. 
+So, in the end, x is a pointer to an integer, it's pointing to the address of y.
+
+--------------
+
+When working with objects, there're two ways to accessing the values of their properties.
+Imagine we have a object of type House. This type has propertis shuch as SquareFeet, NumBedrooms and NumBathrooms.
+
+When we pass an instance of this type to a function, there are two options: passing the object itself or passing a pointer to the object.
+
+Example:
+
+int GetHousePrice(House pHouse) {
+    return pHouse.SquareFeet * 1000 + pHouse.NumBedrooms * 10000 + pHouse.NumBathrooms * 5000 
+}
+
+int GetHousePrice(House *pHouse) {
+    return pHouse->SquareFeet * 1000 + pHouse->NumBedrooms * 10000 + pHouse->NumBathrooms * 5000 
+}
+
+We use the . operator when we are working with an object, and the -> operator when we are working with a pointer to the object.
