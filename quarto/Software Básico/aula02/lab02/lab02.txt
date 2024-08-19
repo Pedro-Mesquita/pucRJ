@@ -1,0 +1,23 @@
+1 - a)
+O arquivo mostrou 4 linhas, cada linha representa um byte. Portanto um
+inteiro tem 4 bytes. Esses bytes (eu acho) que estão ordenados de forma 
+sequencial, um contíguo ao outro. Por isso que a função dump consegue acessar os bytes
+que armazenam o endereço passado.
+
+b)
+Da mesma forma que o exercício "a", cada linha está representando um byte. Portanto, um long
+tem 8 bytes. 
+
+c)
+Da mesma forma que o exercício "b", cada linha está representando um byte. Portanto, um short
+tem 2 bytes.
+
+d) Quando eu testei com char, só mostrou 1 linhas, ou seja, só tem 1 byte. Convertendo o 
+valor de hexadecimal para decimal e consultando na tabela ASCII, é possível entender que o 
+valor é o "a".
+
+e) Ao fazer um dump de uma lista, é interessante que ele sempre vai mostrar o 00, que é null em asci.
+Sinalizando que a string termina ali.
+
+
+
