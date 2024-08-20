@@ -12,7 +12,7 @@ void dump(void *p, int n)
 
 int main(void)
 {
-    char p[] = "7509";
+    char p[] = "$";
     dump(p, sizeof(p));
     return 0;
 }

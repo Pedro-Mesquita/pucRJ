@@ -16,8 +16,22 @@ d) Quando eu testei com char, só mostrou 1 linhas, ou seja, só tem 1 byte. Con
 valor de hexadecimal para decimal e consultando na tabela ASCII, é possível entender que o 
 valor é o "a".
 
-e) Ao fazer um dump de uma lista, é interessante que ele sempre vai mostrar o 00, que é null em asci.
-Sinalizando que a string termina ali.
+e) Ao fazer um dump de uma lista, é interessante que ele sempre vai mostrar o 00, que é o /0.
+Sinalizando que a string termina ali. O valor de 'A' em ASCII é 65. O valor de ' ' em ASCII é 32. 
+O valor de ',' em ASCII é 44. O valor de '/n' em ASCII é 10. O valor de '$' em ASCII é 24. 
+
+2 - a)
+A função string2num, como o próprio nome sugere, "converte" um vetor de caracteres númericos em número.
+Basicamente, a parte que converte é *s - '0', e o (a * 10) ela vai posicionando o número na posição correta.
+
+b) 
+Para possibilitar a conversão de base é só substituir o 10 pela base passada no parâmetro
+
+c) 
+Eu fiz uma condicional que verifica se o valor passado é um dígito, caso ele seja mantém a operação de conversão
+de base 2 até base 10. Caso não seja um dígito, eu faço uma aritmética baseado na tabela ASCII. 
+Como cada letra possui um valor na tabela ASCII, eu subtraio 'a' da letra passada e somo 10. Assim, eu crio os valores
+de 10 até 25.  A maior base a ser utilizada é a base 35.
 
 
 
