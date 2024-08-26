@@ -2,10 +2,11 @@
 
 int odd_ones(unsigned int x);
 unsigned char switch_byte(unsigned char x);
+unsigned char rotate_left(unsigned char x, int n);
 
 int main(void)
 {
-    // Parte 1
+    // PARTE 1
 
     unsigned int x = 0x87654321; // 1000 0111 0110 0101 0100 0011 0010 0001 - 2271560481
     unsigned int y, z;
@@ -18,31 +19,50 @@ int main(void)
        e os outros bytes com o mesmo valor dos bytes de x */
     z = 0x77654321; // 0111 0111 0110 0101 0100 0011 0010 0001 - 2003125025
     z = x | z;
-
     printf("%08x %08x\n", y, z);
 
-    // Parte 2
+    // PARTE 2
     printf("%x tem numero %s de bits\n", 0x01010101, odd_ones(0x01010101) ? "impar" : "par");
     printf("%x tem numero %s de bits\n", 0x01030101, odd_ones(0x01030101) ? "impar" : "par");
 
-    // Parte 3
+    // PARTE 3
+    // A)
     unsigned char number = 0xAB;
     unsigned char switchedValue = switch_byte(number);
+    printf("%02X\n", switchedValue);
+
+    // B)
+    unsigned char k = 0x61;
+
+    printf("%x\n", rotate_left(k, 1)); // Esperado: 0xc2
+    printf("%x\n", rotate_left(k, 2)); // Esperado: 0x85
+    printf("%x\n", rotate_left(k, 7)); // Esperado: 0xb0
 
     return 0;
 }
 
+unsigned char rotate_left(unsigned char x, int n)
+{
+    unsigned char circularPart = x >> (8 - n);
+    unsigned char shfitedPart = x << n;
+
+    unsigned char result = circularPart | shfitedPart;
+
+    return result;
+}
+
 unsigned char switch_byte(unsigned char x)
 {
-    printf("tamanho: %ld", sizeof(unsigned char));
-    return 0;
+    unsigned char firstHalf = x >> 4;
+    unsigned char secondHalf = x << 4;
+    unsigned char switchedValue = firstHalf | secondHalf;
+    return switchedValue;
 }
 
 int odd_ones(unsigned int x)
 {
     int num_bits = sizeof(x) * 8;
     int i = 0;
-
     int qtt_one = 0;
 
     while (i < num_bits)
@@ -51,7 +71,6 @@ int odd_ones(unsigned int x)
         {
             qtt_one++;
         }
-
         i++;
         x = x >> 1;
     }
@@ -60,7 +79,6 @@ int odd_ones(unsigned int x)
 
     if (qtt_one != rest * 2)
     {
-
         return 1;
     }
     else
