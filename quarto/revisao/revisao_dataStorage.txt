@@ -1,0 +1,30 @@
+1) Understanding data storage
+
+Bit is a unit in a computer memory, a bit can just be 0 or 1 (off and on). The smallest storage that is meaningful for storing is the byte.
+A combination of 8 bits is called byte. Therefore, we can have 2^8 (256, 0 to 255) combinations of 0 and 1 in a byte.
+
+
+As said, whe just use bytes to storage data and this data should be in binary. Thereby, the number 0 is represent for this byte:
+
+
+2⁷| 2⁶| 2⁵| 2⁴| 2³| 2²| 2¹| 2⁰
+0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+
+So the number 0 is: (0 * 2⁷) + (0 * 2⁶) + (0 * 2⁵) + (0 * 2⁴) + (0 * 2³) + (0 * 2²) + (0 * 2¹) + (0 * 2⁰) 
+
+The number one: 0|0|0|0|0|0|0|1
+two: 0|0|0|0|0|0|1|0
+three: 0|0|0|0|0|0|1|1
+.
+.  976
+.
+two hundred and fifty five: 1|1|1|1|1|1|1|1
+
+As you can see, doesn't matter if our number is occupying the entire byte, 8 bits will be allocated to it independently.
+But if we want to represent number biggers than 255? We just have to allocate more bytes.
+
+With 2 bytes we have 2^16 (65536) possibilities.
+
+two thousand: 0|0|0|0|0|1|1|1   1|1|0|1|0|0|0|0
+
+
