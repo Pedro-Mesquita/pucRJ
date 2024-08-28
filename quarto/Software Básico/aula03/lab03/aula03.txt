@@ -1,0 +1,52 @@
+Aluno: Pedro Mesquita Maia - 2312664
+
+1 -
+    Nesse primeiro exerício, eu senti um pouco de dificuldade, pois eu demorei
+    para pensar nos operadores de bit para resolver esse problema. Mas assim que eu lembrei, a solução saiu.
+
+    Basicamente, para eu deixar o byte menos siginficativo e deixar os outros com 0 eu usei o operador &.
+    Como a tabela verdade do operador & nos diz que só é verdadeiro quando as duas partes forem verdadeiras,
+    então é só eu declarar uma variável "y" com o valor de 1 e com o mesmo tipo de "x". Assim, "x" & "y" só 
+    vai dar verdadeiro no byte menos significativo e os demais vão ficar com 0 pois deu falso.
+
+    Já no caso mais significativo, eu usei o operador | com um número específico. Esse número, deve possuir
+    os bits do primeiro byte opostos ao de "x", e os bits dos demais bytes iguais. Dessa forma, no byte mais 
+    significativo, eu vou possuir tudo como "1", pois independente dos valores o resultado vai ser true. E nos
+    outros bytes vai dar o mesmo valor de "x". 
+
+2 - Essa segunda eu estava travado na parte de verificar se a quantidade de "1" é par ou ímpar, eu não
+    conseguia desenvolver. Tive que pedir ajuda para o chatGPT e ele me deu o caminhos das pedras.
+    A primeira parte foi simples, eu calculo a quantidade de bits que "x" tem, inicializo um variável 
+    para ser o index do while e um variável para guardar a quantidade de vezes que o "1" aparece.
+    No laço while eu percorre de i = 0 até i = (sizeof(x) * 8) -1. Então eu verifico se x & 1 é verdairo,
+    caso seja eu incremento a variável de quantidade em 1. Essa parte "x & 1" é interessante, por exemplo:
+    x = 1010 0001 0101 0101
+    1 = 0000 0000 0000 0001
+    Nesse caso, x & 1 vai dar verdadeiro só no último bit de cada valor, ou seja, foi descoberto que x tem um "1".
+    Em seguinda eu incremento o valor de "i" e uso o rigth shift operator com 1, ai o valor de "x" vai andar
+    uma casa para a direita, fazendo com que o valor de x vire:
+    x = 01010 0001 0101 010
+    Como x & 1 vai dar falso, eu só incremento o index e faço mais um rigth shift.
+
+    Depois de pesquisar a reposta na internet eu entendi que todo número par não é composto pela soma de 2⁰. Pois,
+    teria a adição do número 1 e portanto seria ímpar. Sabendo que o último bit não pode ser 1, é só fazer a quantidade
+    de aparições do "1" & 1, que ai vai verificar se o último bit da quantidade de aparições do "1" é igual a 1, se for
+    vai retornar "true", caso contrário "false".
+
+
+3 a) Como o valor passado sempre vai ter 1 byte eu crio duas variáveis, uma para salvar a primeira metade do byte
+    e a outra para salvar a segunda. Para salvar somente as metades, eu uso o operadores >> 4 e << 4.
+    Assim, cada metade vai ter 4 bits em 0 e 4 bits com os demais valores.
+    Em seguida eu crio mais uma variável para salvar o resultado final. Esse resultado final é a primeira metade | segunda metade,
+    por conta dos zeros, o operador | vai repetir os valores trocados de cada parte do byte.
+
+  b) Essa eu também demorei, mas consegui fazer. Como o enunciado delimita o valor de "n", eu defini que 
+  a parte que vai aparecer no final do valor vai ser essa operação:
+   x >> (8 - n), onde "x" é o valor. Após essa expressão, o valor vai ser um byte com a quantidade de zeros
+   definido por 8-n, sobrando somente os valores que irão aparecer ao final.
+
+   Em seguida eu defino outra variável que vai preencher com zeros a direita n vezes (x << n). Após a criação dessas 
+   duas variáveis, é só utilizar operador "|". Que ai ele vai "juntar" as duas partes, preenchendo em um os valores
+   removidos dos dois.
+
+

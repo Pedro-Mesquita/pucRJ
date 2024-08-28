@@ -258,10 +258,10 @@ char mostraEPerguntaOpcao(void)
 
 void imprimeInverso(No *pCabeca)
 {
-    if (pCabeca == NULL)
-    {
-        return;
-    }
-    imprimeInverso(pCabeca->prox);
-    printf("%s\n", pCabeca->cliente.nome);
+	if (pCabeca == NULL)
+	{
+		return;
+	}
+	imprimeInverso(pCabeca->prox);
+	printf("%s\n", pCabeca->cliente.nome);
 }

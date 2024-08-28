@@ -1,0 +1,11 @@
+/*
+    TODO:
+    1) Criar tipo de estrutura V
+    2) Criar lista encadeada
+    3) Criar arquivo txt com os dados
+    4) Leitura do arquivo
+    5) Fazer ordenação
+    6) Entrada
+    7) Exclusão
+    8) Visualização (da lista e da quantidade de pacientes de cada tipo)
+*/
