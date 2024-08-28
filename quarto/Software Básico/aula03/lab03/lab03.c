@@ -67,7 +67,7 @@ int odd_ones(unsigned int x)
 
     while (i < num_bits)
     {
-        if (x & 0x01)
+        if (x & 1)
         {
             qtt_one++;
         }
@@ -75,14 +75,5 @@ int odd_ones(unsigned int x)
         x = x >> 1;
     }
 
-    int rest = qtt_one / 2;
-
-    if (qtt_one != rest * 2)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return (qtt_one & 1);
 }
