@@ -1,11 +1,14 @@
 /*
     TODO:
     1) Criar tipo de estrutura V
-    2) Criar lista encadeada
-    3) Criar arquivo txt com os dados
-    4) Leitura do arquivo
-    5) Fazer ordenação
+    2) Criar lista encadeada V
+    3) Criar arquivo txt com os dados V
+    4) Leitura do arquivo V
+    5) Fazer ordenação {
+        Criar 3 listas, onde cada lista representa uma cor,
+        depois adiciona essa lista na lista principal
+    }
     6) Entrada
     7) Exclusão
-    8) Visualização (da lista e da quantidade de pacientes de cada tipo)
+    8) Visualização (da lista e da quantidade de pacientes de cada tipo) 
 */
