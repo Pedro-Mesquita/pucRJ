@@ -20,12 +20,14 @@ typedef struct node Node;
 
 Node *createLinkedList(Node *pHead);
 void printLinkedList(Node *pHead);
+Node *sortLinkedList(Node *pHead);
 
 int main(void)
 {
     Node *pHead = NULL;
 
     pHead = createLinkedList(pHead);
+    pHead = sortLinkedList(pHead);
     printLinkedList(pHead);
     return 0;
 }
@@ -89,14 +91,76 @@ void printLinkedList(Node *pHead)
 
 Node *sortLinkedList(Node *pHead)
 {
-    Node *pAux;
-    pAux = pHead;
-    Node *pRed;
-    Node *pYellow;
-    Node *pGreen;
+    Node *pAux = pHead;
+    Node *pRed = NULL, *pRedTail = NULL;
+    Node *pYellow = NULL, *pYellowTail = NULL;
+    Node *pGreen = NULL, *pGreenTail = NULL;
 
-    while (pAux)
+    while (pAux != NULL)
     {
-        if
+        Node *nextNode = pAux->next;
+        pAux->next = NULL;
+
+        if (pAux->patient.color == 'G')
+        {
+            if (pGreen == NULL)
+            {
+                pGreen = pAux;
+                pGreenTail = pAux;
+            }
+            else
+            {
+                pGreenTail->next = pAux;
+                pGreenTail = pAux;
+            }
+        }
+        else if (pAux->patient.color == 'R')
+        {
+            if (pRed == NULL)
+            {
+                pRed = pAux;
+                pRedTail = pAux;
+            }
+            else
+            {
+                pRedTail->next = pAux;
+                pRedTail = pAux;
+            }
+        }
+        else if (pAux->patient.color == 'Y')
+        {
+            if (pYellow == NULL)
+            {
+                pYellow = pAux;
+                pYellowTail = pAux;
+            }
+            else
+            {
+                pYellowTail->next = pAux;
+                pYellowTail = pAux;
+            }
+        }
+
+        pAux = nextNode;
     }
+
+    if (pRed == NULL)
+    {
+        pRed = pYellow;
+    }
+    else
+    {
+        pRedTail->next = pYellow;
+    }
+
+    if (pYellow == NULL)
+    {
+        pYellow = pGreen;
+    }
+    else
+    {
+        pYellowTail->next = pGreen;
+    }
+    pHead = pRed;
+    return pHead;
 }
