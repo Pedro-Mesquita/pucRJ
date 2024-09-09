@@ -1,0 +1,61 @@
+1) Esse deu certo, tive que ver o vídeo no vimeo mas foi.
+    Basicamente, para os valores negativos, eu tive que descobrir o seu complemento a dois.
+    A parte interessante foi se atentar ao tipos declaros e levar isso em consideração na hora de 
+    realizar o cálculo do complemento.
+    Depois disso ele faz o dump do endereço baseado no valor passado.
+
+2)
+    O dump dos valores mostra 03 80 e depois 03 80
+    No dump do l (-32765) vamos ter que o seu representante em binário (após ter feito o complemento a dois) é 10000000 00000011, o byte mais significativo é 
+    128 e o menos representa 2. Convertido para hexadecimal da 80 e 03. Como o meu pc é little endian ele mostra do menos significativo para o mais significativo.
+    No caso do dump do k (32771) tem o seu valor em binário como 10000000 00000011, ou seja 32771 é o complemento de -32765. Por isso o dump mostra os mesmos valores.
+    
+
+3) Para selecionar o byte requisitado é necessário
+usar alguns operadores bitwise. Primeiro de tudo eu desloco
+o bytenum * 8 bits para direita. É necessário fazer dessa forma,
+pois 1 byte tem 8 bits, assim eu (baseado no valor do bytenum) é 
+possível "limpar" os bits indesejados, ex:
+
+bytenum: 0
+word: 01ABCD02
+Nesse caso, eu tenho 4 bytes e eu quero selecionar o byte
+de posição 0. 
+Como 0 * 8 é 0, o 01ABCD02 não será deslocado.
+
+Em seguinda eu uso o perador & com o valor FF, que é 1.
+
+
+ 0000 0001 1010 1011 1100 1101 0000 0010 
+& 
+ 0000 0000 0000 0000 0000 0000 1111 1111
+ ---------------------------------------
+ 0000 0000 0000 0000 0000 0000 0000 0010
+
+ Assim, o valor do último byte é 2
+ Como só temos 1 byte e queremos retornar 32 bits (4 bytes)
+ temos que retornar transformar 02 em 00000002, dando
+ no total 24 bits. Para isso movemos 24 bits para a esquerda
+ e depois 24 para direita (voltando o o valor para a posição original)
+
+
+4) 
+    1. x = 11111111 11111111 11111111 11111111 e y = 00000000 00000000 00000000 00000010. 
+    Como eles são do tipo inteiro, isto é, aceitam valores com sinais o primeiro bit deve
+    ser interpretado como o sinal. Como x começa com 1, então ele é negativo. Pegando o complement a 2
+    de x, temos que x = 11111111 11111111 11111111 11111111, como x é menor do que y, a resposta é sim.
+
+    2. x = 11111111 11111111 11111111 11111111 e y = 00000000 00000000 00000000 00000010. 
+    Como eles são do tipo unsigned int, isto é, ambos só podem ser não negativos.
+    Como x é maior que y, a resposta deve ser não. Trocando o formato do print de d para u,
+    vamos ter dois valores interpretados como unsigned.
+
+    3. Essa comparação de unsigned com signed me surpreendeu. Não consegui entender, mas pesquisando na inteirament
+    eu vi que quando há uma comparação entre esses tipos o unsigned é transformado para signed. Assim, x não é 
+    -1 e sim 4294967295, por isso o print na tela é não.
+
+5) Eu não entendi muito bem, eu pensei o seguinte: 
+Como sc = 11111111, quando eu atribuir sc a ui ele só vai completar com 0, virando 00000000000000000000000011111111.
+Mas quando eu fui testar ele ficou 11111111111111111111111111111111. Pesquisei mas não entendi muito bem o motivo.
+
+

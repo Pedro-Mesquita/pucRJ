@@ -1,0 +1,14 @@
+1)  
+.1Eu imagino que cada vetor possui o tamanho do seu tipo multiplicado
+pelo tamanho do seu tipo.
+No caso do int b[2], seria 2 * sizeof(int), que seria 8 bytes.
+short a[2][3], 6 seria é o seu tamanho e um short tem 2 bytes, valor
+total seria 12 bytes.
+
+.2 O dump reafirma o meu pensamento. no dump de b houveram 8 linhas 
+(cada linha representa um byte). Assim, b tem 8 bytes.
+Já no vetor bi-dimensional a, a quantidade de linhas é 12 (6*2). 6 elementos
+multiplicados pela quantidade de bytes de um short.
+
+2) 
+
