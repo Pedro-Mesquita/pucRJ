@@ -1,0 +1,77 @@
+Em números inteiros sem sinal com n bits nós temos 2^n valores distintos:
+| | | | | | | | | | | |
+0 1 2 3 4 5 6 . . . n-1
+
+onde cada bit pode assumir o valor de 0 ou 1. Ou seja, a faixa de valores é [0, 2**(n - 1)]
+
+Como eu posso representar números inteiros com sinal? Com complemento a 2.
+
+O bit mais significativo (n-1) repersenta o sinal do número, mas para descobrir o número eu NÃO faço dessa forma: 
+
+1000 0101 -> Como o bit mais significativo é o 1, então esse número é negativo (correto) e como 000 0101 é igual a 5
+então o número 1000 0101 é -5 (errado). O resto dos bits não representa inteiramente o seu valor.
+
+O que será feito é o seguinte, os números positivos serão expressos de 0 até 2**(n-1), e o negativos de 2**(n-1) até o 2**n.
+
+Em 4 bits, nós temos 16 possibilidades n**4.
+
+0000 -> 0
+0001 -> 1
+0010 -> 2
+0011 -> 3
+0100 -> 4           Esse primeiro bloco 0 até 2**(n-1) representa os números positivos.
+0101 -> 5
+0110 -> 6
+0111 -> 7
+
+1000 -> -8
+1001 -> -7
+1010 -> -6
+1011 -> -5          Esse segundo bloco 2**(n-1) (sem contar o 2**(n-1)) até 2**n representa os números negativos.
+1100 -> -4
+1101 -> -3
+1110 -> -2
+1111 -> -1
+
+Mas por que é desse jeito? Tem uma representação aritmética que o explica.
+
+x ≅ y (mod k) se |x-y| = m*k. Ou seja, x é congruente a y módulo k se |x-y| resultar em um múltiplo de k.
+
+(não entendi muita coisa kk) Mas de forma geral, é isso aqui:
+Se x >= 0 a representação de x na base 2 = x 
+Se x < 0 então representação de x na abse 2 = 2**n + x
+
+Para n = 4, ex: 
+
+rep(-1) = 2**4 + (-1) = 16-1 = 15 = 1111. Então -1 = 1111
+rep(-8) = 2**4 + (-8) = 16-8 = 8 = 1000. Então -8 = 1000
+rep(-2) = 2**4 + (-2) = 16-2 = 14 = 1110. Então -2 = 1110
+
+No entanto, enquanto n vai aumentando essa conta vai ficando grande. Por isso, há uma manipulação dessa expressão para ficar mais fácil
+2**n + x = (2**n - 1) - (-x) + 1
+
+Ex com n = 8:
+rep(-5) = (2**8 -1) - 5 + 1 = (2**8 -1) -5 +1  = {
+    (2**8 -1) = 1111 1111
+    +5        = 0000 0101
+    +1
+} 
+
+ 1111 1111
+-0000 0101
+----------
+ 1111 1010
++0000 0001
+----------
+ 1111 1011 Assim, -5 = 1111 1011 = 251
+
+ A mesma operação serve inversamente, isto é dado o número 1111 1011 em 8 bits e representado em complemento a 2:
+
+ 1111 1011 é invertido = 0000 0100, depois adiciono 1 = 0000 0101, que é igual a 5, ou seja o valor representado é o -5  
+
+
+Soma e Subtração - Complemento a depois
+
+A subtração de x por y é x + o complemento de y, onde o complemento de y é dado pelo algortimo anterior.
+
+As operações de soma com complemento vão funcionar para quase tudo... Menos quando a quantidade de bits superar o espaço alocado para isso.
