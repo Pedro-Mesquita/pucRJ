@@ -11,4 +11,27 @@ Já no vetor bi-dimensional a, a quantidade de linhas é 12 (6*2). 6 elementos
 multiplicados pela quantidade de bytes de um short.
 
 2) 
+O buraco no armazenamento se dá pelo padding. Como a minha estrutura 
+tem um int, short e depois um int eu tenho que ocupar 2 bytes com 0
+para que volte a ser um múltiplo de 4 e então eu possa armazenar o valor do int c.
 
+3)
+.a X1 tem o tamanho de 12 bytes e são alocados 3 bytes com 0 para
+poder armazenar o valor de c2. No final são alocados mais 3 bytes para
+completar os 8 bytes necessários.
+
+.b X2 tem o tamanho 16 bytes, 8 do long, 1 do char e mais 7 para completar os 8 bytes.
+
+.c X3 tem o tamanho de 8 bytes. 4 bytes do inteiro, um de cada char w mais 2 bytes para completar
+os 8 bytes de memória.
+
+.d X4 tem o tamanho de 24 bytes, 16 bytes são de X2. O resto é do char mais os 7 bytes necessários
+para completar os 8 bytes da memória.
+
+.e X5 tem o tamanho de 8 bytes, 3 bytes são do char e o resto é padding para completar (errei, vi no dump que são 3 bytes mesmo).
+
+.f X6 tem 16 bytes 2 do short, 2 de padding, 4 do int, 3 bytes dos 3 char's, 1 padding, 2 do short e 2 de padding.
+
+.g X7 tem 8 bytes, 5 bytes do vetor de char e mais 3 bytes de padding.
+
+.h X8 tem 8 bytes, 5 bytes do vetor char e mais 3 de padding.
