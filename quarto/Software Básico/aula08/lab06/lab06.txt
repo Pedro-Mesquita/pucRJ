@@ -1,0 +1,23 @@
+2) Consegui realizar a soma do vetor. Para isso, eu defini os valores inteiros em uma
+variável nums. Após isso, eu salvo o endereço de nums em %r12 e defino o %eax como 0.
+Eu defino %eax como 0 pois eu não sei qual é o valor atual dele (pode ter sido usado pelo SO).
+
+dentro de l1 eu adiciono o conteúdo da memória apontado por %r12 [  (%r12)  ] a %eax.
+Depois eu movo o valor somado em %eax para %esi e ai ele é printado.
+
+3) Para implementar o print dos números pares eu criei uma nova label (L3) que fica
+responsável por incrimentar o valor de i (usado para percorrer o "loop") e também
+de ir para o próximo valor inteiro da lista %r12. No final desses incrementos
+ele da um jump para L1.
+    No L1 eu pego o valor de %eax e coloco para %r12, depois eu faço "testl $1, %eax",
+    eu poderia fazer com o andl mas eu acho que eu teria que armazenar o valor de %eax em outro
+    local, pois o valor dele passaria a ser o seu bit menos significativo. Eu vi na internet
+    que o testl ele faz o bitwise and mas não atribui o resultado ao registrador, ele apenas
+    altera a flag.
+    Após o testl $1, %eax eu faço um jnz (jump if not zero) para L3, caso seja zero (é par)
+    eu executo o bloco de código que printa o valor de %eax
+
+4) Para imprimir bytes como long eu tive que usar o movsbl, que move o valor para um long,
+aleḿ disso eu tive que alterar o valor de soma do %r12 (como agora é um vetor de char, eu devo somar um byte e não 4)
+
+
