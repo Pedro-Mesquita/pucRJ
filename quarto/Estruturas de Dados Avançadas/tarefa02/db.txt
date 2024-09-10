@@ -1,10 +1,9 @@
 E1G 
-E2G 
+E2R 
 E3G 
-E4G 
-E5G 
+E4Y 
+E5R 
 E6R
 E7G 
-E8Y
-E9R
-E10Y 
+E8R
+
