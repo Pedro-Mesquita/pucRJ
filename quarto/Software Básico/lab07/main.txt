@@ -1,0 +1,33 @@
+1)
+Primeiro eu digo que o registrador r12 vai receber o endereço  de S2. Em seguida
+é definidade uma label L1.
+
+Em L1 eu verifico se o conteúdo da memória apontado por r12 é igual a 0. Se for verdade,
+ele pula para L2, caso contrário o eax passar a ter o valor apontado por r12.
+
+Continuando o caso contrário:
+Ele vai imprimir o valor em eax, para isso ele definie o primeiro argumento, que é
+salvo no registrador rdi (8 bytes por que é um endereço e no rdi pois é o 
+registrador para o primeiro argumento). Em seguida o esi recebe o valor de eax, foi escolhido
+o esi pois ele recebe um 4 bytes e é o registrador próprio para o segundo parâmetro.
+Depois ele atribui 0 ao eax e chama a função printf.
+
+Após o bloco do print o código continua adicionado 1 ao endereço r12 (pula para o próximo elemento da lista)
+e pula para L1.
+
+No caso em que r12 é igual 0 ele atribui a rdi (primeiro parâmetro) o "/n", atribui 0 ao eax e chama o
+printf.
+
+Resumindo: Basicamente o programa imprime cada valor da lista enquanto esse valor não for zero (NULL)
+Na "tradução" para assembly a while é convertido verificando o caso oposto do while em C,
+isto é, enquanto em C eu continuo no loop enquanto *pc não for null em assembly eu faço isso
+verificando quando "*pc" é exatamente null e caso seja null eu já pulo para finalizar.
+
+Caso "*pc" não é examente null (caso em que eu quero performar algo) eu continuo com o código
+depois do jump e depois pulo novamente para a label inicial.
+
+2) Para fazer essa condição eu separei em um terceiro bloco a adição de 1 no endereço que aponta para o 
+registrador r12 e jump para L1. No bloco L1 eu adicionei duas verificações que é a comparação
+com 123 e a comparação com 125. Caso alguma seja verdadeira eu salto para L3.
+
+3)
