@@ -1,9 +1,21 @@
+/*
+char S2[] = {65, 108, 111, 32, 123, 103, 97, 108, 101, 114, 97, 125, 33, 0};
+int main (void) {
+  char *pc = S2;
+  while (*pc)
+    printf ("%c", *pc++);
+  printf("\n");
+  return 0;
+}
+*/
+
 .data
-Sf: .string "%d\n"
-Sf2: .string "\n"  
+S2:    .byte 65, 108, 111, 32, 123, 103, 97, 108, 101, 114, 97, 125, 33, 0
+Sf:  .string "%c"    /* primeira string de formato para printf */
+Sf2: .string "\n"    /* segunda string de formato para printf */
 
 .text
-.globl main
+.globl  main
 main:
 
 /********************************************************/
@@ -15,14 +27,16 @@ main:
   movq    %r12, -16(%rbp)  /* guarda r12 */
 /********************************************************/
 
-  mov $1, %r10d
+  movq  $S2, %r12  /* r12 = &S2 */
 
 L1:
-  cmpb $11, %r10b   /* Compare using a byte-sized register */
+  cmpb  $0, (%r12)  /* if (*pc == 0) ? */
+  je  L2          /* goto L2 */
+  cmpb $123, (%r12)
   je L3
-  mov %r10d, %r11d
-  imull %r11d, %r11d
-  
+  cmpb $125, (%r12)
+  je L3
+  movsbl  (%r12), %eax    /* eax = *r12 (estendendo o byte para 32 bits */
 
 /*************************************************************/
 /* este trecho imprime o valor de %eax (estraga %eax)  */
@@ -31,10 +45,7 @@ L1:
   movl  $0, %eax
   call  printf       /* chama a funcao da biblioteca */
 /*************************************************************/
-
-L3:
-  addq $1, %r10   /* Use a 64-bit register with addq */
-
+  jmp L3
 L2:  
 /*************************************************************/
 /* este trecho imprime o \n (estraga %eax)                  */
@@ -51,3 +62,8 @@ L2:
   leave
   ret      
 /***************************************************************/
+
+L3:
+  addq  $1, %r12  /* r12 += 1; */
+  jmp  L1         /* goto L1; */
+  
