@@ -30,4 +30,9 @@ depois do jump e depois pulo novamente para a label inicial.
 registrador r12 e jump para L1. No bloco L1 eu adicionei duas verificações que é a comparação
 com 123 e a comparação com 125. Caso alguma seja verdadeira eu salto para L3.
 
-3)
+3) Para calcular os quadrados dos números de 1 até 10 eu atribuí 1 para o r12d (32 bits). No L1 eu comparei
+o valor 11 com o valor de r12d, caso fossem iguais eu pulo para o L2 (bloco de finalização), caso não eu movo o valor de
+r12d para o eax e uso o imull no eax. Depois disso eu preparo os parâmetros para a função printf, em seguida eu adiciono 1 ao r12d
+e pulo para o L1.
+
+4) 
