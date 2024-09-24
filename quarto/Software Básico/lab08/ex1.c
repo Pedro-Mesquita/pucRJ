@@ -1,6 +1,6 @@
 #include <stdlib.h>
 int main()
 {
-    system("ls -ls");
+    system("pwd");
     return 0;
 }
