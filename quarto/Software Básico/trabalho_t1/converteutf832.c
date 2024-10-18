@@ -1,4 +1,4 @@
-/* Pedro Mesquita Maia 2312664 3WC*/
+
 
 #include "converteutf832.h"
 
