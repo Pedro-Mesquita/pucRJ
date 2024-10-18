@@ -1,4 +1,4 @@
-/* Pedro Mesquita Maia 2312664 3WC*/
+
 
 1) A verificação de abertura e de criação de arquivo (não é aberto ou criado o arquivo, apenas verifica se o parâmetro FILE passado está correto) foi feita com sucesso, usando
 o stderr e explicitando no print o problema ocorrido. Para essa verificação foi criada uma função chamada "verifyFile".
