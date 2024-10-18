@@ -35,4 +35,8 @@ o valor 11 com o valor de r12d, caso fossem iguais eu pulo para o L2 (bloco de f
 r12d para o eax e uso o imull no eax. Depois disso eu preparo os parâmetros para a função printf, em seguida eu adiciono 1 ao r12d
 e pulo para o L1.
 
-4) 
+4) Eu alterei o primeiro parâmetro do print para mostrar endereços (%p) e também defini uma lista de inteiros.
+Em seguida eu salvei o enderço do primeir elemento da lista em r12 e 0 no ebx. Em seguinda eu comparei o tamanho da lista
+com o valor de ebx, caso o valor fosse igual eu iria para L2 (termina a apliacação), caso contrário eu moveria o valor de r12
+para rax (escolhi o rax pois o valor de r12 é o endereço, 8 bytes, da lista). Ai o primeiro parâmetro da função recebe o valor do Sf,
+o segundo recebe o valor de rax e depois do print eu adiciono 4 no r12 e 1 do ebx e volto para o início.
