@@ -1,0 +1,20 @@
+
+1)Esse programa chama a função system da biblioteca padrão de C, que basicamente executa o comando 
+que você passar pra ela. No nosso caso, o comando é "ls -ls", que vai listar o conteúdo do diretório 
+com detalhes (tipo tamanho, permissões e tal). A tradução pra assembly começa com o prólogo, onde o programa guarda 
+o valor do %rbp e organiza a pilha pra fazer as operações. 
+Aí, ele pega o endereço da string s1 e coloca no %rdi, que é onde a gente passa o primeiro argumento
+da função. Depois, ele chama a função system, que vai executar o comando. 
+Por fim, ele faz a finalização tradicional, restaurando a pilha e voltando pra onde foi chamado.
+
+Agora a gente tem dois módulos em C. O primeiro tem a função filtro, que recebe dois parâmetros:
+ x e lim. Basicamente, se x for menor que lim, ele devolve 0, senão devolve o valor de x. 
+ No arquivo main.c, a gente tem um array chamado nums com uns números. A ideia é passar cada
+número desse array na função filtro e imprimir o resultado. Traduzindo o main.c pra assembly, 
+começamos com o prólogo tradicional, onde salvamos os valores dos registradores %rbx e %r12 
+pra não perder esses valores nas chamadas de função. 
+No laço L1, a gente compara o índice atual com o tamanho do array (que é 5). Pra cada elemento, 
+o valor apontado por %r12 (que é o endereço de nums) vai pra %edi, 
+que é o primeiro argumento da função filtro. O lim vai pra %esi, que é o segundo argumento. Depois 
+de chamar filtro, o valor que volta (em %eax) vai pro printf pra ser impresso. 
+Aí a gente vai pro próximo valor até acabar o array.

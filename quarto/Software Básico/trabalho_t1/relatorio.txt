@@ -1,0 +1,8 @@
+/* Pedro Mesquita Maia 2312664 3WC*/
+
+1) A verificação de abertura e de criação de arquivo (não é aberto ou criado o arquivo, apenas verifica se o parâmetro FILE passado está correto) foi feita com sucesso, usando
+o stderr e explicitando no print o problema ocorrido. Para essa verificação foi criada uma função chamada "verifyFile".
+
+2) convUtf8p32 é criado o BOM em little-endian com sucesso. Após isso é feita a conversão em si que também está sendo feita corretamente.
+
+3) Em convUtf32p8, o BOM é lido  e os caracteres do arquivos são convertidos corretamente para utf-8.
