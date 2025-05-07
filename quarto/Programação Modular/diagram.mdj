@@ -4600,7 +4600,8 @@
 									"_parent": {
 										"$ref": "AAAAAAGSRGTdzK3yqAc="
 									},
-									"name": "todos_atributos menos o id"
+									"name": "todos_atributos menos o id",
+									"type": ""
 								}
 							]
 						},
@@ -5105,7 +5106,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGSH6K6QEmQGsM="
 							},
-							"name": "status"
+							"name": "status",
+							"type": ""
 						}
 					],
 					"operations": [

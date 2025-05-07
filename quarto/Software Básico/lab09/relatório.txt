@@ -1,0 +1,7 @@
+1) Basicamente adiciono os valores dos registradores de parâmetro no registrador de retorno (%eax). Foi de boa.
+
+2) Na função de fatoração eu tive um pouco mais de dificuldade, pois eu não estava conseguindo fazer
+a volta da fução com recursiva (com o popq %rdi). Tive que pesquisar na internet essa parte, mas o registrado
+da função deu para fazer.
+
+3) Consegui fazer sem muitos problemas. 

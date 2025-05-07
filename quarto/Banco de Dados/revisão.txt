@@ -1,0 +1,56 @@
+Revisão T3 - Banco de dados
+
+-------------------------------------------------------------------
+Visões
+
+O que é uma visão?
+Basicamente ela é uma tebela virtual que armazena uma query específica. Sempre que uma view é chamada ela executa
+a quary que armazenou. É utilizada para consultas complexas.
+
+Assim como uma tabela, as visões são armazenadas no banco de dados.
+
+Exemplo de criação de uma view:
+
+CREATE VIEW nome_da_view AS
+SELECT colunaX
+FROM tabelaZ
+Where condicao
+
+De maneira informal, a view é uma nomeação de uma query. 
+
+Para remover uma view é a mesma coisa de uma tabela. Ex:
+
+DROP nome_da_view
+---------------------------------------------------------------------
+
+DML - Data Manipulation Language
+
+É uma seção do SQL que possuí comandos de manipulação de dados. Exemplos:
+
+Order by, distinct, select, from, where, some, all etc.
+
+Ex: 
+
+SELECT DISTINCT * 
+FROM tabela
+WHERE  valor > all
+	(SELECT preco 
+	FROM tabela_carros
+	WHERE modelo = 'Nissan')
+
+---------------------------------------------------------------------
+
+DDL - Data Definiton Language
+
+É usada para criar tabelas e schemas.
+
+Ex:
+CREATE TABLE nome_da_tabela (
+	id INT NOT NULL, 
+	nome VARCHAR(20) NOT NULL, 
+	idade INT NOT NULL,
+	PRIMARY KEY (id)
+);
+
+
+

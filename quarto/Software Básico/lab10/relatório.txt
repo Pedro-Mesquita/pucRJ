@@ -1,0 +1,13 @@
+1) Eu fiquei com dúvida de como acessaria o next da estrutura, mas ai pesquisando
+eu vi que era só adicionar no endereço da estrutura a posição que estaria salvo aquela informação
+como a estrutura tem um int e um endereço então a posição do endereço seria 8 (contando com padding).
+No resto eu não tive muita dificuldade
+
+2) Consegui fazer sem muita dificuldade.
+
+3) Nessa função eu me perdi (kkk), eu fiquei atribuindo os novos valores aos registradores usados como
+parâmetro. Sendo que eu ainda precisava manter o valor original, depois de um tempo batendo cabeça eu lembrei depois
+callee-saved.
+
+4) Depois de apanhar para a terceira função essa saiu mais de boa, no entanto eu fiquei com um pouco de dúvida na hora de 
+passar o parâmetro da função f. Tive que pedir ajuda do chatGPT.
