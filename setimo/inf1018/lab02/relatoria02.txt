@@ -1,0 +1,27 @@
+1
+a. O resultado mostrou os endereços/valor byte à byte. Como o while é baseado no sizeof de um inteiro e foi
+decrementando de 1 em 1 e ao total houveram 4 linhas, então o tamanho de um inteiro é de 4 bytes.
+A memória começa 0x7ffef1da9a64, depois ...65, ...66 e ...67, isto é, crescia. Da maneira semelhante, aconteceu com o conteúdo
+que estava na memória de p1, que foi do menos signicativo para o mais significativo (cresceu de "significância").
+
+b. Com um long houve 8 prints, ou seja, 8 bytes.
+
+c. Com um short houveram 2 prints, ou seja, 2 bytes.
+
+d. Ao fazer o dump de 'a' foi mostrado no print 61, que em decimal é = 6*16 + 1*1, que é 97, testando com o 'l'
+deu 6c que é = 6*16 + 12 = 108
+
+e. "A" deu 41, " " deu 20, "," deu 2c e "$" deu 24
+
+2
+A função string2num percorre a string caractere por caractere até encontrar o \0. Em cada iteração, *s representa
+o caractere atual da string. A expressão (*s - '0') converte esse caractere para o valor numérico correspondente, pois os caracteres '0' a '9'
+possuem códigos ASCII consecutivos. A variável a começa em 0 e, a cada passo, é multiplicada por 10 e somada ao novo dígito, formando o número.
+
+b. Para permitir numerais em bases entre 2 e 10, basta substituir a multiplicação por 10 pela base passada como parâmetro.
+Assim, o valor acumulado é multiplicado pela base e somado ao dígito atual.
+
+c. Para bases maiores que 10, utilizam-se letras a–z para representar valores de 10 a 35. Dessa forma, a maior base possível nesse esquema é 36.
+
+d. A função isdigit pode ser usada para verificar se o caractere é um dígito (0–9). Caso não seja, ele pode ser tratado como letra correspondente a valores maiores que 9.
+
