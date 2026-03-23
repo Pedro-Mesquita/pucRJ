@@ -1,0 +1,21 @@
+1 a.
+Para obter apenas o byte menos significativo de x, foi utilizada uma máscara 0xFF. Essa máscara mantém apenas os 8 bits menos significativos e zera todos os outros bits. Assim, se x = 0x87654321, o resultado obtido é 0x00000021.
+
+b.
+Para fazer com que o byte mais significativo seja 0xFF, utilizou-se uma operação OR com a máscara 0xFF000000. Dessa forma, os 8 bits mais significativos passam a ser todos 1, enquanto os demais bytes permanecem iguais aos de x. Assim, para x = 0x87654321, o resultado é 0xFF654321.
+
+2
+A função odd_ones verifica se a quantidade de bits iguais a 1 em um número é ímpar. Para isso, o número é 
+analisado bit a bit utilizando deslocamentos e operações AND. A cada passo é verificado se o bit menos significativo é 1. Ao final da verificação de todos os bits, é possível saber se a quantidade de bits 1 é par ou ímpar.
+
+Nos testes realizados:
+0x01010101 possui número par de bits 1.
+0x01030101 possui número ímpar de bits 1.
+
+3
+A função switch_byte troca as duas metades de um byte.
+Um byte possui 8 bits e pode ser dividido em duas partes de 4 bits. A primeira metade é deslocada para a direita e a segunda para a esquerda, e depois os resultados são combinados.
+Por exemplo:
+
+4
+A função rotate_left realiza um deslocamento circular para a esquerda. Eu tive um pouco de dificuldade para entender a linha  unsigned char wrap = x >> (8 - n), mas no final deu certo.

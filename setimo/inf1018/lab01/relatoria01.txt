@@ -1,0 +1,29 @@
+O laboratório começa introduzindo alguns comandos básicos de navegação de repositórios como:
+*pwd (mostra o diretório corrente)
+*ls (lista o conteúdo do diretório atual)
+*cd (muda de diretório)
+
+O programa contém uma função foo, onde ela recebe um float e retorna esse parâmetro somado de 1.
+Já a função main, ela recebe dois parâmetros: argc (quantidade de parâmetros) e **argv (array de strings). Caso o número de parâmetros da main for diferente de dois ele retorna o uso do grama, caso contrário ele
+converte para float o valor recebido no **argv e parra como parâmetro para a função foo.
+
+a.
+quando é executado "./ex1 4.0" a main recebe dois itens no argv, argv[0]="./ex1" e o argv[1]="4.0". Como, argc é igual a 2, o programa passa da primeira condicional. 
+O valor "4.0" é convertido para float e passado para a função foo, que retorna esse valor somado de 1. Eu acredito que quando é executado "ex1" o terminal busca onde no computador está 
+definido esse comando, como ele não existe é retornado um not found.
+
+b.
+Depois o programa foi dividido em dois arquivos. Um deles contém a função foo e o outro contém a função main.
+A função foo continua realizando a mesma operação, recebendo um float e retornando esse valor somado de 1.
+A função main apenas chama essa função passando o valor que foi recebido nos argumentos.
+
+c.
+quando removemos o cabeçalho da função foo, aparecem mensagens de warning indicando possíveis problemas no código. Isso acontece porque o programa passa a utilizar uma função
+sem ter a declaração dela no arquivo onde está a main.
+
+d.
+a função dump recebe um ponteiro para memória e um valor n, que representa quantos bytes devem ser lidos a partir daquele endereço. A função
+percorre esses bytes e imprime os valores armazenados na memória.
+
+pelos resultados o tipo char ocupa 1 byte na memória, enquanto o tipo int ocupa mais bytes. Além disso, o vetor v que contém "1" 
+possui dois bytes: o caractere '1' e o caractere especial '\0' que marca o final da string.
