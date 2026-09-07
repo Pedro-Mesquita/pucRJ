@@ -9,7 +9,3 @@ int main (void) {
   printf("\n");
   return 0;
 }
-
-Na parte de .data são representado as constantes do códido (o array S2 e as duas strings de formato)
-
-no .text é definida a main 
