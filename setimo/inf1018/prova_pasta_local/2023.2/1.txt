@@ -1,0 +1,4 @@
+unsigned int c = 12115130000
+int b = 314030000
+
+float = C1FD0000

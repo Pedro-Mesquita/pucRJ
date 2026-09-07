@@ -1,0 +1,108 @@
+1
+a. Variável char c = 150
+Como char ocupa 1 byte, o valor 150 em hexadecimal é 0x96.
+Assim, o dump de c mostra apenas um byte: 96
+
+b. Variável short s = -3
+
+Um short ocupa 2 bytes.
+Para representar -3:
+3 em binário (16 bits): 0000 0000 0000 0011
+invertendo: 1111 1111 1111 1100
+somando 1: 1111 1111 1111 1101
+
+Isso corresponde a 0xFFFD.
+Como a arquitetura é little-endian, os bytes aparecem na memória nesta ordem: fd ff
+
+c. Variável int i = -151
+
+Um int ocupa 4 bytes.
+Primeiro, convertemos 151 para hexadecimal:
+151 = 0x97
+
+Agora em 32 bits: 00000000 00000000 00000000 10010111
+Invertendo: 11111111 11111111 11111111 01101000
+Somando 1: 11111111 11111111 11111111 01101001
+
+Portanto, -151 = 0xFFFFFF69. invertendo a ordem dos bytes fica: 69 ff ff ff
+
+a. Valor de l
+
+Um short possui 16 bits.
+32765 = 0x7FFD
+
+0x7FFD em binário: 0111 1111 1111 1101
+invertendo: 1000 0000 0000 0010
+somando 1: 1000 0000 0000 0011
+
+Assim, -32765 = 0x8003.
+No dump, fica: 03 80
+
+b. Valor de k
+32771 em hexadecimal é: 0x8003
+Como k é unsigned short, esse valor é interpretado como positivo, então: k = 32771
+No dump, os bytes também serão: 03 80
+Apesar de l e k terem a mesma representação interna, que é 0x8003, a interpretação muda por causa do tipo. Em l, como o tipo é short com sinal, o bit mais significativo indica que o número é negativo. Em k, como o tipo é unsigned short, o mesmo conjunto de bits representa um número positivo.
+A função xbyte deve extrair o byte indicado e devolver esse valor como inteiro de 32 bits com sinal.
+A ideia é pegar o byte desejado dentro da palavra de 32 bits, deslocá-lo até a posição mais significativa e depois fazer o deslocamento de volta preservando o sinal. Assim, se o byte extraído começar com 1, ele será interpretado como negativo.
+Nos exemplo
+
+Para 0x01abcd02 e bytenum = 0, o byte extraído é 0x02. Como o bit mais significativo desse byte é 0, o valor retornado é 2.
+Para 0x11a032b5:
+o byte 0 é 0xB5, que corresponde a -75
+o byte 1 é 0x32, que corresponde a 50
+o byte 2 é 0xA0, que corresponde a -96
+o byte 3 é 0x11, que corresponde a 17
+
+No caso de 0xabcd:
+o byte 3 é 0x00, então o resultado é 0
+o byte 1 é 0xAB, que como valor com sinal corresponde a -85
+
+No caso da entrada zzzz, o programa acusa número inválido porque z não é um dígito hexadecimal válido.
+
+Essa foi uma das partes que eu menos entendi no início, principalmente a ideia de que o deslocamento pode ser usado para fazer a extensão de sinal automaticamente. Tive que pedir ajuda da ia para entender melhor.
+
+No programa 1, x é do tipo int e recebe 0xffffffff. Como int é um tipo com sinal, esse padrão de bits representa -1 em complemento de 2. Já y vale 2.
+
+Então o programa mostra:
+x = -1, y = 2
+
+Na comparação:
+x < y
+-1 < 2
+Isso é verdadeiro, então o resultado é sim.
+
+No programa 2, x é do tipo unsigned int e recebe 0xffffffff. Nesse caso, esse padrão de bits não representa -1, e sim 4294967295. O y continua valendo 2.
+x = 4294967295, y = 2
+Na comparação:
+4294967295 < 2
+
+Isso é falso, então o resultado é nao.
+
+A diferença entre os dois casos acontece porque a sequência de bits é a mesma, mas a interpretação depende do tipo da variável.
+No programa 3, x é int e y é unsigned int.
+O valor inicial de x é -1, mas na comparação entre signed e unsigned o valor com sinal é convertido para unsigned. Assim, x passa a ser interpretado como 4294967295.
+
+A comparação fica: 4294967295 < 2
+
+Isso é falso, então o resultado é nao.
+Comparando com os casos anteriores, o programa 3 acaba se comportando como o programa 2 no momento da comparação, porque o valor de x é convertido para unsigned. Essa parte eu achei meio confusa no início, porque olhando rapidamente parece que -1 deveria ser menor que 2, mas por causa da conversão implícita isso não acontece.
+
+Temos a atribuição:
+signed char sc = -1;
+unsigned int ui = sc;
+
+O signed char ocupa 8 bits. Como sc vale -1, sua representação interna em complemento de 2 é: 11111111
+
+Ao atribuir esse valor para ui, acontecem duas mudanças: o tamanho passa de 8 bits para 32 bits e o tipo passa de signed para unsigned.
+Como o valor original é signed, primeiro ocorre a extensão de sinal. Isso significa que o bit mais significativo, que é 1, é copiado para os novos bits à esquerda. Assim, a representação em 32 bits fica: 11111111 11111111 11111111 11111111
+
+Essa passa a ser a representação interna de ui.
+
+Como ui é unsigned int, esse padrão de bits será interpretado como um valor positivo igual a 4294967295.
+
+Portanto, a representação interna de ui fica: 0xFFFFFFFF
+
+Se for feito o dump de ui em uma máquina little-endian, os bytes mostrados serão: ff ff ff ff
+
+Nessa questão eu entendi a ideia geral, mas fiquei um pouco em dúvida no começo sobre a ordem exata das etapas, também tive que pedir ajuda da IA.

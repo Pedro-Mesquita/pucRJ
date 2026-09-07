@@ -1,0 +1,70 @@
+1.
+O struct X tem o seguinte layout em x86-64 Linux:
+  double d  -> offset 0,  8 bytes  (0x601040 - 0x601047)
+  float  f  -> offset 8,  4 bytes  (0x601048 - 0x60104b)
+  short  s  -> offset 12, 2 bytes  (0x60104c - 0x60104d)
+  padding   -> offset 14, 2 bytes  (0x60104e - 0x60104f)
+  sizeof(x) = 16
+
+Calculando os valores em little-endian:
+  d = -4.5  -> IEEE 754 double: 0xC012000000000000
+  f = 9.75  -> IEEE 754 float:  0x411C0000
+  s = -11   -> complemento de 2: 0xFFF5
+
+Saída esperada do programa:
+  0x601040 - 00
+  0x601041 - 00
+  0x601042 - 00
+  0x601043 - 00
+  0x601044 - 00
+  0x601045 - 00
+  0x601046 - 12
+  0x601047 - c0
+  0x601048 - 00
+  0x601049 - 00
+  0x60104a - 1c
+  0x60104b - 41
+  0x60104c - f5
+  0x60104d - ff
+  0x60104e - PP
+  0x60104f - PP
+
+Essa questão foi tranquila. A parte mais chata foi calcular os bits do double e do float
+na mão, mas seguindo o processo de sinal/expoente/mantissa foi ok.
+
+2.
+A tradução do foo foi simples. O único cuidado foi negar b antes de converter para double,
+o que foi direto com imul $-1, %esi antes do cvtsi2sd.
+
+3.
+A tradução do pack foi relativamente tranquila pois a lógica do while com ponteiro encadeado
+é mais direta do que o for com array. O único cuidado foi acessar os campos certos do struct:
+vi (int) no offset 0, vd (double) no offset 8 e next (ponteiro) no offset 16.
+
+4.
+A tradução do pack1 foi onde tive mais dificuldade. Os principais erros que cometi foram:
+Não indexei o array por i: sempre lia de px (endereço fixo) sem calcular px + i*8.
+  Precisei de um imulq para calcular o deslocamento correto.
+Usei offset 8 para px[i].vf quando o correto é 4 (vi tem 4 bytes antes de vf no struct).
+Usei movsd para carregar um campo float. O correto é movss seguido de cvtss2sd para
+  converter para double antes de passar para foo.
+
+5.
+Minha tabela inicial tinha alguns erros.
+Listei a e b como símbolos (d). Na verdade são variáveis locais da função g, vivem na pilha
+e não aparecem na tabela de símbolos do nm.
+
+Saída real do nm arq1.o:
+  0000000000000000 B buff
+                   U f
+  0000000000000000 T g
+                   U i
+  0000000000000008 b k
+                   U malloc
+                   U strcat
+                   U strcpy
+                   U strlen
+
+6.
+O printf("%d", k) em arq2 imprime o k de arq2, que é uma variável diferente e nunca foi
+modificada. O resultado impresso é 0.

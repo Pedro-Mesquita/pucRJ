@@ -1,0 +1,41 @@
+1.
+Consegui identificar, basicamente existem o código tem duas seções principais
+a primeira onde são definidos os dados (array de números e uma string) que correspondem
+a string do print f e ao array nums.
+
+Em seguida tem a definição da main e a "criação das variáveis", que na verdade está
+sendo movido os valores para dentro dos registradores.
+
+Logo depois é definida uma label onde é escrito o "for" do código em c, onde basicamente
+é definido 4 com o valor em ebx e, caso seja igual, pula para a label L2.
+
+Caso não seja igual o código continua adicionado 1 no contador e 4 no array de inteiros.
+
+No bloco L2 tem uma "caixa preta" onde basicamente finaliza o programa.
+
+2.
+A estrutura do programa é a mesma do anterior, com inicialização dos dados e uso de registradores
+para representar as variáveis.
+
+A principal diferença é que, dentro do laço, ao invés de somar os elementos, o código verifica
+se o valor é par. Isso é feito com uma operação lógica bit a bit no último bit do número.
+Se for 0, o número é par.
+
+Quando o valor é par, ele é preparado e passado para o printf. O laço continua incrementando
+o contador e o ponteiro até percorrer todo o array.
+
+3.
+Aqui o array passa a ser de bytes (.byte), então cada elemento ocupa 1 byte em vez de 4.
+
+Por isso, o ponteiro agora avança de 1 em 1, e não mais de 4 em 4.
+
+Na leitura do valor, é necessário fazer a extensão de 8 bits para 32 bits antes de usar o valor,
+pois o printf espera um inteiro em %eax. Essa extensão também garante que valores negativos
+sejam tratados corretamente.
+
+4.
+O exercício mostra como estruturas simples em C (for, if, array e ponteiros) são traduzidas
+para assembly.
+
+Fica claro que o tamanho do tipo impacta diretamente o acesso à memória, e que operações simples,
+como testar paridade ou acessar bytes, exigem instruções específicas (bit a bit e extensão de sinal).

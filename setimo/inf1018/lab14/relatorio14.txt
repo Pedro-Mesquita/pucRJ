@@ -1,0 +1,9 @@
+Na questão 1 (float2) eu consegui fazer tranquilo. A dica do enunciado ajudou bastante pois multiplicar por 2 equivale a somar 1 no expoente,
+então eu só extrai os campos do float com as macros, incrementar o expoente e montar o resultado com makefloat. Foi bem direto.
+
+Na questão 2 (int2float) tive mais dificuldade. Entendi a lógica geral: descobrir o bit mais significativo do valor absoluto para calcular o expoente (127 + posição do bit)
+e depois montar a mantissa removendo esse bit implícito e alinhando os bits restantes na posição 22.
+A parte que me gerou mais confusão foi o alinhamento da mantissa, especialmente decidir quando shiftar para a esquerda ou para a direita dependendo da posição do bit.
+Tive que revisar bem esse ponto e pedir ajuda do chagpt para confirmar se a lógica estava certa
+
+No geral, o laboratório foi útil para entender de verdade como os floats são representados internamente.

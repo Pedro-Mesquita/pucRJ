@@ -1,0 +1,9 @@
+A primeira questão (função add) eu consegui fazer tranquilo, pois era uma função simples,
+então foi mais direto entender a passagem de parâmetros e o retorno.
+
+Na questão 2 (fatorial), tive dificuldade por ser uma função recursiva. Não tinha entendido
+bem como persistir os valores entre as chamadas, principalmente o valor de n,
+já que ele é sobrescrito após o call. Com isso, tive problemas para montar corretamente o retorno da função.
+
+Na questão 3 (função foo), também tive dificuldade, principalmente na parte de indexação do array e no controle do loop.
+Acabei errando em alguns acessos à memória e na atualização dos registradores.

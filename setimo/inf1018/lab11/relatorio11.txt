@@ -1,0 +1,7 @@
+Na número 1 eu consegui fazer tranquilo, só tinha esquecido como fazer para salvar
+os valores que seriam usadas no print e no scanf.
+Mas em relação a criação das variáveis locais eu consegui fazer sem grandes problemas.
+
+Na 2 eu tive dificuldade, fiquei com dúvida do que era/não era variável local e não consegui fazer o programa rodar sozinho. Tive
+que pedir ajuda da IA para resolver. Após revisar o que ela escreveu eu consegui entender, mas acho que tenho que fazer mais exercícios
+para consolidar esse conteúdo.
