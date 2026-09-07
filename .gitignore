@@ -8,3 +8,6 @@ __pycache__/
 oitavo/arquitetura/data/outputs/
 oitavo/arquitetura/data/inputs/*/
 !oitavo/arquitetura/data/inputs/8x8/
+
+# Arquivos de lock do LibreOffice
+.~lock.*#
