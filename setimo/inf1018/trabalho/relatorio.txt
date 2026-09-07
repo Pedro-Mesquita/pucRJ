@@ -1,0 +1,56 @@
+/* Pedro_Mesquita_Maia 2312664 3WA */
+
+
+O que foi feito
+---------------
+Implementei a cria_func que gera, em tempo de execucao, o codigo de uma nova
+versao da funcao f, amarrando ou repassando os parametros conforme o params[].
+Suporta de 1 a 3 parametros, os tipos INT_PAR e PTR_PAR, e as tres origens
+PARAM, FIX e IND.
+
+A funcao gerada monta um prologo, salva os argumentos que
+chegam, coloca cada valor no registrador certo (rdi, rsi, rdx), chama f com
+call indireto e no fim faz leave/ret devolvendo o que f retornou.
+
+
+Como testei
+-----------
+Fui criando um teste por funcionalidade no teste.c e so depois
+implementava a parte que fazia ele passar. Compilei sempre com:
+
+    gcc -Wall -Wa,--execstack -o teste cria_func.c teste.c
+
+Comecei colocando um codigo conhecido (a funcao identidade, 89 f8 c3) num vetor
+local e chamando ele com um cast pra ponteiro de funcao, so pra ver que dava pra
+executar codigo do vetor. Depois fui passando esse codigo pra dentro da cria_func
+e fui aumentando: primeiro repassar o parametro, depois amarrar constante, depois
+varios parametros, reordenacao, valor indireto e ponteiro.
+
+
+O que esta funcionando
+----------------------
+Todos os testes passam (15 verificacoes). Os testes cobrem:
+
+- PARAM: a nova funcao repassa o argumento. Ex: dobro(5) deu 10.
+- FIX: amarra constante. Ex: mult(x,10) deu 10,70,100.
+- Varios PARAM: subtrai(10,3) deu 7.
+- Reordenacao: FIX no 1o parametro e PARAM no 2o (o argumento que chega em rdi
+  tem que ir pro rsi). subtrai(100,30) deu 70.
+- IND: le o valor da variavel na hora da chamada. soma(5, base) deu 105 com
+  base=100 e 205 depois que mudei base pra 200.
+- Tres parametros: soma3(1,2,7) deu 10.
+- PTR_PAR: ponteiro repassado. primeiro_char("Hi") deu 72 ('H').
+
+Tambem rodei os tres exemplos do enunciado e todos deram certo:
+
+1. mult amarrando o 2o param em 10  -> imprimiu 10 20 30 ... 100
+2. mult com o 1o param IND (variavel i) e 2o FIX 10, funcao sem argumento
+   -> imprimiu 10 20 30 ... 100
+3. memcmp com a string fixa amarrada (PTR_PAR FIX), a candidata e o tam como
+   PARAM -> respondeu SIM pro prefixo de tamanho 12 e NAO pro de tamanho 16.
+
+
+O que nao esta funcionando
+--------------------------
+Nada de errado encontrado dentro do escopo (1 a 3 parametros). A cria_func tem
+uma checagem que ignora chamadas com n fora desse intervalo.

@@ -1,1 +1,10 @@
 .vscode/
+# Ambientes virtuais Python
+venv/
+.venv/
+__pycache__/
+
+# Matrizes geradas (arquitetura) - grandes demais para o GitHub
+oitavo/arquitetura/data/outputs/
+oitavo/arquitetura/data/inputs/*/
+!oitavo/arquitetura/data/inputs/8x8/

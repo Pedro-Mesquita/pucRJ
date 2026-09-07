@@ -1,0 +1,19 @@
+Neste lab traduzi as funções foo, foo1, foo2 e foo3 para assembly e fiz uma main em C para
+testar cada uma usando -lm.
+
+A foo foi tranquila, usei as instruções de soma, subtração e multiplicação de float e double.
+Também testei tirar o protótipo da foo da main: deu warning de implicit declaration e nem
+ligou (undefined reference), porque sem o protótipo o retorno fica errado e a função não é
+encontrada.
+
+Na foo1 e foo2 a parte difícil foi perceber que os registradores %xmm podem ser sobrescritos
+quando chamo sin ou cos. Por isso salvei os valores na pilha antes das chamadas e recuperei
+depois. Conferi os resultados com valores conhecidos de seno e cosseno (M_PI e M_PI_2).
+
+Na foo3 precisei guardar a variável r na pilha, lembrar que o primeiro parâmetro era ponteiro
+e não perder o acumulador entre as chamadas de sin. A instrução movsd não zera o r, então usei
+pxor para zerar o %xmm0 antes de salvar na pilha.
+
+No geral entendi melhor como funcionam chamadas de função com argumentos e retornos em ponto
+flutuante e a importância de salvar valores na pilha. Usei IA para tirar dúvidas sobre os
+registradores %xmm e o endereçamento de memória.

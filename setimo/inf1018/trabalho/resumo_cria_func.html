@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: "Liberation Serif", Georgia, serif; font-size: 11.5pt;
+         line-height: 1.45; color: #1a1a1a; }
+  h1 { font-size: 19pt; color: #15314f; border-bottom: 2px solid #15314f;
+       padding-bottom: 6px; margin-bottom: 2px; }
+  .sub { color: #555; font-size: 10.5pt; margin-top: 0; margin-bottom: 18px; }
+  h2 { font-size: 13.5pt; color: #1f4e79; margin-top: 20px;
+       border-left: 4px solid #1f4e79; padding-left: 8px; }
+  h3 { font-size: 11.8pt; color: #2a2a2a; margin-bottom: 4px; }
+  p { margin: 6px 0; text-align: justify; }
+  ul { margin: 6px 0 6px 0; }
+  li { margin: 3px 0; }
+  code { font-family: "Liberation Mono", Consolas, monospace; font-size: 10pt;
+         background: #f0f2f5; padding: 1px 4px; border-radius: 3px; }
+  .box { background: #f6f8fa; border: 1px solid #d9dee3; border-radius: 6px;
+         padding: 10px 14px; margin: 12px 0; }
+  .key { background: #fff8e1; border-left: 4px solid #f0ad4e; padding: 8px 12px;
+         margin: 12px 0; border-radius: 0 6px 6px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.3pt; }
+  th, td { border: 1px solid #cfd6dd; padding: 5px 8px; text-align: left;
+           vertical-align: top; }
+  th { background: #eaf0f6; }
+  .small { font-size: 10pt; color: #555; }
+</style>
+</head>
+<body>
+
+<h1>cria_func — Resumo Conceitual</h1>
+<p class="sub">INF1018 · Geração de código de máquina em tempo de execução · ideias e motivações</p>
+
+<p>Este documento resume <strong>por que</strong> a <code>cria_func</code> é escrita
+do jeito que é. O foco não é cada byte ou cada linha, mas as ideias que justificam
+as decisões de projeto.</p>
+
+<h2>1. O que a função se propõe a fazer</h2>
+<p>A <code>cria_func</code> é uma <strong>fábrica de funções</strong>. Em vez de
+calcular um resultado, ela <em>fabrica</em> uma nova função em tempo de execução,
+escrevendo os bytes de instruções de máquina (x86-64) dentro de um vetor. Essa
+nova função é um <strong>"trampolim"</strong>: quando chamada, ela repassa o
+controle para uma função já existente <code>f</code>, mas com alguns argumentos
+preparados de antemão.</p>
+<p>A ideia central é <strong>"amarrar" parâmetros</strong> — o conceito de aplicação
+parcial. A partir de uma função genérica como <code>mult(x, y)</code> podemos gerar,
+em tempo de execução, uma função especializada "multiplicar por 10" que recebe um
+só argumento e internamente chama <code>mult(x, 10)</code>.</p>
+
+<div class="key">
+<strong>Por que isso é possível?</strong> Em C, um vetor de bytes e uma função são,
+no fundo, apenas endereços de memória. Se colocamos bytes que <em>são</em> instruções
+válidas e apontamos um ponteiro de função para o início do vetor, a CPU executa esses
+bytes como se fossem qualquer outra função. A <code>cria_func</code> apenas escreve
+os bytes certos.</p>
+</div>
+
+<h2>2. De onde vem o valor de cada parâmetro</h2>
+<p>Cada parâmetro da função-alvo <code>f</code> precisa receber um valor. A descrição
+em <code>params[]</code> diz a <strong>origem</strong> de cada um — e é isso que torna
+a <code>cria_func</code> genérica em vez de servir a um único caso:</p>
+<table>
+<tr><th>Origem</th><th>Ideia</th><th>Quando o valor é definido</th></tr>
+<tr><td><code>PARAM</code></td><td>Repassa um argumento recebido pela própria função gerada</td><td>A cada chamada (vem de quem chama)</td></tr>
+<tr><td><code>FIX</code></td><td>Uma constante amarrada, embutida no código</td><td>Na geração (congelado para sempre)</td></tr>
+<tr><td><code>IND</code></td><td>Lê o valor de um endereço de memória</td><td>A cada chamada (lê o valor atual)</td></tr>
+</table>
+<p>A distinção entre <code>FIX</code> e <code>IND</code> é conceitualmente importante:
+o <code>FIX</code> congela o valor no momento em que a função é criada; o <code>IND</code>
+guarda um <em>endereço</em> e vai buscar o valor toda vez que a função é chamada — então
+o resultado pode mudar entre chamadas mesmo sem regenerar o código.</p>
+
+<h2>3. Por que existe um prólogo e um epílogo</h2>
+<p>A função gerada chama outra função (<code>f</code>). Isso a obriga a se comportar
+como uma função "bem-educada" perante a convenção de chamada: ela precisa montar um
+<strong>stack frame</strong> na entrada (prólogo) e desmontá-lo na saída (epílogo).</p>
+<ul>
+<li><strong>Prólogo</strong> — salva o ponto-base do chamador, estabelece um quadro
+de referência estável e reserva espaço de trabalho na pilha.</li>
+<li><strong>Epílogo</strong> — desfaz exatamente o que o prólogo fez, devolvendo a
+pilha ao estado original antes de retornar.</li>
+</ul>
+<div class="key">
+<strong>Por que isso não é opcional:</strong> se a pilha não for desmontada
+simetricamente, a instrução de retorno volta para um endereço errado e o programa
+quebra. Prólogo e epílogo precisam estar sempre balanceados.</div>
+
+<h2>4. O cuidado com o alinhamento da pilha</h2>
+<p>A convenção de chamada (System V) <strong>exige</strong> que a pilha esteja
+alinhada a 16 bytes no momento de uma chamada. Funções reais assumem esse alinhamento;
+violá-lo causa falhas difíceis de diagnosticar. Por isso o espaço reservado na pilha
+é sempre arredondado para um múltiplo de 16 — não por capricho, mas porque é uma
+regra do ambiente que precisamos respeitar.</p>
+
+<h2>5. Por que salvar os argumentos na pilha antes de tudo</h2>
+<p>Este é o ponto mais sutil do projeto. Os argumentos chegam em registradores numa
+ordem fixa. Mas a ordem em que <code>f</code> os espera pode ser diferente — por
+exemplo, uma constante <code>FIX</code> pode ocupar o primeiro registrador, empurrando
+um argumento recebido para o segundo.</p>
+<div class="box">
+<p><strong>O problema:</strong> se começássemos a preencher os registradores na ordem
+de <code>f</code>, poderíamos <em>sobrescrever</em> um argumento recebido antes de
+usá-lo — perdendo-o para sempre.</p>
+<p><strong>A solução:</strong> antes de mexer em qualquer registrador, a função gerada
+<strong>copia todos os argumentos recebidos para a pilha</strong>. Com os valores
+guardados num lugar seguro, podemos então reorganizar os registradores livremente e
+buscar cada valor de volta na hora certa. É essa decisão que faz a reordenação de
+parâmetros funcionar corretamente.</p>
+</div>
+
+<h2>6. Por que usar um registrador "de passagem"</h2>
+<p>Montar o valor de cada argumento primeiro num registrador de trabalho
+(<code>%rax</code>) e só depois copiá-lo para o registrador final é uma escolha de
+<strong>simplicidade e uniformidade</strong>. Os três casos (<code>PARAM</code>,
+<code>FIX</code>, <code>IND</code>) podem ser tratados da mesma forma — "produza o
+valor aqui" — e a etapa de "entregar no lugar certo" fica isolada e repetível. Isso
+reduz a quantidade de variações de código que precisamos gerar.</p>
+
+<h2>7. Por que o endereço de f é embutido no código</h2>
+<p>O endereço de <code>f</code> só é conhecido em tempo de execução (é um argumento da
+<code>cria_func</code>). Não dá para escrevê-lo como constante no programa-fonte; ele
+precisa ser <strong>gravado dentro do código gerado</strong> na hora. Esse é o mesmo
+princípio que vale para as constantes <code>FIX</code> e os endereços <code>IND</code>:
+cada instrução tem uma <strong>parte fixa</strong> (a operação) e uma <strong>parte
+variável</strong> (o operando) que a <code>cria_func</code> preenche dinamicamente.
+É essa separação que permite gerar código diferente para cada chamada.</p>
+
+<h2>8. Decisões de escopo e de estilo</h2>
+<ul>
+<li><strong>Máximo de 3 parâmetros.</strong> Limitar a 3 mantém tudo no terreno simples
+dos primeiros três registradores de argumento, evitando casos especiais de codificação
+e o trânsito de argumentos pela pilha. Uma verificação inicial protege esse contrato.</li>
+<li><strong>Tabelas de bytes com o assembly ao lado.</strong> As sequências de bytes
+que dependem do registrador de destino ficam em tabelas comentadas com a instrução
+equivalente. Isso documenta a "tradução" e evita repetir bytes mágicos espalhados.</li>
+<li><strong>Pequenas funções auxiliares de emissão.</strong> Centralizar o ato de
+"escrever bytes e avançar a posição" deixa o corpo principal legível como uma sequência
+de blocos (prólogo, preparação, chamada, epílogo), em vez de um amontoado de índices.</li>
+</ul>
+
+<h2>9. Em uma frase</h2>
+<div class="key">
+A <code>cria_func</code> é uma fábrica que escreve, em tempo de execução, o código de
+uma função-trampolim: ela monta um quadro de pilha seguro, guarda os argumentos
+recebidos, coloca em cada registrador o valor certo (recebido, constante ou lido da
+memória) respeitando a convenção de chamada, invoca <code>f</code> e devolve o que
+<code>f</code> retornou — efetivamente criando uma versão especializada de <code>f</code>.
+</div>
+
+</body>
+</html>

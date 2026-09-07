@@ -1,0 +1,21 @@
+O programa imprimiu -3, porque a foo (em temp2.c) muda a variável a (em temp1.c).
+
+Com o nm entendi as letras: T é código (main, foo), D é dado global (a, b) e U é um símbolo
+usado mas não definido no módulo, que é resolvido na ligação.
+
+Trocando int a = 1024 por char a = 1 em temp1.c, o erro foi pego na compilação, por causa do
+conflito com o extern int a do header. Aí vi a importância de incluir o header também onde o
+símbolo é definido.
+
+Trocando o include por extern char a em temp2.c, compilou e ligou, mas o resultado deu errado,
+porque um módulo trata a como int e o outro como char, e o linker não confere tipo.
+
+Com int a = 1 em temp2.c, deu erro de ligação (a definido duas vezes). Com static int a = 1 o
+erro some, porque static deixa o símbolo local ao módulo, então cada um tem o seu a.
+
+Por fim, trocando foo() por b() (sendo b uma variável), o programa deu segfault, pois tentou
+executar o valor de b como código. Mudando b para 0xC3 ele rodou normal, porque 0xC3 é o
+opcode do ret, então a "chamada" volta na hora.
+
+Entendi melhor a diferença entre compilação e ligação e que o linker enxerga só nomes de
+símbolos, não tipos. Usei IA para tirar dúvidas sobre as letras do nm e o opcode 0xC3.

@@ -1,0 +1,8 @@
+Eu perdi a aula do laboratório, então não tive a explicação do professor sobre a atividade.
+Demorei um pouco para entender o que precisava ser feito, mas consegui resolver o primeiro
+exercício sozinho após analisar o código e entender melhor o funcionamento da pilha.
+
+Nos exercícios seguintes, apesar de seguirem a mesma ideia, tive mais dificuldade para compreender como os retornos eram encadeados
+e como passar argumentos para as funções. Por isso, acabei utilizando o chatgpt para tirar dúvidas e entender melhor os conceitos envolvidos.
+
+Sofri um pouco mais consegui entender um pouco sobre overflow, vou estudar à parte para conseguir compreender mais.

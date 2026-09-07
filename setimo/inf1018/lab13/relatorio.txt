@@ -1,0 +1,10 @@
+Eu consegui fazer os primeiros exercícios sem muita dificuldade e entender melhor como uma sequência de bytes pode ser interpretada
+como código de máquina e executada através de um ponteiro para função.
+
+A parte que mais me confundiu foi entender a declaração de ponteiros para função e o cast do vetor de bytes para esse tipo de ponteiro.
+Também demorei um pouco para compreender como a instrução call funciona internamente e por que era necessário calcular um deslocamento para chamar outra função.
+
+Nos exercícios seguintes encontrei alguns problemas de execução, como erros de segmentação (segmentation fault), e tive dificuldade para identificar a causa desses erros.
+Por isso, utilizei IA para tirar dúvidas e entender melhor conceitos relacionados a endereçamento de memória, chamadas de função e execução dinâmica de código.
+
+Tive um pouco mais de dificuldade nesta atividade do que nos laboratórios anteriores, mas acho que consegui compreender a ideia geral
