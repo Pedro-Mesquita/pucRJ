@@ -40,10 +40,18 @@ def carregar(caminho: str, rows: int, cols: int) -> np.ndarray:
     return dados.reshape(rows, cols)
 
 
-def comparar(nome: str, esperado: np.ndarray, obtido: np.ndarray) -> bool:
-    """Compara duas matrizes por erro relativo e imprime um resumo."""
+def comparar(nome: str, esperado: np.ndarray, obtido: np.ndarray,
+             escala: np.ndarray = None) -> bool:
+    """Compara duas matrizes por erro relativo e imprime um resumo.
+
+    `escala`, quando dada, substitui |esperado| no denominador. Para o
+    produto de matrizes usa-se (|A| @ |B|)[i, j]: com entradas em [-1, 1]
+    varios C[i, j] ficam perto de zero por cancelamento e o erro relativo a
+    |C[i, j]| explode sem que haja erro real; a soma dos modulos dos produtos
+    e o limite natural do erro de arredondamento de um produto escalar.
+    """
     # denominador protegido: evita divisao por zero em elementos nulos
-    denom = np.maximum(np.abs(esperado), 1e-30)
+    denom = np.maximum(np.abs(esperado) if escala is None else escala, 1e-30)
     erro_rel = np.abs(esperado - obtido) / denom
     pior = int(erro_rel.argmax())
     i, j = divmod(pior, esperado.shape[1])
@@ -88,9 +96,11 @@ def main() -> None:
         r2 = carregar(args.output2, args.rows1, args.cols2)
         # acumula em float64 para que a referencia seja mais precisa
         # que qualquer uma das implementacoes em C sendo testadas
-        esperado = (a.astype(np.float64) @ b.astype(np.float64)).astype(np.float32)
+        a64, b64 = a.astype(np.float64), b.astype(np.float64)
+        esperado = (a64 @ b64).astype(np.float32)
+        escala = (np.abs(a64) @ np.abs(b64)).astype(np.float32)
         print()
-        tudo_ok &= comparar("matrix_matrix_mult", esperado, r2)
+        tudo_ok &= comparar("matrix_matrix_mult", esperado, r2, escala)
 
     sys.exit(0 if tudo_ok else 1)
 

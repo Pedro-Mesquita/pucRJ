@@ -1,0 +1,7 @@
+# binarios e dados gerados pelos scripts (as entradas grandes passam de 10 GB)
+build/
+data/inputs/*
+!data/inputs/8x8/
+data/outputs/
+
+matrix_lib_test

@@ -1,0 +1,192 @@
+===============================================================================
+ LAB 03 - ANALISE DE DESEMPENHO: THREADS x QUANTIDADE DE THREADS
+===============================================================================
+
+Data da coleta : 10/09/2026 19:09
+Maquina        : 13th Gen Intel(R) Core(TM) i5-1335U
+CPUs logicas   : 12  (2 P-cores/4 threads @4.6GHz + 8 E-cores @3.4GHz)
+Caches         : L1d 48KB por P-core / 32KB por E-core | L2 6.5MB | L3 12MB
+Kernel         : 7.0.0-30-generic
+Compilacao     : gcc -Wall -pthread -o threadN thread.c  (alterando QTDTHREADS)
+Tipo do vetor  : long (8 bytes) - vetor de 10.000 posicoes = 78 KB
+
+METODOLOGIA
+-----------
+  - 50 execucoes de cada executavel, precedidas de 1 execucao de aquecimento
+    descartada.
+  - O tempo medido e o 'tempo de calculo' do proprio programa: intervalo entre
+    as barreiras 'largada' e 'chegada'. NAO inclui pthread_create nem
+    pthread_join, conforme o enunciado.
+  - Todos os tempos em MICROSSEGUNDOS (us).
+
+
+===============================================================================
+ 1. TEMPOS BRUTOS - AS 50 EXECUCOES DE CADA PROGRAMA (us)
+===============================================================================
+
+--- thread4  (4 threads) ---
+    89.0   153.0    20.0   139.0   162.0   159.0    26.0    79.0   157.0   196.0
+   119.0    48.0    92.0     6.0   143.0     4.0     5.0   105.0   131.0    69.0
+   119.0    41.0    61.0   105.0    81.0   132.0    86.0   157.0    42.0   149.0
+     4.0   131.0   147.0     5.0    38.0    57.0   114.0    88.0    71.0    97.0
+   157.0    36.0   107.0    25.0    91.0    91.0    33.0    94.0    68.0    70.0
+
+--- thread8  (8 threads) ---
+     7.0    68.0    82.0    96.0    98.0   103.0   108.0    52.0   103.0   130.0
+   134.0   119.0    73.0   108.0   107.0    89.0   131.0    72.0    61.0    52.0
+    76.0    76.0   110.0    86.0    93.0    92.0    64.0    59.0    80.0    64.0
+    92.0    80.0    71.0    89.0    78.0    80.0    75.0    69.0    77.0    79.0
+    72.0   105.0   117.0   117.0   144.0    36.0    39.0   216.0   122.0   140.0
+
+--- thread16  (16 threads) ---
+   141.0   209.0   143.0   108.0   316.0   237.0   186.0   294.0   173.0   220.0
+   215.0   351.0   144.0   374.0   187.0   155.0   135.0   148.0   247.0    79.0
+   213.0   166.0   148.0   188.0   170.0   200.0   136.0   176.0   149.0   149.0
+   158.0    92.0   203.0   259.0   315.0   139.0   467.0    83.0   241.0   181.0
+   302.0   255.0   301.0   206.0   228.0   298.0   651.0   353.0   249.0   210.0
+
+--- thread32  (32 threads) ---
+   636.0   552.0   891.0   598.0   994.0   567.0   862.0   645.0   637.0  1614.0
+   623.0   579.0   601.0   809.0   102.0   687.0   979.0   698.0   527.0   630.0
+   695.0  1040.0   411.0   354.0   496.0   557.0    52.0   549.0   986.0   659.0
+  1061.0   570.0   964.0   975.0   630.0   673.0   691.0   556.0  1118.0   626.0
+   450.0   594.0   604.0  1088.0   563.0   566.0   614.0   910.0   534.0   645.0
+
+
+===============================================================================
+ 2. RESUMO ESTATISTICO DO TEMPO DE CALCULO (us)
+===============================================================================
+
+PROGRAMA    THREADS       MIN   MEDIANA     MEDIA       MAX    DESVIO
+--------------------------------------------------------------------------
+thread4           4       4.0      91.0      88.0     196.0      50.4
+thread8           8       7.0      86.0      89.8     216.0      32.8
+thread16         16      79.0     203.0     219.0     651.0     100.4
+thread32         32      52.0     630.0     689.2    1614.0     257.3
+
+OBS: a mediana e a medida mais confiavel - media e max sao puxados por
+     execucoes isoladas em que o escalonador atrasou alguma thread.
+
+
+===============================================================================
+ 3. CUSTO NORMALIZADO - TEMPO POR PASSADA SOBRE O VETOR
+===============================================================================
+
+IMPORTANTE: neste programa CADA thread percorre o vetor INTEIRO (10.000
+posicoes). O trabalho NAO e dividido entre elas - ele e REPLICADO:
+
+     trabalho total = QTDTHREADS x 10.000 operacoes
+
+Dobrar o numero de threads DOBRA o trabalho total. Logo, o tempo crescer com
+mais threads e o resultado ESPERADO, e nao sinal de que threads sejam lentas.
+Para comparar de forma justa, divide-se o tempo pelo numero de passadas:
+
+PROGRAMA    THREADS  MEDIANA(us)     us POR PASSADA   EFICIENCIA
+--------------------------------------------------------------------------
+thread4           4         91.0              22.75          47%
+thread8           8         86.0              10.75         100%
+thread16         16        203.0              12.69          85%
+thread32         32        630.0              19.69          55%
+
+EFICIENCIA toma o melhor caso (thread8) como 100%.
+
+
+===============================================================================
+ 4. TEMPO INDIVIDUAL DAS THREADS (us)
+===============================================================================
+
+PROGRAMA    THREADS   MEDIA/WORKER   MAX/WORKER     AMOSTRAS
+--------------------------------------------------------------------------
+thread4           4          60.50        174.0          200
+thread8           8          72.27        210.0          400
+thread16         16          82.89        394.0          800
+thread32         32          57.44        236.0         1600
+
+
+===============================================================================
+ 5. EFEITO SOBRE A CORRECAO (condicao de corrida)
+===============================================================================
+
+PROGRAMA    THREADS      MIN    MEDIANA       MAX   EXECS CORRETAS
+--------------------------------------------------------------------------
+thread4           4        0         25      9999            24/50
+thread8           8        0       7803      9995             2/50
+thread16         16     4050       7922      9998             0/50
+thread32         32     3117       7305      9953             0/50
+
+Numeros = quantas das 10.000 posicoes ficaram diferentes de vetor[0].
+'EXECS CORRETAS' = execucoes em que o vetor terminou integro.
+
+
+===============================================================================
+ 6. NOTA SOBRE O TIPO: TROCA DE int PARA long
+===============================================================================
+
+O valor correto apos N passadas e (4+2)*2^N - 2:
+
+     4 threads :             94
+     8 threads :           1534
+    16 threads :         393214
+    32 threads :    25769803774
+
+Com int (4 bytes, maximo 2.147.483.647) o caso de 32 threads ESTOURAVA: o
+programa imprimia 'valor esperado: -2' e o vetor contia valores negativos.
+Overflow de inteiro com sinal e comportamento indefinido em C, o que
+invalidava a verificacao de correcao nesse caso.
+
+Com long (8 bytes, maximo ~9,2 x 10^18) o valor cabe folgadamente e thread32
+passa a imprimir corretamente 25769803774. O limite passa a ser 60 threads.
+
+EFEITO COLATERAL NO DESEMPENHO: o vetor dobrou de tamanho, de 39 KB para
+78 KB. Isso importa porque:
+   - com int (39 KB) o vetor ainda cabia na L1 de um P-core (48 KB);
+   - com long (78 KB) ele NAO cabe na L1 de nenhum nucleo desta maquina.
+Os acessos passam a ir a L2, e os tempos medianos pioraram cerca de 10-15%
+(ex.: thread32 foi de 559 us para 630 us). E o preco da correcao numerica.
+
+
+===============================================================================
+ 7. CONCLUSOES
+===============================================================================
+
+1) O tempo cresce com o numero de threads (91 -> 86 -> 203 -> 630 us de
+   mediana). Isso NAO e perda de desempenho do mecanismo de threads: como o
+   trabalho e replicado e nao dividido, 32 threads executam 8x mais operacoes
+   que 4 threads.
+
+2) Normalizado por passada, o custo forma uma CURVA EM U:
+        4 threads -> 22,75 us/passada
+        8 threads -> 10,75 us/passada   <-- melhor ponto
+       16 threads -> 12,69 us/passada
+       32 threads -> 19,69 us/passada
+   Ate ~8 threads a maquina absorve o paralelismo e o custo fixo (barreira,
+   despertar das threads) se dilui por mais trabalho util. Depois, inverte.
+
+3) O joelho da curva coincide com o hardware: a maquina tem 12 CPUs logicas.
+   Com 16 e 32 threads ha SOBRESCRICAO - mais threads que nucleos - e elas
+   passam a se revezar, pagando troca de contexto sem ganhar paralelismo.
+
+4) O gargalo real e a MEMORIA COMPARTILHADA, nao a CPU. As N threads escrevem
+   nas MESMAS 10.000 posicoes simultaneamente. Cada escrita invalida a linha
+   de cache nos demais nucleos, que precisam busca-la de novo. Esse trafego de
+   coerencia cresce com o numero de threads e explica por que o custo por
+   passada ja piora antes mesmo de esgotar os nucleos.
+
+5) A VARIABILIDADE cresce com mais threads (desvio 50,4 -> 32,8 -> 100,4 ->
+   257,3 us). Com poucas threads o comportamento e relativamente previsivel;
+   com muitas, o resultado passa a depender fortemente do escalonador.
+
+6) Quanto a CORRECAO: nenhuma configuracao e confiavel, e a chance de acerto
+   cai com mais threads - 24 de 50 execucoes corretas com 4 threads, 2 de 50
+   com 8, e NENHUMA com 16 ou 32. Mais threads = mais sobreposicao = mais
+   atualizacoes perdidas (lost update).
+
+7) A conclusao central do laboratorio: aumentar o numero de threads nao
+   melhora nem o tempo nem a correcao deste programa. O trabalho e replicado
+   (nao ha o que paralelizar) e o acesso ao vetor nao e sincronizado. Para
+   haver ganho real seria preciso DIVIDIR o vetor em faixas disjuntas entre
+   as threads - o que eliminaria a corrida e daria speedup de verdade.
+
+===============================================================================
+ FIM DO RELATORIO
+===============================================================================

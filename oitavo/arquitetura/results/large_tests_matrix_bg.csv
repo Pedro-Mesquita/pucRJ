@@ -1,0 +1,10 @@
+size,funcao,versao,tempo_ms,validacao,wall_s
+1024,scalar_matrix_mult,row,8.149,OK,0.0
+1024,matrix_matrix_mult,row_partial,2769.226,OK,10.1
+2048,scalar_matrix_mult,row,23.209,OK,0.1
+2048,matrix_matrix_mult,row_partial,19832.376,OK,19.9
+4096,scalar_matrix_mult,row,83.116,OK,0.3
+4096,matrix_matrix_mult,row_partial,149304.796,OK,149.6
+8192,scalar_matrix_mult,row,350.877,OK,1.1
+8192,matrix_matrix_mult,row_partial,1158720.19,OK,1160.0
+10000,scalar_matrix_mult,row,499.476,OK,2.7

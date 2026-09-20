@@ -2,7 +2,7 @@
 
 This repository contains **Trabalho 1** for the course **Introdução à Arquitetura de Computadores** at PUC-Rio.
 
-The goal of the assignment is to optimize matrix operations written in C using **Intel Intrinsics**, specifically **AVX/FMA instructions**, and compare their performance against non-vectorized implementations studied in class.
+The goal of the assignment is to optimize matrix operations written in C using **Intel Intrinsics** (AVX; the assignment says "AVX/FMA" but the submitted code uses mul+add, see Decision Log), and compare their performance against non-vectorized implementations studied in class.
 
 The project runs on **Linux** and must be compiled using **GCC**.
 
@@ -42,53 +42,56 @@ Because dimensions are multiples of 8, AVX instructions operating on 8 single-pr
 Use the following organization:
 
 ```text
-trabalho1/
-├── matrix_lib.c
-├── matrix_lib.h
-├── matrix_lib_test.c
+arquitetura/
+├── matrix_lib.c              (entrega final: scalar AVX + matrix AVX mul+add)
+├── matrix_lib.h              (professor, NAO modificar)
+├── matrix_lib_test.c         (professor, NAO modificar)
+├── .gitignore                (build/, data/inputs/* exceto 8x8, data/outputs/)
 │
 ├── benchmarks/
 │   ├── scalar/
-│   │   ├── scalar_column.c
-│   │   ├── scalar_row.c
-│   │   ├── scalar_pointer.c
-│   │   └── scalar_avx.c
+│   │   ├── scalar_col.c        coluna por coluna, indexacao
+│   │   ├── scalar_row.c        linha por linha, indexacao
+│   │   ├── scalar_increment.c  ponteiros incrementais
+│   │   └── scalar_avx.c        AVX, 8 floats por passo (= versao final)
 │   │
 │   └── matrix/
-│       ├── matrix_conventional.c
-│       ├── matrix_row_partial.c
-│       └── matrix_avx_fma.c
+│       ├── matrix_conventional.c  linha x coluna (i -> j -> k)
+│       ├── matrix_matrix.c        somas parciais em linha (i -> k -> j), sem SIMD
+│       ├── matrix_avx.c           somas parciais + AVX mul+add (= versao final)
+│       └── matrix_avx_fma.c       somas parciais + FMA (SO para comparacao no relatorio)
 │
 ├── data/
-│   ├── inputs/
-│   │   ├── 8x8/
-│   │   ├── 16x16/
-│   │   ├── 32x32/
-│   │   ├── 64x64/
-│   │   ├── 128x128/
-│   │   ├── 256x256/
-│   │   ├── 512x512/
-│   │   ├── 1024x1024/
-│   │   └── ...
-│   │
+│   ├── inputs/<R>x<C>/A.dat,B.dat   (quadradas NxN; nao quadradas RxC: A e RxC, B e CxR)
 │   └── outputs/
 │
 ├── results/
-│   ├── scalar_results.csv
-│   ├── matrix_results.csv
+│   ├── iac2/                                   (OFICIAL: copia dos CSVs/logs medidos na IAC2)
+│   ├── scalar_results.csv, scalar_raw.csv      (notebook, obsoleto; nao usar no relatorio)
+│   ├── large_tests.csv, large_tests_matrix_bg.csv  (testes de escala no notebook, NAO sao benchmark)
 │   └── graphs/
 │
 ├── scripts/
-│   ├── generate_matrices.py
-│   ├── run_scalar_benchmarks.sh
-│   ├── run_matrix_benchmarks.sh
-│   └── generate_graphs.py
+│   ├── generate_matrices.py       gera A/B; aceita N ou RxC; escreve em blocos
+│   ├── validate_results.py        compara saidas com numpy
+│   ├── test_scalar_versions.sh    correcao + equivalencia das versoes escalares
+│   ├── test_matrix_versions.sh    correcao + equivalencia das versoes de matriz
+│   ├── run_large_tests.py         testes de correcao em escala (ate o limite da maquina)
+│   ├── generate_matrices.c        gerador sem numpy (para a IAC2); mesmo formato
+│   ├── bench_common.sh            funcoes comuns dos benchmarks (bash+awk, sem Python)
+│   ├── run_scalar_benchmarks.sh   benchmark escalar: col row increment avx
+│   ├── run_matrix_benchmarks.sh   benchmark de matrizes: conventional matrix avx [avx_fma]
+│   └── (graficos: Pedro faz por conta propria; nao criar generate_graphs.py)
 │
 ├── report/
-│   └── relatorio.pdf
+│   └── relatorio.pdf              (a fazer)
 │
 └── CLAUDE.md
 ```
+
+The file names above are the ones actually in the repository. Earlier drafts of
+this document used `scalar_column.c`, `scalar_pointer.c`, `matrix_row_partial.c`
+and `matrix_avx_fma.c` for the final AVX version; those names are obsolete.
 
 This structure separates:
 
@@ -116,11 +119,17 @@ It must contain:
 
 ```text
 scalar_matrix_mult
-→ Intel Intrinsics / AVX
+→ Intel Intrinsics / AVX (same code as benchmarks/scalar/scalar_avx.c)
 
 matrix_matrix_mult
-→ row-oriented partial sums + Intel Intrinsics / AVX/FMA
+→ row-oriented partial sums + Intel Intrinsics / AVX with
+  _mm256_mul_ps + _mm256_add_ps (same code as benchmarks/matrix/matrix_avx.c)
 ```
+
+**Decision (2026-09-19): the final `matrix_matrix_mult` does NOT use FMA.**
+See "Decision Log" at the end of this file for the reasoning. Do not switch it
+back to `_mm256_fmadd_ps` unless the professor explicitly confirms FMA is
+expected.
 
 Do not permanently replace the root `matrix_lib.c` with a baseline implementation during benchmarking.
 
@@ -252,7 +261,7 @@ benchmarks/scalar/
 
 The required versions are:
 
-## 1. `scalar_column.c`
+## 1. `scalar_col.c`
 
 Non-vectorized implementation that indexes the matrix while traversing it **column by column**.
 
@@ -292,7 +301,7 @@ This implementation benefits from sequential memory access.
 
 ---
 
-## 3. `scalar_pointer.c`
+## 3. `scalar_increment.c`
 
 Non-vectorized implementation studied in class that traverses the linear `values` vector by incrementing a pointer or linear position.
 
@@ -365,7 +374,7 @@ The resulting matrix dimensions are:
 A.rows × B.cols
 ```
 
-The final implementation must use the optimized algorithm discussed in class together with **Intel Intrinsics / AVX/FMA**.
+The final implementation must use the optimized algorithm discussed in class together with **Intel Intrinsics / AVX** (`_mm256_mul_ps` + `_mm256_add_ps`; no FMA — see Decision Log).
 
 ---
 
@@ -406,7 +415,7 @@ Because `B` is stored row-major, this causes non-sequential memory access.
 
 ---
 
-## 2. `matrix_row_partial.c`
+## 2. `matrix_matrix.c` (row-oriented partial sums)
 
 Non-vectorized optimized version using **partial sums and row-oriented traversal**.
 
@@ -425,11 +434,13 @@ This version should demonstrate the performance impact of improving memory local
 
 ---
 
-## 3. `matrix_avx_fma.c`
+## 3. `matrix_avx.c`
 
-Optimized row-oriented implementation using **Intel Intrinsics / AVX/FMA**.
+Optimized row-oriented implementation using **Intel Intrinsics / AVX**
+(`_mm256_mul_ps` + `_mm256_add_ps`). This is the version that goes into the
+final `matrix_lib.c`.
 
-It should use the same partial-sum idea as `matrix_row_partial.c`, but vectorize the inner loop.
+It uses the same partial-sum idea as `matrix_matrix.c`, but vectorizes the inner loop.
 
 Conceptually:
 
@@ -441,15 +452,18 @@ for each row i of A
         update consecutive elements of C[i]
 ```
 
-AVX should operate on groups of 8 `float` values.
+AVX operates on groups of 8 `float` values. The accumulation is done as a
+separate multiply and add so that the result is bit-identical to the scalar
+versions and to the reference inside `check_mult_errors()`.
 
-FMA should be used when appropriate for operations equivalent to:
+The root `matrix_lib.c` uses this strategy for its final `matrix_matrix_mult`.
 
-```text
-C = A * B + C
-```
+## 4. `matrix_avx_fma.c` (comparison only, not submitted)
 
-The root `matrix_lib.c` should use this strategy for its final `matrix_matrix_mult`.
+Same as `matrix_avx.c` but with `_mm256_fmadd_ps`. Kept only to measure and
+discuss FMA in the report (single rounding, ~12% faster at 2048 in `-O0`,
+diverges from `check_mult_errors()` on near-zero elements). It is NOT the
+submitted implementation.
 
 ---
 
@@ -462,8 +476,10 @@ conventional row × column
 vs
 row-oriented partial sums
 vs
-row-oriented partial sums + AVX/FMA
+row-oriented partial sums + AVX (mul+add)
 ```
+
+Optionally add the FMA variant as a fourth series to support the FMA discussion.
 
 It is NOT necessary to implement a separate:
 
@@ -514,7 +530,15 @@ data/inputs/
 └── 1024x1024/
 ```
 
-Each directory may contain the binary files needed as matrices A and B.
+Each directory contains `A.dat` and `B.dat`. For a non-square directory `RxC`,
+`A` is R×C and `B` is C×R, so that `A × B` is well defined
+(`matrix_lib_test -r R -c C -C R`). Non-square inputs exist for correctness
+tests only; benchmarks use square matrices.
+
+`generate_matrices.py` writes in row blocks (a 24000×24000 `uniform()` would
+need a 4.6 GB float64 intermediate) and uses a fixed seed per size, so files
+are reproducible byte-for-byte. Do not change the seed formula for square
+sizes: the large inputs already on disk (up to 24000×24000, 11 GB) depend on it.
 
 Use the same input matrices when comparing implementations at a given size.
 
@@ -554,6 +578,17 @@ Possible larger scalar benchmarks include:
 Matrix multiplication is significantly more expensive, so do not assume the same maximum size is practical.
 
 Determine the largest reasonable matrix size through actual execution.
+
+What is already known from actual runs on the test machine (i5-1335U, 15 GB
+RAM, `-O0`), from `results/large_tests*.csv`:
+
+* Scalar: all versions run and validate up to 10000×10000 in seconds.
+  Inputs for 16384, 20000 and 24000 are generated (24000 needs ~7 GB in the
+  test program) but were not run yet.
+* Matrix product, row partial sums: 4096 → 149 s, 8192 → 1159 s (19 min).
+  10000 was started and cancelled; extrapolation is ~35 min. Conventional
+  will be much slower. The practical ceiling for the matrix benchmark is a
+  time decision, not a memory one.
 
 Do not fabricate results for sizes that were not tested.
 
@@ -616,7 +651,7 @@ results/matrix_results.csv
 Suggested format:
 
 ```csv
-size,conventional,row_partial,avx_fma
+size,conventional,row_partial,avx
 8,...
 16,...
 32,...
@@ -685,8 +720,9 @@ Responsible for benchmarking:
 
 ```text
 matrix_conventional
-matrix_row_partial
-matrix_avx_fma
+matrix_matrix       (row partial sums)
+matrix_avx
+matrix_avx_fma      (optional)
 ```
 
 using equivalent inputs and compilation parameters.
@@ -763,8 +799,8 @@ scalar column / scalar AVX
 scalar row / scalar AVX
 scalar pointer / scalar AVX
 
-matrix conventional / matrix AVX-FMA
-matrix row-partial / matrix AVX-FMA
+matrix conventional / matrix AVX
+matrix row-partial / matrix AVX
 ```
 
 Do not claim a speedup until the corresponding benchmark has actually been executed.
@@ -795,7 +831,7 @@ A useful matrix multiplication graph should contain three series:
 ```text
 conventional
 row partial sums
-AVX/FMA
+AVX (mul+add)
 ```
 
 Typical axes:
@@ -820,7 +856,7 @@ Before benchmarking:
 1. Verify scalar multiplication results.
 2. Verify conventional matrix multiplication results.
 3. Verify row-partial matrix multiplication results.
-4. Verify AVX/FMA results.
+4. Verify AVX results (and the FMA variant, if measured).
 5. Compare optimized outputs against a known-correct implementation.
 6. Only analyze performance after correctness has been established.
 
@@ -828,7 +864,33 @@ Floating-point calculations may produce very small differences due to operation 
 
 Do not use exact floating-point equality for independent implementations if operation ordering differs.
 
-Use an appropriate tolerance when writing auxiliary validation tools.
+Use an appropriate tolerance when writing auxiliary validation tools. For the
+matrix product, the relative error must be measured against
+`(|A| @ |B|)[i,j]` (sum of absolute terms), not against `|C[i,j]|`: with
+inputs in [-1, 1] many `C[i,j]` are near zero by cancellation and the
+relative error to `|C[i,j]|` explodes without any real error. Both
+`validate_results.py` and `run_large_tests.py` already do this. The float64
+numpy reference is the authoritative correctness criterion.
+
+Known limitation of the professor's `check_mult_errors()`: it compares against
+a sequential float32 mul+add sum with relative tolerance 1e-4 against
+`|C[i,j]|`. Any implementation whose rounding differs from that reference
+(e.g. FMA) triggers "Multiplication error" on near-zero elements for n ≥ 128
+with random mixed-sign data, even though both are within float32 rounding of
+the true value. The submitted mul+add versions are bit-identical to that
+reference and pass it. Treat the professor's check as informational for
+non-identical roundings; it is still the check the grader will see, which is
+why the submitted code matches it exactly.
+
+Bit-exactness results (verified with `cmp`): all four scalar versions produce
+identical output; `matrix_conventional`, `matrix_matrix` and `matrix_avx`
+produce identical output. Only `matrix_avx_fma` differs in bits.
+
+For the scalar product the professor's check is O(n²) and fine at any size.
+For the matrix product it is the naive O(n³) algorithm in `-O0` and takes
+hours at 10000×10000; `run_large_tests.py` kills the process after
+`result2` is written (line `[221]`) and validates with numpy instead. The
+timing is printed before that point and is unaffected.
 
 Do not modify the professor-provided test program solely to accommodate an incorrect result.
 
@@ -862,16 +924,25 @@ Validate relevant conditions such as:
 * invalid result dimensions, depending on the original library behavior;
 * memory allocation failures, if allocation occurs inside the library.
 
-Preserve any existing error-code conventions already defined in:
+Error codes actually used (identical across all benchmark versions and the
+final `matrix_lib.c`; every error also prints `[ERROR <line>] ...` to stderr):
 
 ```text
-matrix_lib.h
-matrix_lib.c
+scalar_matrix_mult
+  1  m->rows != r->rows
+  2  m->cols != r->cols
+  3  m or r is NULL
+  4  m->values or r->values is NULL
+
+matrix_matrix_mult
+  1  m1->cols != m2->rows
+  2  r->rows != m1->rows or r->cols != m2->cols
+  3  m1, m2 or r is NULL
+  4  values of m1, m2 or r is NULL
 ```
 
-Do not invent a new incompatible error-handling system before inspecting the original implementation.
-
-Document all error codes used in the final report.
+Checks are performed in the order 3, 4, 1, 2 (null pointers first). Keep new
+code consistent with this table and document it in the report.
 
 ---
 
@@ -893,11 +964,33 @@ Public functions and important helpers should use comments similar to:
  */
 ```
 
-Document non-obvious AVX/FMA logic.
+Document non-obvious AVX logic.
 
 Avoid comments that merely repeat obvious C statements.
 
 ---
+
+# Code Conventions (decided during development)
+
+* Loop indices and dimension variables are `unsigned long int`, the same type
+  as `rows`/`cols` in the struct. Do not use `int` for them (user decision).
+* Parameter names follow `matrix_lib.h`: `(float scalar_value, matrix *m, matrix *r)`
+  and `(matrix *m1, matrix *m2, matrix *r)`.
+* AVX code uses `_mm256_loadu_ps` / `_mm256_storeu_ps` (no alignment
+  requirement; no penalty on the 32-byte-aligned buffers from
+  `aligned_alloc(32)` in the test program). Document this in a comment.
+* AVX loops cover `n - n % 8` elements and are followed by a scalar remainder
+  loop that never runs with the assignment's matrices; keep it, it is cheap
+  and makes the function correct for any size.
+* Every `.c` has a header comment with the error-code table and Doxygen
+  comments on `scalar_matrix_mult` / `matrix_matrix_mult`. Comments are in
+  Portuguese without accents (ASCII), like the rest of the code.
+* Scalar benchmark files have a stub `matrix_matrix_mult` that returns 1 (the
+  test program exits with code 10 after the scalar part — scripts rely on
+  this). Matrix benchmark files have a stub `scalar_matrix_mult` that returns 0.
+* Benchmarks and tests compile with `-Wall -std=c11 -mfma -O0 -I.`: `-O0` so
+  that the measured difference comes from the written code, not from GCC
+  auto-vectorization. Always the same flags for every version.
 
 # Development Rules for Claude
 
@@ -906,13 +999,13 @@ When working on this repository:
 1. Never modify `matrix_lib_test.c`.
 2. Never modify `matrix_lib.h` unless I explicitly request it.
 3. Keep the final assignment implementation in the root `matrix_lib.c`.
-4. The root `matrix_lib.c` must contain the final AVX/FMA implementation.
+4. The root `matrix_lib.c` must contain the final AVX implementation (mul+add, no FMA).
 5. Keep baseline benchmark implementations under `benchmarks/`.
 6. Do not permanently overwrite `matrix_lib.c` with benchmark versions.
 7. Preserve the function signatures required by the professor.
 8. Preserve compatibility with the professor's GCC compilation command.
 9. Use Intel Intrinsics for the final optimized arithmetic functions.
-10. Prefer AVX/FMA and process 8 `float` elements per vector when applicable.
+10. Prefer AVX and process 8 `float` elements per vector when applicable. Do not use FMA in the submitted code (see Decision Log).
 11. Take row-major memory layout and cache locality into account.
 12. Do not add timing code to `matrix_lib.c`.
 13. Do not modify timing logic in `matrix_lib_test.c`.
@@ -931,6 +1024,9 @@ When working on this repository:
 26. Keep benchmark automation under `scripts/`.
 27. Do not treat auxiliary benchmark source files as final submission files.
 28. When uncertain about a requirement, prefer the most conservative interpretation of the assignment.
+29. Do not start long benchmark runs while functions are still being written; the agreed order is: implement everything → assemble `matrix_lib.c` → benchmark → graphs → report.
+30. Long runs go in the background with output flushed (`python3 -u`), and must be cancellable; report only results that finished.
+31. Generated inputs above 4096 are large (up to 2.3 GB per file). Delete large outputs after validating them (`run_large_tests.py` does this from 4096 up).
 
 ---
 
@@ -951,9 +1047,9 @@ Files:
 
 ```text
 benchmarks/scalar/
-├── scalar_column.c
+├── scalar_col.c
 ├── scalar_row.c
-├── scalar_pointer.c
+├── scalar_increment.c
 └── scalar_avx.c
 ```
 
@@ -966,7 +1062,8 @@ Required implementations:
 ```text
 1. conventional row × column, no SIMD
 2. row-oriented partial sums, no SIMD
-3. row-oriented partial sums + AVX/FMA
+3. row-oriented partial sums + AVX (mul+add)   ← submitted
+(4. row-oriented partial sums + FMA, optional, comparison only)
 ```
 
 Files:
@@ -974,8 +1071,9 @@ Files:
 ```text
 benchmarks/matrix/
 ├── matrix_conventional.c
-├── matrix_row_partial.c
-└── matrix_avx_fma.c
+├── matrix_matrix.c          (row partial sums)
+├── matrix_avx.c             (final AVX version, mul+add)
+└── matrix_avx_fma.c         (FMA variant, comparison only)
 ```
 
 ---
@@ -1023,3 +1121,130 @@ The report should contain:
 * final conclusions.
 
 All conclusions about performance must be based on actual measurements.
+
+---
+
+# Decision Log
+
+Decisions taken with the user during development, with the reasoning, so they
+are not re-litigated.
+
+## 2026-09-19 — File names
+
+Files are named `scalar_col.c`, `scalar_row.c`, `scalar_increment.c`,
+`scalar_avx.c`, `matrix_conventional.c`, `matrix_matrix.c`, `matrix_avx.c`,
+`matrix_avx_fma.c` (user's choice). `run_scalar_benchmarks.sh` still has
+`VERSOES=(column row pointer avx)` and must be updated to
+`(col row increment avx)` when the benchmark phase starts.
+
+## 2026-09-19 — `unsigned long int` for indices
+
+First written as `unsigned long int`, changed to `int` on request, then
+changed back on request ("siga os valores da struct"). Final: match the struct.
+
+## 2026-09-19 — mul+add instead of FMA in the submitted `matrix_matrix_mult`
+
+Facts established by measurement:
+
+* `_mm256_fmadd_ps` is ~12% faster than `_mm256_mul_ps + _mm256_add_ps` at
+  2048×2048 in `-O0` (4125–4261 ms vs 4641–4832 ms, 3 runs); equal within
+  noise at 1024.
+* Both are within float32 rounding of the float64 truth (verified on the
+  flagged elements: FMA closer in 2 of 4 cases, farther in 2).
+* FMA output differs in bits from the scalar versions; mul+add is
+  bit-identical to them and to the reference in `check_mult_errors()`.
+* With random inputs in [-1, 1], `check_mult_errors()` prints
+  "Multiplication error" for the FMA version on ~1 near-zero element per
+  matrix for n ≥ 128. Its own reference has relative error up to 9.5e-4 vs
+  the true value there, above its 1e-4 tolerance; the criterion is simply
+  too strict for cancelled elements.
+
+What the assignment says: "instruções vetoriais (AVX/FMA) usando a biblioteca
+Intel Intrinsics" and each function "deve usar as instruções vetoriais
+disponibilizadas na biblioteca Intel Intrinsics"; compile with `-mfma`. It
+does not mandate the FMA instruction; `-mfma` also implies `-mavx` in GCC and
+may be there only to make 256-bit intrinsics compile.
+
+Decision (user): submit mul+add. Zero risk of the grader seeing an error
+message from the professor's own test program outweighs the ~12% and the
+hint from the flag. Keep `matrix_avx_fma.c` as a measured variant and write
+the FMA section of the report around this comparison ("what worked / what
+did not"). If the professor confirms FMA is expected, the change is one line
+in `matrix_lib.c` and `matrix_avx.c`.
+
+## 2026-09-19 — Scale tests cancelled
+
+`run_large_tests.py` was run for scalar (8 → 10000, all three non-AVX
+versions, all exact) and matrix row-partial (8 → 8192 validated; 10000
+cancelled by the user). Findings worth keeping for the report, not yet
+benchmarked with repetitions:
+
+* `scalar_col` at 8192 (3648 ms) was slower than at 10000 (1713 ms): a
+  32 KiB stride (8192 × 4 B) maps every element of a column to the same cache
+  set (power-of-two aliasing).
+* `scalar_increment` beat `scalar_row` up to 2048 but lost at 4096/8192 in a
+  single run; at those sizes the loop is memory-bound and one run is noisy.
+  Let the median of repetitions decide.
+
+Data from these runs is in `results/large_tests.csv` and
+`results/large_tests_matrix_bg.csv`; it is not benchmark data.
+
+## 2026-09-19 — Benchmark machine: IAC2, not the notebook
+
+All report numbers come from `iac2.inf.puc-rio.br` (i5-12400, 6 P-cores,
+L2 1.25 MB/core, L3 18 MB, 31 GB RAM, gcc 13.3, Ubuntu 24.04, idle when
+measured). It has no numpy/pip/venv, so everything that runs there is bash +
+C: `scripts/generate_matrices.c`, `bench_common.sh`, `run_*_benchmarks.sh`,
+and the test scripts fall back to the professor's checks when `import numpy`
+fails. Pedro types every remote command himself; Claude only gives the
+commands. Results are copied back with rsync into `results/iac2/`.
+
+Correctness on IAC2 (test_scalar_versions / test_matrix_versions, professor's
+checks): all versions pass; all scalar versions bit-identical; conventional,
+row-partial and AVX (mul+add) bit-identical.
+
+### Scalar benchmark on IAC2 — DONE (results/iac2/scalar_results.csv)
+
+Sizes 8 → 40000 (16 sizes, 5 reps each, 321 raw rows). Medians in ms at 40000:
+col 27811, row 3946, increment 2805, avx 1792 → speedups vs AVX 15.5×, 2.2×,
+1.57×. Findings for the report:
+
+* Power-of-two aliasing in `col`: 8192 (1477 ms) is 2× slower than 10000
+  (732 ms); 16384 (6304) vs 20000 (4043); 32768 (27078) ≈ 40000 (27811).
+* Below 512 all four versions tie (L1/L2, fixed overhead dominates); 1024 has
+  a noise inversion (row < avx) — mention, do not hide.
+* AVX vs increment only ~1.6×: scalar product is memory-bound and `-O0`
+  spills every `__m256` to the stack.
+
+### Matrix benchmark on IAC2 — DONE (results/iac2/matrix_results.csv)
+
+Repetitions: 5 for 8 → 2048; 3 for 4096; 8192: conventional 1 (96 min per
+run), row-partial 3, avx 3; 16384: row-partial 1 (76 min) and avx 1 (31 min),
+conventional not measured (~14 h). Logs: matrix_bench_1..4.log, 0 warnings.
+
+Medians (ms): 2048 → 66037 / 9271 / 3713; 4096 → 647077 / 73946 / 29197;
+8192 → 5764321 / 580371 / 233557; 16384 → — / 4541246 / 1878897
+(conventional / row-partial / avx).
+
+Speedups: conv/avx 17.8× (2048), 22.2× (4096), 24.7× (8192) — still growing
+with N because the conventional keeps degrading (8.9× per doubling vs the
+ideal 8×). row-partial/avx flat at ~2.5× from 1024 up (2.4× at 16384).
+conv/row-partial 7.1× → 8.8× → 9.9×. Row-partial and AVX scale 7.8–8.0× per
+doubling all the way to 16384 (ideal N³).
+
+Findings for the report:
+
+* Conventional jumps 21× from 512 to 1024 (N³ predicts 8×): B (4 MB) leaves
+  L2, column stride 4 KiB misses every access; 10.4× from 1024 to 2048 (B =
+  16 MB ≈ L3), 9.8× and 8.9× after that.
+* Most of the gain is loop order, not SIMD: row-partial alone is 7–10× over
+  conventional; AVX adds a further 2.5× (compute-bound, unlike the scalar
+  product where AVX gave only 1.6×).
+* Below 128 conventional ties or wins (all in L1, register accumulation); at
+  8×8 AVX is slowest (setup cost).
+* The ceiling for the matrix product is time, not memory (16384 conventional
+  would take ~14 h); the scalar ceiling (40000) is memory (~19 GB touched of
+  31 GB). State both in the report.
+
+Benchmark phase is finished. Remaining: graphs (Pedro does them himself from
+results/iac2/*.csv) and the report.

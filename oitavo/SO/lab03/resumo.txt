@@ -1,0 +1,60 @@
+Objetivo:
+O objetivo central deste trabalho é comparar duas formas de obter concorrência sobre um mesmo vetor: processos criados com fork, usando memória compartilhada, e threads criadas com pthread_create. Em ambos os casos, N trabalhadores percorrem um vetor de 10.000 posições aplicando vetor[j] = vetor[j]*2 + 2, e o programa mede o tempo de cálculo e verifica se o vetor terminou íntegro.
+
+
+Como foi dividido:
+fork.c: Versão com 8 processos filhos operando sobre um vetor em memória compartilhada.
+thread.c: Versão com N threads (4, 8, 16 ou 32) operando sobre um vetor global.
+desempenho.txt: Relatório com 50 execuções de cada versão de thread.
+
+Compilação e execução
+
+gcc -Wall -o fork fork.c
+gcc -Wall -pthread -o thread thread.c
+./fork > fork.txt
+./thread > thread.txt
+
+
+Funcionamento do fork:
+
+O pai cria um segmento de memória compartilhada (shmget/shmat), inicializa o vetor com 4 e cria 8 filhos com fork. Cada filho avisa que está pronto e espera a largada, dada pelo pai apenas quando todos estão prontos, para que o tempo medido não inclua o fork. Cada filho percorre o vetor inteiro aplicando a operação; o pai espera todos terminarem, recolhe-os com wait, verifica o vetor e libera a memória. Se as 8 passadas fossem serializadas, cada posição terminaria com 1534.
+
+Exemplo da saída (fork):
+
+tempo de calculo        : 0.000145 s
+menor valor             : 1534
+maior valor             : 1534
+posicoes != vetor[0]    : 0 de 10000
+
+Nessa execução as passadas acabaram serializadas e o vetor terminou íntegro, o que não é garantido.
+
+
+Funcionamento do thread:
+
+Aqui não é preciso memória compartilhada: como as threads vivem no mesmo espaço de endereçamento, o vetor é uma variável global. A sincronização usa duas barreiras do pthread: largada, para o cálculo começar com todas as threads prontas, e chegada, para marcar o fim. Cada thread percorre o vetor inteiro; a principal registra o tempo, faz pthread_join e verifica o vetor. O vetor foi declarado como long porque, com 32 threads, o valor esperado não cabe em int.
+
+Exemplo da saída (thread, 4 threads):
+
+tempo de calculo        : 0.000078 s
+menor valor             : 22
+maior valor             : 94
+posicoes != vetor[0]    : 1969 de 10000
+
+O vetor não terminou íntegro porque a operação não é atômica (lê, calcula e escreve): quando duas threads leem a mesma posição antes de qualquer escrita, uma atualização é perdida (lost update).
+
+
+Resultados:
+
+Nas 50 execuções de cada versão de thread, a mediana do tempo de cálculo foi de 91 microssegundos com 4 threads, 86 com 8, 203 com 16 e 630 com 32. Como cada thread percorre o vetor inteiro, o trabalho é replicado, então o tempo crescer é esperado; o custo por passada forma uma curva em U com o melhor ponto em 8 threads, pois a partir de 16 há mais threads que CPUs e elas passam a se revezar. O vetor terminou íntegro em 24 das 50 execuções com 4 threads, em 2 com 8 e em nenhuma com 16 ou 32.
+
+Comparando 50 execuções de fork (8 processos) com 50 de thread8, o fork teve mediana de 72 microssegundos, porém com muito mais variação (máximo de 913), e terminou íntegro em 28 execuções; o thread8 teve mediana de 112 microssegundos, mais uniforme (máximo de 278), e terminou íntegro em 11.
+
+
+Comparação entre fork e thread:
+
+Com fork, cada processo tem o seu próprio espaço de endereçamento, então o vetor precisa de um segmento compartilhado criado explicitamente e a largada foi implementada à mão com contadores atômicos; além disso, cada fork copia o contexto do processo. Com threads, o vetor é uma variável global, a barreira do pthread resolve a sincronização e a criação é mais barata. Nos tempos, o fork foi tipicamente mais rápido mas muito mais variável, e terminou íntegro mais vezes: como cada processo percebe a largada em um momento diferente, é mais comum que as passadas acabem serializadas por acaso, enquanto a barreira acorda as threads praticamente juntas, aumentando a sobreposição. Em ambos os casos há condição de corrida, e o resultado correto só é obtido com sincronização explícita. Por fim, com fork a falha de um filho não afeta os demais, enquanto com threads uma falha derruba o processo inteiro.
+
+
+Conclusão:
+
+Os resultados confirmaram, na prática, as duas formas de compartilhar um vetor entre trabalhadores concorrentes: memória compartilhada entre processos e variável global entre threads. As threads são mais simples de programar e têm tempos mais uniformes; os processos exigem mais trabalho, mas oferecem isolamento. Em ambas as abordagens o experimento evidenciou o mesmo problema de concorrência: atualizações são perdidas e o vetor termina inconsistente na maior parte das execuções, piorando conforme aumenta o número de trabalhadores. Aumentar o número de threads ou processos não melhora nem o tempo nem a correção, porque o trabalho é replicado e o acesso ao vetor não é sincronizado.
