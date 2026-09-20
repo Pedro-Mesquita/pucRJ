@@ -1,0 +1,8 @@
+1.
+Basicamente eu movi o endereço para o primeiro elemento de s1 para o registrador de 1° argumento (rdi).
+Depois usei o call para chamar a função system e em seguinda passei o valor de 0 para o registrador de retorno.
+
+2.
+Consegui fazer sem problemas, use os registadores rbx e r12 (callee saved) para guardarem os valores da lista
+de números e para armazenar o valor da iteração. Acho que a parte que tive que pensar mais um pouco foi
+em como pegar o valor retornado pela função filtro, mas ai lembrei do registrador de retorno (rax).

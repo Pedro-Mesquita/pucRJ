@@ -1,0 +1,8 @@
+i = importado - U
+f = importado - U
+
+g = exportado - T
+strlen - U
+malloc - U
+strcat - U
+strcpy - U

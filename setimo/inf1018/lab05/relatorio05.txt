@@ -1,0 +1,67 @@
+1.
+int b[2], representação do armazenamento: [a][a][a][a][b][b][b][b].
+short a[2][3], representação do armazenamento: [a][a] [a][a] [a][a]   [a][a] [a][a] [a][a].
+
+A função dump mostrou isso:
+b: 
+0x7ffcc01940d4 - 00
+0x7ffcc01940d5 - 00
+0x7ffcc01940d6 - 00
+0x7ffcc01940d7 - 00
+0x7ffcc01940d8 - 01
+0x7ffcc01940d9 - 00
+0x7ffcc01940da - 00
+0x7ffcc01940db - 00
+a: 
+0x7ffcc01940dc - 00
+0x7ffcc01940dd - 00
+0x7ffcc01940de - 01
+0x7ffcc01940df - 00
+0x7ffcc01940e0 - 02
+0x7ffcc01940e1 - 00
+0x7ffcc01940e2 - 03
+0x7ffcc01940e3 - 00
+0x7ffcc01940e4 - 04
+0x7ffcc01940e5 - 00
+0x7ffcc01940e6 - 05
+0x7ffcc01940e7 - 00
+
+
+2.
+resultado do print do dump:
+x: 
+0x5774d6b77010 - a4
+0x5774d6b77011 - a3
+0x5774d6b77012 - a2
+0x5774d6b77013 - a1
+0x5774d6b77014 - b2
+0x5774d6b77015 - b1
+0x5774d6b77016 - 00
+0x5774d6b77017 - 00
+0x5774d6b77018 - c4
+0x5774d6b77019 - c3
+0x5774d6b7701a - c2
+0x5774d6b7701b - c1
+
+sizeof(x): 12
+
+o "burado" entre o short e o próximo inteiro é por conta do padding. Para ficar sempre alinhado com o tipo
+de (int no caso) são adicionado 2 paddings para a posição do próximo inteiro ser um múltiplo de 4.
+
+
+3.
+a: struct x1 na memória [c1][][][][i][i][i][i][c2][][][]
+
+b: struct x2 na memória [l][l][l][l][l][l][l][l][c][][][][][][][]
+
+c: strcut x3 na memória [i][i][i][i][c1][c2][][]
+
+d: strcut x4 na memória [l][l][l][l][l][l][l][l][c][][][][][][][][c][][][][][][][]
+
+e: strcut x5 na memória [c1][c2][c3]
+
+f: struct x6 na memória [s1][s1][][][i][i][i][i][c][c][c][][s2][s2]
+
+g: union x7 na memória [c][c][c][c][c][][][]
+
+h: union x8 na memória [c][c][c][c][c][]

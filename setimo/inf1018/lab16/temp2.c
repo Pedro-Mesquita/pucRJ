@@ -1,7 +1,7 @@
-#include "temp1.h"
+extern char a;
 #include "temp2.h"
 
-int b = 0xC3;
+int b = 10;
 
 void foo (void) {
   a = -3;

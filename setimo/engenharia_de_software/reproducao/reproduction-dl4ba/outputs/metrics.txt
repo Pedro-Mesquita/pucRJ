@@ -1,0 +1,40 @@
+============================================================
+REPRODUCAO SIMPLIFICADA — dl4ba (GCC dataset)
+============================================================
+
+[1] Carregando dataset...
+    Linhas originais : 2103
+    Apos remover NaN : 2103
+    Apos filtrar texto vazio : 2103
+    Apos filtrar classes com <10 amostras : 1987
+    Numero de desenvolvedores (classes) : 36
+
+[2] Preparacao
+    Total de amostras usadas : 1987
+    Total de classes         : 36
+    Folds de cross-validation: 10
+    Max features TF-IDF      : 20000
+
+[3] Executando 10-fold cross-validation...
+    Fold  1: Top-1=0.5226  Top-5=0.7337  Top-10=0.8342  MRR=0.6196
+    Fold  2: Top-1=0.5025  Top-5=0.7437  Top-10=0.8543  MRR=0.6140
+    Fold  3: Top-1=0.5528  Top-5=0.7538  Top-10=0.8492  MRR=0.6512
+    Fold  4: Top-1=0.5327  Top-5=0.7739  Top-10=0.8744  MRR=0.6377
+    Fold  5: Top-1=0.5126  Top-5=0.7337  Top-10=0.8442  MRR=0.6098
+    Fold  6: Top-1=0.5427  Top-5=0.7538  Top-10=0.8492  MRR=0.6417
+    Fold  7: Top-1=0.5377  Top-5=0.7387  Top-10=0.8392  MRR=0.6350
+    Fold  8: Top-1=0.4899  Top-5=0.7626  Top-10=0.8485  MRR=0.6114
+    Fold  9: Top-1=0.4899  Top-5=0.7475  Top-10=0.8687  MRR=0.6119
+    Fold 10: Top-1=0.5455  Top-5=0.7626  Top-10=0.8788  MRR=0.6466
+
+[4] Resultados (media ± desvio padrao — 10 folds)
+    Top-1  Accuracy : 0.5229 ± 0.0219
+    Top-5  Accuracy : 0.7504 ± 0.0127
+    Top-10 Accuracy : 0.8541 ± 0.0142
+    MRR             : 0.6279 ± 0.0153
+    Tempo total     : 28.8s
+
+    Amostras usadas : 1987
+    Classes         : 36
+    Modelo          : TF-IDF (max_features=20000, ngram=(1,2)) + Logistic Regression (C=1.0)
+    Validacao       : 10-fold stratified CV

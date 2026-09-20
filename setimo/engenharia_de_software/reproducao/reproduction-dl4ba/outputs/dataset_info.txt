@@ -1,0 +1,62 @@
+============================================================
+INSPECAO DO DATASET: gcc_data.csv
+============================================================
+
+[1] Formato do dataset
+    Linhas    : 2103
+    Colunas   : 5
+    Colunas   : ['Bug_ID', 'Assignee', 'Summary', 'Description', 'Status']
+
+[2] Tipos de dados
+    Bug_ID               int64
+    Assignee             object
+    Summary              object
+    Description          object
+    Status               object
+
+[3] Valores ausentes por coluna
+    Bug_ID                   0 ausentes (0.0%)
+    Assignee                 0 ausentes (0.0%)
+    Summary                  0 ausentes (0.0%)
+    Description              0 ausentes (0.0%)
+    Status                   0 ausentes (0.0%)
+
+[4] Desenvolvedores (Assignees)
+    Total de desenvolvedores unicos : 82
+    Max bugs por desenvolvedor      : 264
+    Min bugs por desenvolvedor      : 1
+    Mediana bugs por desenvolvedor  : 8
+
+[5] Top 10 desenvolvedores com mais bugs
+    Tobias Burnus                        264 bugs
+    Benjamin Kosnik                      257 bugs
+    Alexandre Petit-Bianco               159 bugs
+    Paolo Bonzini                        110 bugs
+    David Edelsohn                        99 bugs
+    Alexandre Oliva                       95 bugs
+    Alan Modra                            89 bugs
+    David Malcolm                         70 bugs
+    Andrew Haley                          67 bugs
+    Bryce McKinlay                        57 bugs
+
+[6] Distribuicao de tamanho do campo Summary
+    Media    : 57.3 caracteres
+    Mediana  : 55.0 caracteres
+    Max      : 182 caracteres
+
+[7] Distribuicao de tamanho do campo Description
+    Media    : 1217.0 caracteres
+    Mediana  : 746.0 caracteres
+    Max      : 31966 caracteres
+
+[8] Valores unicos do campo Status
+    RESOLVED          FIXED        2078
+    CLOSED          FIXED            20
+    VERIFIED          FIXED           5
+
+[9] Desenvolvedores com ao menos 10 bugs: 36 de 82
+    Desenvolvedores com ao menos 5 bugs : 44 de 82
+
+============================================================
+Inspecao concluida.
+============================================================

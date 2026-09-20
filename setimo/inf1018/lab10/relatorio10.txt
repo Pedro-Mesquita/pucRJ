@@ -1,0 +1,6 @@
+Nenhuma das questões eu consegui fazer sozinho, quando eu não salvava os valores corretos na stack eu errava alguma atribuição nos registradores. Para resolver eu tive que pedir ajuda do chatgpt.
+
+Percebi que o meu principal erro foi não entender bem quando eu precisava preservar os valores dos registradores, principalmente nos casos em que havia chamada de função dentro de loop.
+Eu acabava usando registradores que eram sobrescritos depois do call, o que fazia o programa se comportar de forma incorreta.
+
+Fiquei com a sensação ruim pois eu chegava perto mas sempre faltava um entendimento melhor em algum ponto. No geral, após finalizar o lab, entendi mais sobre pilhas.

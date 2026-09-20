@@ -1,0 +1,41 @@
+1.
+Para definir os valores usados no array S2 e os dois valores usados no printf foram criada as labels na seção
+.data.
+
+na seção .text foi definido a função main
+
+onde "char *pc = S2;" virou "movq  $S2, %r12"
+
+O while ele funciona assim:
+o "cmpb  $0, (%r12)" verifica se o conteúdo da memória apontado por r12 é diferente de 0.
+Se for, printa o valor e depois adiciona 1 no endereço que r12 guarda.
+Em seguida volta para a label L1 e, somente quando for igual, ele printa o zero e finaliza a função
+
+2.
+Para implementar a modificação no código assembly eu só adicionei mais duas verificações:
+a primeira se for igual a 123 ai pula para L3 (que é a parte de adicionar 1 no ponteiro de r12 e volta para o L1)
+e a segunda que faz a mesma coisa, só muda que valida se é igual a 125.
+L1:
+  cmpb  $0, (%r12)  /* if (*pc == 0) ? */
+  je  L2          /* goto L2 */
+  cmpb $123, (%r12)
+  je L3
+  cmpb $125, (%r12)
+  je L3
+  movsbl  (%r12), %eax    /* eax = *r12 (estendendo o byte para 32 bits */
+
+/*************************************************************/
+/* este trecho imprime o valor de %eax (estraga %eax)  */
+  movq    $Sf, %rdi    /* primeiro parametro (ponteiro)*/
+  movl    %eax, %esi   /* segundo parametro  (inteiro) */
+  movl  $0, %eax
+  call  printf       /* chama a funcao da biblioteca */
+/*************************************************************/
+L3:
+  addq  $1, %r12  /* r12 += 1; */
+  jmp  L1         /* goto L1; */
+
+
+3. Foi "tranquilo" de fazer dado que o enunciado deu o comando que fazia essa operação (imull).
+
+4. Eu tive bastante dificuldade, fiquei travado na parte de calcular endereço e ficava dando segmentation fault. Tive que pedir ajuda da IA pra conseguir finalizar o programa.

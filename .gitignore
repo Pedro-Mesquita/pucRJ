@@ -11,3 +11,6 @@ oitavo/arquitetura/data/inputs/*/
 
 # Arquivos de lock do LibreOffice
 .~lock.*#
+
+# Datasets SRAG (grandes demais para o GitHub)
+setimo/INFLUD*.csv

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#define MAX 10
+
+struct X {
+  int val;
+  struct X *next;
+};
+
+int add2 (struct X *x);
+
+int main (void) {
+
+  struct X x[MAX];
+  int i;
+
+  for (i=0;i<MAX;i++)
+    x[i].val = i;
+
+  for (i=MAX-1;i>1;i--)
+    x[i].next = &(x[i-1]);
+  x[0].next = &(x[MAX-1]);
+  x[1].next = NULL;
+
+  printf ("resultado de add: %d\n", add2(x));
+  return 0;
+}
