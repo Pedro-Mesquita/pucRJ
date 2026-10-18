@@ -18,12 +18,13 @@ O escalar e validado em blocos (np.memmap) para nao carregar 3 matrizes de
 2 GB na memoria de uma vez; as saidas de tamanhos >= APAGAR_SAIDA_A_PARTIR
 sao apagadas depois de validadas para nao encher o disco.
 
+Os tamanhos sao fixos (TAMANHOS, 8 ate 4000 x 4000), numa unica execucao.
+
 Uso:
-    python3 scripts/run_large_tests.py                      # tamanhos padrao
-    python3 scripts/run_large_tests.py 8 64 4096            # tamanhos escolhidos
-    python3 scripts/run_large_tests.py --skip-matrix 16384  # so o escalar
-    python3 scripts/run_large_tests.py --scalar col,increment 1024
-    python3 scripts/run_large_tests.py --scalar "" 8 64      # so o produto
+    python3 scripts/run_large_tests.py
+    python3 scripts/run_large_tests.py --skip-matrix          # so o escalar
+    python3 scripts/run_large_tests.py --scalar col,increment
+    python3 scripts/run_large_tests.py --scalar ""            # so o produto
 
 Binarios (compilados pelo proprio script, mesmas flags do benchmark):
     build/test_<versao>          <- benchmarks/scalar/scalar_<versao>.c
@@ -51,11 +52,11 @@ FONTES_MATRIX = {
     "row_partial": ROOT / "benchmarks" / "matrix" / "matrix_matrix.c",
 }
 
-TAMANHOS_PADRAO = [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 10000]
+TAMANHOS = [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4000]
 SCALAR = 2.5
 TOL = 1e-4
 LIMITE_CHECK_C = 2048          # daqui em diante pula o check_mult_errors()
-APAGAR_SAIDA_A_PARTIR = 4096   # daqui em diante apaga o .dat de saida
+APAGAR_SAIDA_A_PARTIR = 4000   # daqui em diante apaga o .dat de saida
 BLOCO_LINHAS = 512             # linhas por bloco na validacao do escalar
 
 
@@ -148,7 +149,6 @@ def validar_matriz(a: np.memmap, b: np.memmap, o2: pathlib.Path, n: int) -> tupl
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("sizes", nargs="*", type=int, default=TAMANHOS_PADRAO)
     p.add_argument("--scalar", default="col,row,increment", metavar="V1,V2",
                    help="versoes de scalar_matrix_mult (vazio = nenhuma)")
     p.add_argument("--matrix", default=",".join(FONTES_MATRIX), metavar="V1,V2",
@@ -160,10 +160,6 @@ def main() -> None:
     args = p.parse_args()
     args.scalar = [v for v in args.scalar.split(",") if v]
     args.matrix = [] if args.skip_matrix else [v for v in args.matrix.split(",") if v]
-
-    for n in args.sizes:
-        if n % 8:
-            sys.exit(f"tamanho invalido: {n} (precisa ser multiplo de 8)")
 
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     BUILD.mkdir(exist_ok=True)
@@ -186,7 +182,7 @@ def main() -> None:
             w.writerow(["size", "funcao", "versao", "tempo_ms", "validacao",
                         "erro_rel_max", "wall_s"])
 
-        for n in args.sizes:
+        for n in TAMANHOS:
             entrada = INPUTS / f"{n}x{n}"
             if not (entrada / "A.dat").is_file():
                 print(f"== {n}x{n}: gerando entradas")

@@ -1,0 +1,96 @@
+LAB SEMÁFOROS - INF1316 - SISTEMAS OPERACIONAIS
+Aluno: Pedro Mesquita
+
+============================================================
+1. OBJETIVO
+============================================================
+
+O objetivo do laboratório é observar, na prática, o problema de condição de
+corrida (race condition) entre tarefas concorrentes que acessam uma mesma
+região de memória, e depois resolvê-lo com semáforos. Para isso, um vetor
+global de 10.000 posições, inicializado com 10, é alterado por 100 threads
+(API pthreads): as tarefas de número ímpar subtraem o próprio número de todas
+as posições e as de número par somam o próprio número. Ao final, compara-se o
+conteúdo do vetor com o valor esperado para identificar as posições em que a
+concorrência provocou erro.
+
+============================================================
+2. COMO FOI DIVIDIDO
+============================================================
+
+O trabalho foi dividido em dois programas independentes, um para cada item do
+enunciado:
+
+- sem_semaforo.c (item 1): versão sem nenhuma sincronização. As 100 threads
+  alteram o vetor livremente. Ao final, o programa lista cada posição cujo
+  valor ficou diferente do esperado e informa o total de posições com erro.
+
+- semaforo.c (item 2): mesma lógica, mas com um semáforo POSIX (semaphore.h)
+  protegendo a atualização de cada posição do vetor. As tarefas continuam
+  executando de forma concorrente; apenas a operação sobre uma posição é feita
+  com exclusão mútua.
+
+Os dois programas têm a mesma estrutura: inicializaVetor() preenche o vetor
+com 10, rotina_da_tarefa() é a função executada por cada thread (recebe o
+número da tarefa e soma ou subtrai esse valor de todas as posições) e main()
+cria as threads, espera todas terminarem com pthread_join() e faz a
+verificação do resultado.
+
+============================================================
+3. COMPILAÇÃO E EXECUÇÃO
+============================================================
+
+Os programas foram compilados com o gcc no Linux, usando a flag -pthread
+(o enunciado cita "-pthreads", mas a flag correta do gcc é -pthread):
+
+    gcc -Wall -pthread sem_semaforo.c -o sem_semaforo
+    gcc -Wall -pthread semaforo.c -o semaforo
+
+Para executar:
+
+    ./sem_semaforo
+    ./semaforo
+
+Como a versão sem semáforo pode imprimir milhares de linhas (uma por posição
+com erro), é prático redirecionar a saída para um arquivo:
+
+    ./sem_semaforo > saida.txt
+
+Como o erro de concorrência não acontece em toda execução, a versão sem
+semáforo deve ser executada várias vezes, por exemplo:
+
+    for i in $(seq 10); do ./sem_semaforo | tail -1; done
+
+============================================================
+4. EXPLICAÇÃO DO FUNCIONAMENTO
+============================================================
+
+Cada posição começa com 10 e recebe -1 +2 -3 +4 ... -99 +100, ou seja, 50
+pares que valem +1 cada. Sem erro de concorrência, todas as posições devem
+terminar com 60; qualquer valor diferente indica uma alteração perdida.
+
+Sem semáforo (sem_semaforo.c), o erro acontece porque vetor[i] = vetor[i] +
+id_tarefa não é atômica: o processador lê o valor, soma e grava. Se duas
+threads leem a mesma posição antes de uma delas gravar, a segunda gravação
+sobrescreve a primeira. Em 8 execuções, o número de posições com erro foi
+1923, 0, 41, 220, 42, 0, 0 e 0. Trecho de uma execução:
+
+    vetor[4108] = 93 (esperado 60)
+    vetor[4109] = 97 (esperado 60)
+    vetor[4110] = 97 (esperado 60)
+    ...
+    Total de posicoes com erro de concorrencia: 45 de 10000
+
+As posições erradas aparecem em blocos contíguos, que são os trechos em que
+duas threads passaram pelas mesmas posições ao mesmo tempo. O erro é
+intermitente porque cada thread percorre o vetor muito rápido, muitas vezes
+antes de a próxima ser criada; se ele não aparecer, basta aumentar
+NUM_THREADS.
+
+Com semáforo (semaforo.c), foi usado sem_init(&semaforo, 0, 1): o 0 indica
+compartilhamento entre threads do mesmo processo e o valor inicial 1 faz o
+semáforo funcionar como mutex. A atualização de cada posição fica entre
+sem_wait() e sem_post(), então nenhuma alteração é perdida. O semáforo
+envolve cada posição, e não o laço inteiro, para manter a concorrência entre
+as tarefas pedida no enunciado. Em todas as execuções o resultado foi 0
+posições com erro.

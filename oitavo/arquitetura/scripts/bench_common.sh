@@ -11,10 +11,16 @@
 # nao da auto-vetorizacao do GCC (com -O3 o compilador gera AVX sozinho nas
 # versoes "row", o que invalidaria a comparacao). Mesma flag para todas.
 CFLAGS="-Wall -std=c11 -mfma -O0 -I."
-REPS="${REPS:-5}"
+# repeticoes de cada versao em cada tamanho (escalar e matriz)
+REPS="${REPS:-10}"
+
+# Tamanhos (N x N) medidos pelos dois benchmarks, numa unica execucao do
+# script. Lista fixa: todas as versoes sao medidas nos mesmos tamanhos; o
+# maior e 4000 x 4000.
+TAMANHOS=(8 16 32 64 128 256 512 1024 2048 4000)
 SCALAR="${SCALAR:-2.5}"
 # a partir deste tamanho a saida .dat e apagada depois de cada execucao
-APAGAR_SAIDA_A_PARTIR="${APAGAR_SAIDA_A_PARTIR:-4096}"
+APAGAR_SAIDA_A_PARTIR="${APAGAR_SAIDA_A_PARTIR:-4000}"
 
 # Garante que data/inputs/<N>x<N>/A.dat existe; gera com o gerador em C se nao.
 garantir_entrada() {   # $1 = N
@@ -23,15 +29,6 @@ garantir_entrada() {   # $1 = N
     [ -x build/generate_matrices ] || gcc -O2 -o build/generate_matrices scripts/generate_matrices.c
     echo "   gerando ${1}x${1}"
     build/generate_matrices "$1" > /dev/null
-}
-
-# Tamanhos: os passados na linha de comando ou todos os quadrados em data/inputs.
-descobrir_tamanhos() {
-    if [ $# -gt 0 ]; then
-        printf '%s\n' "$@"
-    else
-        ls data/inputs 2>/dev/null | sed -n 's/^\([0-9]\+\)x\1$/\1/p' | sort -n
-    fi
 }
 
 # Mediana de numeros lidos do stdin (um por linha).
@@ -56,7 +53,7 @@ agregar() {
             printf '\n'
         done
     } > "$out"
-    echo; echo "$out gravado (mediana de ate $REPS execucoes):"; column -s, -t "$out"
+    echo; echo "$out gravado (mediana das repeticoes):"; column -s, -t "$out"
 }
 
 # Roda o programa de teste uma vez e imprime o tempo pedido, ou nada se falhou.

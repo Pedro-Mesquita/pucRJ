@@ -66,10 +66,8 @@ arquitetura/
 │   └── outputs/
 │
 ├── results/
-│   ├── iac2/                                   (OFICIAL: copia dos CSVs/logs medidos na IAC2)
-│   ├── scalar_results.csv, scalar_raw.csv      (notebook, obsoleto; nao usar no relatorio)
-│   ├── large_tests.csv, large_tests_matrix_bg.csv  (testes de escala no notebook, NAO sao benchmark)
-│   └── graphs/
+│   ├── iac2/            (OFICIAL: CSVs/logs medidos na IAC2 -- vazio ate a nova rodada)
+│   └── graphs/          (gerado por generate_graphs.py)
 │
 ├── scripts/
 │   ├── generate_matrices.py       gera A/B; aceita N ou RxC; escreve em blocos
@@ -81,7 +79,7 @@ arquitetura/
 │   ├── bench_common.sh            funcoes comuns dos benchmarks (bash+awk, sem Python)
 │   ├── run_scalar_benchmarks.sh   benchmark escalar: col row increment avx
 │   ├── run_matrix_benchmarks.sh   benchmark de matrizes: conventional matrix avx [avx_fma]
-│   └── (graficos: Pedro faz por conta propria; nao criar generate_graphs.py)
+│   └── generate_graphs.py         graficos do relatorio a partir de results/iac2/*.csv
 │
 ├── report/
 │   └── relatorio.pdf              (a fazer)
@@ -548,47 +546,19 @@ This is important for fair benchmarks and correctness validation.
 
 # Matrix Sizes
 
-Tests should range from very small matrices to matrices as large as the testing machine can reasonably execute.
-
-Start with:
-
-```text
-8
-16
-32
-64
-128
-256
-512
-1024
-2048
-```
-
-Increase further when the machine allows it.
-
-Scalar multiplication has linear complexity relative to the number of matrix elements and can probably be tested using substantially larger matrices.
-
-Possible larger scalar benchmarks include:
+**Decision (2026-09-22): the largest matrix is 4000×4000** (first set to
+10000, then lowered because 10 reps of the conventional product at 8192+
+would take ~50 h), for both the
+scalar and the matrix product. The size list is fixed in one place,
+`TAMANHOS` in `scripts/bench_common.sh` (and the same list in
+`run_large_tests.py`):
 
 ```text
-4096 × 4096
-8192 × 8192
+8 16 32 64 128 256 512 1024 2048 4000
 ```
 
-Matrix multiplication is significantly more expensive, so do not assume the same maximum size is practical.
-
-Determine the largest reasonable matrix size through actual execution.
-
-What is already known from actual runs on the test machine (i5-1335U, 15 GB
-RAM, `-O0`), from `results/large_tests*.csv`:
-
-* Scalar: all versions run and validate up to 10000×10000 in seconds.
-  Inputs for 16384, 20000 and 24000 are generated (24000 needs ~7 GB in the
-  test program) but were not run yet.
-* Matrix product, row partial sums: 4096 → 149 s, 8192 → 1159 s (19 min).
-  10000 was started and cancelled; extrapolation is ~35 min. Conventional
-  will be much slower. The practical ceiling for the matrix benchmark is a
-  time decision, not a memory one.
+The scripts take no size arguments: one invocation measures every size
+(no per-size runs anymore).
 
 Do not fabricate results for sizes that were not tested.
 
@@ -701,7 +671,9 @@ The generated files must use the binary format expected by `matrix_lib_test.c`.
 
 ## `run_scalar_benchmarks.sh`
 
-Responsible for running the scalar multiplication benchmark implementations for all configured matrix sizes.
+Runs the four scalar versions over every size in `TAMANHOS` (REPS=10 by
+default) in a single invocation; no size arguments. Rewrites
+`results/scalar_raw.csv` and `results/scalar_results.csv` from scratch.
 
 It should automate, where possible:
 
@@ -727,18 +699,28 @@ matrix_avx_fma      (optional)
 
 using equivalent inputs and compilation parameters.
 
+Single invocation over every size in `TAMANHOS`; no size arguments; CSVs are
+rewritten from scratch. **Decision (2026-09-22): 10 repetitions of every
+version at every size, scalar and matrix** (`REPS=10` in `bench_common.sh`;
+the old 5/3/1 per-size scheme is gone). Estimated from the IAC2 medians:
+~2 h 15 in total, almost all at 4000 (conventional is ~85% of it), so run it with `nohup`.
+
 ---
 
 ## `generate_graphs.py`
 
-Responsible for reading:
+Reads (read-only) `results/iac2/{scalar,matrix}_results.csv` and
+`results/iac2/{scalar,matrix}_raw.csv` and writes to `results/graphs/`:
+`scalar_tempo`, `scalar_speedup`, `matrix_tempo`, `matrix_speedup`,
+`variabilidade` (each as PNG + vector PDF) and `scalar_stats.csv` /
+`matrix_stats.csv` (n, min, median, max, spread per version/size).
+Time graphs are log-log with one tick per measured size; speedup graphs are
+linear with a dashed line at 1 and two panels so the small ratios (~2x) are not
+squashed by the large ones (~25x). Colors/markers are fixed per version.
+Dependencies: matplotlib + numpy only (no pandas).
 
-```text
-results/scalar_results.csv
-results/matrix_results.csv
-```
-
-and generating the figures required by the report.
+Decision (2026-09-21): Pedro first tried LibreOffice Calc, then asked for
+Python; this script replaced that. Never write anything into `results/iac2/`.
 
 Generated graphs should be stored under:
 
@@ -1026,7 +1008,7 @@ When working on this repository:
 28. When uncertain about a requirement, prefer the most conservative interpretation of the assignment.
 29. Do not start long benchmark runs while functions are still being written; the agreed order is: implement everything → assemble `matrix_lib.c` → benchmark → graphs → report.
 30. Long runs go in the background with output flushed (`python3 -u`), and must be cancellable; report only results that finished.
-31. Generated inputs above 4096 are large (up to 2.3 GB per file). Delete large outputs after validating them (`run_large_tests.py` does this from 4096 up).
+31. The largest input is 4000×4000 (~61 MB per file). Outputs from 4000 up are deleted after each run (`bench_common.sh`, `run_large_tests.py`).
 
 ---
 
@@ -1186,8 +1168,7 @@ benchmarked with repetitions:
   single run; at those sizes the loop is memory-bound and one run is noisy.
   Let the median of repetitions decide.
 
-Data from these runs is in `results/large_tests.csv` and
-`results/large_tests_matrix_bg.csv`; it is not benchmark data.
+The data from these runs was deleted on 2026-09-22 (see below).
 
 ## 2026-09-19 — Benchmark machine: IAC2, not the notebook
 
@@ -1203,48 +1184,43 @@ Correctness on IAC2 (test_scalar_versions / test_matrix_versions, professor's
 checks): all versions pass; all scalar versions bit-identical; conventional,
 row-partial and AVX (mul+add) bit-identical.
 
-### Scalar benchmark on IAC2 — DONE (results/iac2/scalar_results.csv)
+## 2026-09-22 — Old benchmark deleted; new benchmark DONE
 
-Sizes 8 → 40000 (16 sizes, 5 reps each, 321 raw rows). Medians in ms at 40000:
-col 27811, row 3946, increment 2805, avx 1792 → speedups vs AVX 15.5×, 2.2×,
-1.57×. Findings for the report:
+The first IAC2 benchmark (scalar 8 → 40000, matrix 8 → 16384, 5/3/1 reps)
+was deleted at the user's request together with its graphs, the notebook
+results and the inputs above 2048. Its numbers must NOT be used in the report.
 
-* Power-of-two aliasing in `col`: 8192 (1477 ms) is 2× slower than 10000
-  (732 ms); 16384 (6304) vs 20000 (4043); 32768 (27078) ≈ 40000 (27811).
-* Below 512 all four versions tie (L1/L2, fixed overhead dominates); 1024 has
-  a noise inversion (row < avx) — mention, do not hide.
-* AVX vs increment only ~1.6×: scalar product is memory-bound and `-O0`
-  spills every `__m256` to the stack.
+New run on IAC2, 2026-09-22 17:28–18:29, one chained invocation
+(test_scalar_versions → test_matrix_versions → run_scalar → run_matrix),
+log in `results/iac2/bench_all.log`. Sizes 8 → 4000, 10 reps of every version
+at every size (400 scalar + 300 matrix raw rows, complete). Both correctness
+suites passed (professor's checks, numpy absent); all scalar versions and
+conventional/row-partial/AVX byte-identical; 0 warnings. Graphs regenerated
+the same day with `scripts/generate_graphs.py`. Remaining: the report.
 
-### Matrix benchmark on IAC2 — DONE (results/iac2/matrix_results.csv)
-
-Repetitions: 5 for 8 → 2048; 3 for 4096; 8192: conventional 1 (96 min per
-run), row-partial 3, avx 3; 16384: row-partial 1 (76 min) and avx 1 (31 min),
-conventional not measured (~14 h). Logs: matrix_bench_1..4.log, 0 warnings.
-
-Medians (ms): 2048 → 66037 / 9271 / 3713; 4096 → 647077 / 73946 / 29197;
-8192 → 5764321 / 580371 / 233557; 16384 → — / 4541246 / 1878897
-(conventional / row-partial / avx).
-
-Speedups: conv/avx 17.8× (2048), 22.2× (4096), 24.7× (8192) — still growing
-with N because the conventional keeps degrading (8.9× per doubling vs the
-ideal 8×). row-partial/avx flat at ~2.5× from 1024 up (2.4× at 16384).
-conv/row-partial 7.1× → 8.8× → 9.9×. Row-partial and AVX scale 7.8–8.0× per
-doubling all the way to 16384 (ideal N³).
+Medians (ms), size: col / row / increment / avx
+  2048: 75.6 / 11.1 / 7.82 / 5.13      4000: 102.7 / 39.9 / 28.4 / 18.4
+Medians (ms), size: conventional / row-partial / avx
+  1024: 4014 / 1373 / 464   2048: 53624 / 9436 / 3795   4000: 188802 / 69748 / 28482
 
 Findings for the report:
 
-* Conventional jumps 21× from 512 to 1024 (N³ predicts 8×): B (4 MB) leaves
-  L2, column stride 4 KiB misses every access; 10.4× from 1024 to 2048 (B =
-  16 MB ≈ L3), 9.8× and 8.9× after that.
-* Most of the gain is loop order, not SIMD: row-partial alone is 7–10× over
-  conventional; AVX adds a further 2.5× (compute-bound, unlike the scalar
-  product where AVX gave only 1.6×).
-* Below 128 conventional ties or wins (all in L1, register accumulation); at
-  8×8 AVX is slowest (setup cost).
-* The ceiling for the matrix product is time, not memory (16384 conventional
-  would take ~14 h); the scalar ceiling (40000) is memory (~19 GB touched of
-  31 GB). State both in the report.
-
-Benchmark phase is finished. Remaining: graphs (Pedro does them himself from
-results/iac2/*.csv) and the report.
+* Power-of-two effect dominates the column-wise versions. Conventional grows
+  only 3.5× from 2048 to 4000 although N³ predicts 7.45×; `col` only 1.36×
+  where N² predicts 3.8×. At 2048 the column stride (8 KiB) maps the column
+  onto few cache sets; 4000 (stride 16000 B) does not. Hence the speedup
+  curves peak at 2048 and fall at 4000 (conv/avx 14.1× → 6.6×, col/avx
+  14.8× → 5.6×). This is real, not noise (spread at 2048/4000 < 18%).
+  All other sizes are powers of two, so 4000 is the only non-aliased point.
+* Row-wise versions follow the ideal: row-partial 7.4× and AVX 7.5× from
+  2048 to 4000 (N³ = 7.45×).
+* row-partial/avx stable at 2.5–3.1× from 256 up (2.45× at 4000): AVX is the
+  gain on top of loop order; conv/row-partial 2.9× (1024), 5.7× (2048), 2.7× (4000).
+* Scalar: avx vs increment 1.5×, vs row 2.2× at 2048/4000 (memory-bound,
+  `-O0` spills `__m256`). 1024 has an inversion (row ≈ increment ≈ avx) inside
+  a 60–90% spread: noise.
+* Variability: below 2048 the spread (max-min)/median reaches 50–225%
+  (conventional 1024: runs from 2.6 s to 7.6 s); from 2048 up it is ≤ 18%
+  (≤ 11% for the matrix product). Report medians and say this.
+* Below 64 conventional ties or wins; at 8×8 AVX and row-partial are slower
+  than conventional (fixed overhead).
