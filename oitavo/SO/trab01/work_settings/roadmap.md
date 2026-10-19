@@ -61,11 +61,11 @@ Os processos são controlados com `SIGSTOP`/`SIGCONT`.
 - [x] 0. Estrutura do projeto
 - [x] 1. Aplicação Ai sem syscall
 - [x] 2. Kernel mínimo + InterControllerSim (IRQ0)
-- [ ] 3. Kernel cria os apps parados
-- [ ] 4. Round-robin com IRQ0 (decide B: PC)
-- [ ] 5. Syscall e bloqueio (decide o roteiro de syscalls)
-- [ ] 6. IRQ1 e fila de D1 (decide C: modelo de E/S)
-- [ ] 7. Término e encerramento (decide D)
+- [x] 3. Kernel cria os apps parados
+- [x] 4. Round-robin com IRQ0 (decide B: PC)
+- [x] 5. Syscall e bloqueio (decide o roteiro de syscalls)
+- [x] 6. IRQ1 e fila de D1 (decide C: modelo de E/S)
+- [x] 7. Término e encerramento (decide D)
 - [ ] 8. Logs e cenários de teste
 - [ ] 9. Relatório
 - [ ] 10. Ensaio
@@ -204,7 +204,7 @@ de 1 a 5 sem buracos.
 - se o PC vai junto no `sigval` da syscall.
 
 **Mão na massa:**
-1. **App:** no PC do roteiro, faça `sigqueue(getppid(), SIG_SYS_R ou SIG_SYS_W, valor)` e
+1. **App:** no PC do roteiro, faça `kill(getppid(), SIG_SYS_R ou SIG_SYS_W)` e
    **não avance o PC** até ser retomado. O app continua rodando entre mandar o sinal e levar
    o `SIGSTOP`. Uma forma simples de esperar é `pause()` em loop até o kernel liberar.
 2. **Kernel:** o handler com `SA_SIGINFO` guarda `si_pid` e R/W numa pequena fila (podem

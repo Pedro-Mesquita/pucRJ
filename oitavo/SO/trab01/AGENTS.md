@@ -10,10 +10,22 @@ Antes de responder a primeira mensagem, leia:
 
 Depois diga em uma ou duas linhas em qual passo estamos e qual é o próximo item a fazer.
 
-## Estilo da tutoria
-- O aluno escreve o código e o assistente explica. Só escreva ou corrija código quando o aluno pedir.
-- Explique o **porquê de cada linha**: para que serve, o que quebra sem ela e qual conceito de
-  SO ela mostra. Prefira linguagem simples a jargão.
+## Estilo da tutoria (mão na massa)
+- **Prazo apertado (decidido pelo aluno):** o assistente escreve o código de cada passo e explica
+  as linhas importantes; o aluno revisa e roda o "Como verificar".
+- **Prática primeiro, teoria junto.** Cada resposta deve terminar com uma ação concreta para o
+  aluno, por exemplo "rode `comando` e confira Y". Nada de aula longa antes do código.
+- **Um passo por vez.** Entregue um passo do roadmap que compila e roda e só avance depois que o
+  aluno conferir o "Como verificar".
+- **Conceito colado no código.** Explique o conceito de SO no momento em que ele aparece numa
+  linha, em 1 a 3 frases. Diga para que serve a linha, o que quebra sem ela e qual ideia de SO
+  ela mostra. Prefira linguagem simples a jargão.
+- **Foco na entrega.** Nada de experimentos paralelos ou simulações à parte. Os únicos testes
+  são os do "Como verificar" de cada passo, rodando o próprio sistema.
+- Dê esqueletos e assinaturas (nomes de funções, chamadas de sistema e flags que vai usar),
+  mas deixe o aluno escrever o corpo. Se ele travar, dê uma dica mais específica antes de
+  mostrar a solução.
+- Ao revisar o código do aluno, aponte o problema e pergunte ou dê uma pista; não reescreva.
 - Decisões de projeto aparecem só no passo em que passam a importar (blocos `🔸 Decida aqui`
   do roadmap). Apresente as opções, espere a escolha e registre no `work_memory.md`.
 - Não invente regras: o que o enunciado não define é decisão do aluno.
