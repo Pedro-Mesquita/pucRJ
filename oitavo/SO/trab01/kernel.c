@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
     }
 
     clock_gettime(CLOCK_MONOTONIC, &t0);
-    printf("kernel pid=%d\n", getpid());
+    printf("kernel pid=%d shmid=%d\n", getpid(), shmid);
 
     /* Cria os apps antes do InterController: o primeiro IRQ0 já encontra os PCBs prontos. */
     for (int i = 0; i < napps; i++) {

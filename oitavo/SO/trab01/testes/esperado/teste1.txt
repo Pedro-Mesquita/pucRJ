@@ -1,0 +1,47 @@
+Teste 1 — Um processo em E/S e prioridade de quem volta da E/S
+Comando: ./kernel 6:2R 6 6
+Cenários do roteiro: (a) um processo faz E/S e os outros continuam;
+                     (d) IRQ1 e IRQ0 juntos, e quem sai da E/S roda antes.
+
+Configuração
+  A1: MAX=6, syscall(D1, R) no PC 2
+  A2: MAX=6, sem syscall
+  A3: MAX=6, sem syscall
+
+O que deve acontecer
+  - t=0..2: rodízio A1 → A2 → A3, uma iteração por time slice. Cada processo
+    começa 1 s depois do anterior.
+  - t=3: A1 faz a iteração 2 e pede R. Ele é parado na hora, vai para D1, e a CPU
+    passa para A2 no mesmo instante, sem esperar o IRQ0.
+  - t=3..6: só A2 e A3 se alternam. A1 não executa, e o PC dele fica em 2.
+  - t=6: o IRQ0 chega primeiro e dá a CPU para A3. Alguns ms depois, o IRQ1(R)
+    termina a E/S de A1, que entra na FRENTE da fila (READY=[A1 A2]), à frente de
+    A2, que acabou de sair por time slice.
+  - t=7: A1 roda antes de A2. Sem a prioridade, a fila seria [A2 A1] e A1 só
+    rodaria em t=8.
+  - t=14: A2 faz a última iteração e termina no começo do seu slice. A CPU passa
+    na hora para A3 e depois para A1, que estavam a poucos ms do fim da iteração
+    5 e fazem a iteração 6 (a última iteração não dorme). Os três terminam com
+    PC = 6.
+
+Linha do tempo esperada (t em segundos inteiros; o log real mostra décimos)
+t=0 INICIO | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=0/6 A2=0/6 A3=0/6
+t=1 IRQ0 | RUN=A2 | READY=[A3 A1] | D1=[] | PC: A1=1/6 A2=0/6 A3=0/6
+t=2 IRQ0 | RUN=A3 | READY=[A1 A2] | D1=[] | PC: A1=1/6 A2=1/6 A3=0/6
+t=3 IRQ0 | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=1/6 A2=1/6 A3=1/6
+t=3 SYS(R) | RUN=A2 | READY=[A3] | D1=[A1:R] | PC: A1=2/6 A2=1/6 A3=1/6
+t=4 IRQ0 | RUN=A3 | READY=[A2] | D1=[A1:R] | PC: A1=2/6 A2=2/6 A3=1/6
+t=5 IRQ0 | RUN=A2 | READY=[A3] | D1=[A1:R] | PC: A1=2/6 A2=2/6 A3=2/6
+t=6 IRQ0 | RUN=A3 | READY=[A2] | D1=[A1:R] | PC: A1=2/6 A2=3/6 A3=2/6
+t=6 IRQ1(R) | RUN=A3 | READY=[A1 A2] | D1=[] | PC: A1=2/6 A2=3/6 A3=2/6
+t=7 IRQ0 | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=2/6 A2=3/6 A3=3/6
+t=8 IRQ0 | RUN=A2 | READY=[A3 A1] | D1=[] | PC: A1=3/6 A2=3/6 A3=3/6
+t=9 IRQ0 | RUN=A3 | READY=[A1 A2] | D1=[] | PC: A1=3/6 A2=4/6 A3=3/6
+t=10 IRQ0 | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=3/6 A2=4/6 A3=4/6
+t=11 IRQ0 | RUN=A2 | READY=[A3 A1] | D1=[] | PC: A1=4/6 A2=4/6 A3=4/6
+t=12 IRQ0 | RUN=A3 | READY=[A1 A2] | D1=[] | PC: A1=4/6 A2=5/6 A3=4/6
+t=13 IRQ0 | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=4/6 A2=5/6 A3=5/6
+t=14 IRQ0 | RUN=A2 | READY=[A3 A1] | D1=[] | PC: A1=5/6 A2=5/6 A3=5/6
+t=14 FIM | RUN=A3 | READY=[A1] | D1=[] | PC: A1=5/6 A2=6/6(F) A3=5/6
+t=14 FIM | RUN=A1 | READY=[] | D1=[] | PC: A1=5/6 A2=6/6(F) A3=6/6(F)
+t=14 FIM | RUN=-- | READY=[] | D1=[] | PC: A1=6/6(F) A2=6/6(F) A3=6/6(F)

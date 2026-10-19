@@ -1,0 +1,52 @@
+Teste 4 — Seis processos: fila de prontos longa, E/S em série e prioridade
+Comando: ./kernel 4 4:1W 4:1R 5 3 4
+Cenários do roteiro: (a), (b) e (d) com o máximo de 6 processos e MAX diferentes.
+
+Configuração
+  A1: MAX=4, sem syscall
+  A2: MAX=4, syscall(D1, W) no PC 1
+  A3: MAX=4, syscall(D1, R) no PC 1
+  A4: MAX=5, sem syscall
+  A5: MAX=3, sem syscall
+  A6: MAX=4, sem syscall
+
+O que deve acontecer
+  - t=0..5: cada processo começa 1 s depois do anterior (A1 em t=0, A2 em t=1,
+    ...). A2 e A3 pedem E/S logo na primeira iteração, no mesmo segundo (t=1).
+    D1=[A2:W A3:R] e a CPU passa direto para A4.
+  - t=4: IRQ1(W) libera A2. Ele entra na FRENTE de A4, A5 e A6, que estavam
+    esperando por time slice, e roda em t=5.
+  - t=7: IRQ1(R) libera A3, 3 s depois do fim da E/S de A2 (série). Ele fura a
+    fila de 5 processos e roda em t=8.
+  - Depois disso é round-robin normal com 6, depois 5, 4... processos. Os MAX
+    diferentes fazem os processos terminarem em momentos diferentes: A5 em t=13,
+    A1 e A2 em t=15, A3, A6 e A4 em t=16. Todos com PC = MAX.
+
+Linha do tempo esperada (t em segundos inteiros; o log real mostra décimos)
+t=0 INICIO | RUN=A1 | READY=[A2 A3 A4 A5 A6] | D1=[] | PC: A1=0/4 A2=0/4 A3=0/4 A4=0/5 A5=0/3 A6=0/4
+t=1 IRQ0 | RUN=A2 | READY=[A3 A4 A5 A6 A1] | D1=[] | PC: A1=1/4 A2=0/4 A3=0/4 A4=0/5 A5=0/3 A6=0/4
+t=1 SYS(W) | RUN=A3 | READY=[A4 A5 A6 A1] | D1=[A2:W] | PC: A1=1/4 A2=1/4 A3=0/4 A4=0/5 A5=0/3 A6=0/4
+t=1 SYS(R) | RUN=A4 | READY=[A5 A6 A1] | D1=[A2:W A3:R] | PC: A1=1/4 A2=1/4 A3=1/4 A4=0/5 A5=0/3 A6=0/4
+t=2 IRQ0 | RUN=A5 | READY=[A6 A1 A4] | D1=[A2:W A3:R] | PC: A1=1/4 A2=1/4 A3=1/4 A4=1/5 A5=0/3 A6=0/4
+t=3 IRQ0 | RUN=A6 | READY=[A1 A4 A5] | D1=[A2:W A3:R] | PC: A1=1/4 A2=1/4 A3=1/4 A4=1/5 A5=1/3 A6=0/4
+t=4 IRQ0 | RUN=A1 | READY=[A4 A5 A6] | D1=[A2:W A3:R] | PC: A1=1/4 A2=1/4 A3=1/4 A4=1/5 A5=1/3 A6=1/4
+t=4 IRQ1(W) | RUN=A1 | READY=[A2 A4 A5 A6] | D1=[A3:R] | PC: A1=1/4 A2=1/4 A3=1/4 A4=1/5 A5=1/3 A6=1/4
+t=5 IRQ0 | RUN=A2 | READY=[A4 A5 A6 A1] | D1=[A3:R] | PC: A1=2/4 A2=1/4 A3=1/4 A4=1/5 A5=1/3 A6=1/4
+t=6 IRQ0 | RUN=A4 | READY=[A5 A6 A1 A2] | D1=[A3:R] | PC: A1=2/4 A2=2/4 A3=1/4 A4=1/5 A5=1/3 A6=1/4
+t=7 IRQ0 | RUN=A5 | READY=[A6 A1 A2 A4] | D1=[A3:R] | PC: A1=2/4 A2=2/4 A3=1/4 A4=2/5 A5=1/3 A6=1/4
+t=7 IRQ1(R) | RUN=A5 | READY=[A3 A6 A1 A2 A4] | D1=[] | PC: A1=2/4 A2=2/4 A3=1/4 A4=2/5 A5=1/3 A6=1/4
+t=8 IRQ0 | RUN=A3 | READY=[A6 A1 A2 A4 A5] | D1=[] | PC: A1=2/4 A2=2/4 A3=1/4 A4=2/5 A5=2/3 A6=1/4
+t=9 IRQ0 | RUN=A6 | READY=[A1 A2 A4 A5 A3] | D1=[] | PC: A1=2/4 A2=2/4 A3=2/4 A4=2/5 A5=2/3 A6=1/4
+t=10 IRQ0 | RUN=A1 | READY=[A2 A4 A5 A3 A6] | D1=[] | PC: A1=2/4 A2=2/4 A3=2/4 A4=2/5 A5=2/3 A6=2/4
+t=11 IRQ0 | RUN=A2 | READY=[A4 A5 A3 A6 A1] | D1=[] | PC: A1=3/4 A2=2/4 A3=2/4 A4=2/5 A5=2/3 A6=2/4
+t=12 IRQ0 | RUN=A4 | READY=[A5 A3 A6 A1 A2] | D1=[] | PC: A1=3/4 A2=3/4 A3=2/4 A4=2/5 A5=2/3 A6=2/4
+t=13 IRQ0 | RUN=A5 | READY=[A3 A6 A1 A2 A4] | D1=[] | PC: A1=3/4 A2=3/4 A3=2/4 A4=3/5 A5=2/3 A6=2/4
+t=13 FIM | RUN=A3 | READY=[A6 A1 A2 A4] | D1=[] | PC: A1=3/4 A2=3/4 A3=2/4 A4=3/5 A5=3/3(F) A6=2/4
+t=14 IRQ0 | RUN=A6 | READY=[A1 A2 A4 A3] | D1=[] | PC: A1=3/4 A2=3/4 A3=3/4 A4=3/5 A5=3/3(F) A6=2/4
+t=15 IRQ0 | RUN=A1 | READY=[A2 A4 A3 A6] | D1=[] | PC: A1=3/4 A2=3/4 A3=3/4 A4=3/5 A5=3/3(F) A6=3/4
+t=15 FIM | RUN=A2 | READY=[A4 A3 A6] | D1=[] | PC: A1=4/4(F) A2=3/4 A3=3/4 A4=3/5 A5=3/3(F) A6=3/4
+t=15 FIM | RUN=A4 | READY=[A3 A6] | D1=[] | PC: A1=4/4(F) A2=4/4(F) A3=3/4 A4=3/5 A5=3/3(F) A6=3/4
+t=16 IRQ0 | RUN=A3 | READY=[A6 A4] | D1=[] | PC: A1=4/4(F) A2=4/4(F) A3=3/4 A4=4/5 A5=3/3(F) A6=3/4
+t=16 FIM | RUN=A6 | READY=[A4] | D1=[] | PC: A1=4/4(F) A2=4/4(F) A3=4/4(F) A4=4/5 A5=3/3(F) A6=3/4
+t=16 FIM | RUN=A4 | READY=[] | D1=[] | PC: A1=4/4(F) A2=4/4(F) A3=4/4(F) A4=4/5 A5=3/3(F) A6=4/4(F)
+t=16 FIM | RUN=-- | READY=[] | D1=[] | PC: A1=4/4(F) A2=4/4(F) A3=4/4(F) A4=5/5(F) A5=3/3(F) A6=4/4(F)

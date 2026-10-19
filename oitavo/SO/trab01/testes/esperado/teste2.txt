@@ -1,0 +1,53 @@
+Teste 2 — Dois pedidos de E/S quase juntos: fila FIFO e atendimento em série
+Comando: ./kernel 8:3R,6W 5 5:2W
+Cenário do roteiro: (b) dois pedidos quase juntos são liberados na ordem FIFO.
+
+Configuração
+  A1: MAX=8, syscall(D1, R) no PC 3 e syscall(D1, W) no PC 6
+  A2: MAX=5, sem syscall
+  A3: MAX=5, syscall(D1, W) no PC 2
+
+O que deve acontecer
+  - t=5: A3 faz a iteração 2 e pede W. A CPU passa na hora para A1, que faz a
+    iteração 3 e pede R logo em seguida, ~0,1 s depois. A fila de D1 fica
+    [A3:W A1:R]: quem pediu primeiro está na frente.
+  - t=5..7: só A2 está pronto e roda sozinho até terminar (FIM em t≈7).
+  - t=7..8: CPU ociosa (RUN=--). Todos os vivos estão esperando a E/S.
+  - t=8: IRQ1(W) libera A3 (3 s depois do pedido dele). Como a CPU está ociosa,
+    A3 roda na hora, sem esperar o IRQ0.
+  - t=11: IRQ1(R) libera A1. A E/S é em SÉRIE (decisão 15): o pedido de A1 só
+    começou a ser atendido em t=8, quando o D1 terminou o de A3. Em paralelo,
+    A1 voltaria em t≈8.
+  - t=13: A1 faz a iteração 6 e pede W. t=16: IRQ1(W) libera A1, 3 s depois,
+    porque o D1 estava livre. t=17: A1 termina com PC = 8.
+  - Os dois IRQ1 vindos dos pedidos quase juntos (t=8 e t=11) ficam 3 s
+    distantes: nunca chegam dois IRQ1 ao mesmo tempo, e nenhum se perde.
+
+Linha do tempo esperada (t em segundos inteiros; o log real mostra décimos)
+t=0 INICIO | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=0/8 A2=0/5 A3=0/5
+t=1 IRQ0 | RUN=A2 | READY=[A3 A1] | D1=[] | PC: A1=1/8 A2=0/5 A3=0/5
+t=2 IRQ0 | RUN=A3 | READY=[A1 A2] | D1=[] | PC: A1=1/8 A2=1/5 A3=0/5
+t=3 IRQ0 | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=1/8 A2=1/5 A3=1/5
+t=4 IRQ0 | RUN=A2 | READY=[A3 A1] | D1=[] | PC: A1=2/8 A2=1/5 A3=1/5
+t=5 IRQ0 | RUN=A3 | READY=[A1 A2] | D1=[] | PC: A1=2/8 A2=2/5 A3=1/5
+t=5 SYS(W) | RUN=A1 | READY=[A2] | D1=[A3:W] | PC: A1=2/8 A2=2/5 A3=2/5
+t=5 SYS(R) | RUN=A2 | READY=[] | D1=[A3:W A1:R] | PC: A1=3/8 A2=2/5 A3=2/5
+t=6 IRQ0 | RUN=A2 | READY=[] | D1=[A3:W A1:R] | PC: A1=3/8 A2=3/5 A3=2/5
+t=7 IRQ0 | RUN=A2 | READY=[] | D1=[A3:W A1:R] | PC: A1=3/8 A2=4/5 A3=2/5
+t=7 FIM | RUN=-- | READY=[] | D1=[A3:W A1:R] | PC: A1=3/8 A2=5/5(F) A3=2/5
+t=8 IRQ0 | RUN=-- | READY=[] | D1=[A3:W A1:R] | PC: A1=3/8 A2=5/5(F) A3=2/5
+t=8 IRQ1(W) | RUN=A3 | READY=[] | D1=[A1:R] | PC: A1=3/8 A2=5/5(F) A3=2/5
+t=9 IRQ0 | RUN=A3 | READY=[] | D1=[A1:R] | PC: A1=3/8 A2=5/5(F) A3=3/5
+t=10 IRQ0 | RUN=A3 | READY=[] | D1=[A1:R] | PC: A1=3/8 A2=5/5(F) A3=4/5
+t=10 FIM | RUN=-- | READY=[] | D1=[A1:R] | PC: A1=3/8 A2=5/5(F) A3=5/5(F)
+t=11 IRQ0 | RUN=-- | READY=[] | D1=[A1:R] | PC: A1=3/8 A2=5/5(F) A3=5/5(F)
+t=11 IRQ1(R) | RUN=A1 | READY=[] | D1=[] | PC: A1=3/8 A2=5/5(F) A3=5/5(F)
+t=12 IRQ0 | RUN=A1 | READY=[] | D1=[] | PC: A1=4/8 A2=5/5(F) A3=5/5(F)
+t=13 IRQ0 | RUN=A1 | READY=[] | D1=[] | PC: A1=5/8 A2=5/5(F) A3=5/5(F)
+t=13 SYS(W) | RUN=-- | READY=[] | D1=[A1:W] | PC: A1=6/8 A2=5/5(F) A3=5/5(F)
+t=14 IRQ0 | RUN=-- | READY=[] | D1=[A1:W] | PC: A1=6/8 A2=5/5(F) A3=5/5(F)
+t=15 IRQ0 | RUN=-- | READY=[] | D1=[A1:W] | PC: A1=6/8 A2=5/5(F) A3=5/5(F)
+t=16 IRQ0 | RUN=-- | READY=[] | D1=[A1:W] | PC: A1=6/8 A2=5/5(F) A3=5/5(F)
+t=16 IRQ1(W) | RUN=A1 | READY=[] | D1=[] | PC: A1=6/8 A2=5/5(F) A3=5/5(F)
+t=17 IRQ0 | RUN=A1 | READY=[] | D1=[] | PC: A1=7/8 A2=5/5(F) A3=5/5(F)
+t=17 FIM | RUN=-- | READY=[] | D1=[] | PC: A1=8/8(F) A2=5/5(F) A3=5/5(F)

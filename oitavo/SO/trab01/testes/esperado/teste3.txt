@@ -1,0 +1,42 @@
+Teste 3 — Todos bloqueados: CPU ociosa até o IRQ1
+Comando: ./kernel 4:2R 4:1W 4:1R
+Cenário do roteiro: (c) todos bloqueiam, a CPU fica ociosa e volta com o IRQ1.
+
+Configuração
+  A1: MAX=4, syscall(D1, R) no PC 2
+  A2: MAX=4, syscall(D1, W) no PC 1
+  A3: MAX=4, syscall(D1, R) no PC 1
+
+O que deve acontecer
+  - t=0: A1 faz a iteração 1.
+  - t=1: A2 ganha a CPU e pede W logo na iteração 1. A CPU passa na hora para A3,
+    que pede R na iteração 1. Ela passa então para A1, que pede R na iteração 2.
+    Três syscalls no mesmo segundo, uma por vez. D1=[A2:W A3:R A1:R].
+  - t=1..4: CPU ociosa (RUN=--). Os IRQ0 continuam chegando, mas não há quem
+    escalonar (decisão 5).
+  - E/S em série: os IRQ1 chegam em t=4, t=7 e t=10, sempre 3 s distantes, e
+    liberam na ordem FIFO: A2, A3, A1. Cada um roda sozinho, porque a CPU está
+    ociosa, e termina antes de o próximo voltar.
+
+Linha do tempo esperada (t em segundos inteiros; o log real mostra décimos)
+t=0 INICIO | RUN=A1 | READY=[A2 A3] | D1=[] | PC: A1=0/4 A2=0/4 A3=0/4
+t=1 IRQ0 | RUN=A2 | READY=[A3 A1] | D1=[] | PC: A1=1/4 A2=0/4 A3=0/4
+t=1 SYS(W) | RUN=A3 | READY=[A1] | D1=[A2:W] | PC: A1=1/4 A2=1/4 A3=0/4
+t=1 SYS(R) | RUN=A1 | READY=[] | D1=[A2:W A3:R] | PC: A1=1/4 A2=1/4 A3=1/4
+t=1 SYS(R) | RUN=-- | READY=[] | D1=[A2:W A3:R A1:R] | PC: A1=2/4 A2=1/4 A3=1/4
+t=2 IRQ0 | RUN=-- | READY=[] | D1=[A2:W A3:R A1:R] | PC: A1=2/4 A2=1/4 A3=1/4
+t=3 IRQ0 | RUN=-- | READY=[] | D1=[A2:W A3:R A1:R] | PC: A1=2/4 A2=1/4 A3=1/4
+t=4 IRQ0 | RUN=-- | READY=[] | D1=[A2:W A3:R A1:R] | PC: A1=2/4 A2=1/4 A3=1/4
+t=4 IRQ1(W) | RUN=A2 | READY=[] | D1=[A3:R A1:R] | PC: A1=2/4 A2=1/4 A3=1/4
+t=5 IRQ0 | RUN=A2 | READY=[] | D1=[A3:R A1:R] | PC: A1=2/4 A2=2/4 A3=1/4
+t=6 IRQ0 | RUN=A2 | READY=[] | D1=[A3:R A1:R] | PC: A1=2/4 A2=3/4 A3=1/4
+t=6 FIM | RUN=-- | READY=[] | D1=[A3:R A1:R] | PC: A1=2/4 A2=4/4(F) A3=1/4
+t=7 IRQ0 | RUN=-- | READY=[] | D1=[A3:R A1:R] | PC: A1=2/4 A2=4/4(F) A3=1/4
+t=7 IRQ1(R) | RUN=A3 | READY=[] | D1=[A1:R] | PC: A1=2/4 A2=4/4(F) A3=1/4
+t=8 IRQ0 | RUN=A3 | READY=[] | D1=[A1:R] | PC: A1=2/4 A2=4/4(F) A3=2/4
+t=9 IRQ0 | RUN=A3 | READY=[] | D1=[A1:R] | PC: A1=2/4 A2=4/4(F) A3=3/4
+t=9 FIM | RUN=-- | READY=[] | D1=[A1:R] | PC: A1=2/4 A2=4/4(F) A3=4/4(F)
+t=10 IRQ0 | RUN=-- | READY=[] | D1=[A1:R] | PC: A1=2/4 A2=4/4(F) A3=4/4(F)
+t=10 IRQ1(R) | RUN=A1 | READY=[] | D1=[] | PC: A1=2/4 A2=4/4(F) A3=4/4(F)
+t=11 IRQ0 | RUN=A1 | READY=[] | D1=[] | PC: A1=3/4 A2=4/4(F) A3=4/4(F)
+t=11 FIM | RUN=-- | READY=[] | D1=[] | PC: A1=4/4(F) A2=4/4(F) A3=4/4(F)
