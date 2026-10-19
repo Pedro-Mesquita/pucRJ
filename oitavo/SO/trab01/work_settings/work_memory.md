@@ -12,3 +12,5 @@ SIGUSR2  -> IRQ1
 SIGRTMIN -> syscall R
 SIGRTMIN + 1-> syscall W
 SIGRTMIN + 2-> I/O 
+## Decisões do passo 1
+7 - app recebe nome e MAX por argv (`./app A1 10`): o enunciado só fala em "laço de até MAX iterações" e não diz se MAX é igual para todos. MAX por processo permite testar um processo terminando antes dos outros.
