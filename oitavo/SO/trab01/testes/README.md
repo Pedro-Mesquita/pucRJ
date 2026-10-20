@@ -8,7 +8,7 @@ Da raiz do projeto:
 ```
 testes/run_teste.sh N        # N = 1, 2, 3 ou 4
 ```
-O script compila (`make`), roda o kernel mostrando o log ao vivo e, quando todos os apps
+O script compila (`gcc`), roda o kernel mostrando o log ao vivo e, quando todos os apps
 terminam, manda `SIGINT` (o mesmo que um Ctrl+C), porque o kernel é infinito (decisão 17).
 Depois ele faz 4 conferências:
 

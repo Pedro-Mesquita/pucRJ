@@ -15,7 +15,10 @@ esac
 ESPERADO="testes/esperado/teste$1.txt"
 LOG="testes/saida/teste$1.log"
 mkdir -p testes/saida
-make -s || exit 1
+rm -f "$LOG"    # um log antigo com "todos os processos terminaram" encerraria o teste cedo
+for prog in kernel intercontroller app; do
+    gcc -Wall -Wextra -g -o $prog $prog.c || exit 1
+done
 
 echo "=== Teste $1: ./kernel $ARGS ==="
 echo "(linha do tempo esperada em $ESPERADO)"

@@ -35,7 +35,7 @@ Depois diga em uma ou duas linhas em qual passo estamos e qual é o próximo ite
 
 ## Projeto
 - Enunciado: `work_settings/INF1316 - Trab1 - SO - 2026-2.pdf`.
-- Compilar com `make`. Os executáveis (`kernel`, `intercontroller`, `app`) ficam fora do git.
+- Compilar com `gcc -Wall -Wextra -g -o X X.c` para `kernel`, `intercontroller` e `app` (nada depende do `make`). Os executáveis (`kernel`, `intercontroller`, `app`) ficam fora do git.
 - Sinais e constantes compartilhados ficam em `common.h`.
 
 ## Git
