@@ -67,7 +67,7 @@ Os processos são controlados com `SIGSTOP`/`SIGCONT`.
 - [x] 6. IRQ1 e fila de D1 (decide C: modelo de E/S)
 - [x] 7. Término e encerramento (decide D)
 - [x] 8. Logs e cenários de teste
-- [ ] 9. Relatório
+- [x] 9. Relatório
 - [ ] 10. Ensaio
 
 ---
